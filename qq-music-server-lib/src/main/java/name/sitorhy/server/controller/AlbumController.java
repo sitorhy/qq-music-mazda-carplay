@@ -21,9 +21,32 @@ public class AlbumController {
         this.albumService = albumService;
     }
 
+    /**
+     * 自建歌单
+     */
     @GetMapping("/my")
     Mono<ServiceResponse<List<Album>>> getMyAlbums() {
         return albumService.getMyAlbums()
+                .map((result) -> new ServiceResponse<>(result, true))
+                .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
+    }
+
+    /**
+     * 收藏的歌单
+     */
+    @GetMapping("/fav")
+    Mono<ServiceResponse<List<Album>>> getMyFavAlbums() {
+        return albumService.getMyFavAlbums()
+                .map((result) -> new ServiceResponse<>(result, true))
+                .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
+    }
+
+    /**
+     * 收藏的有版权发行专辑
+     */
+    @GetMapping("/public")
+    Mono<ServiceResponse<List<Album>>> getMyFavPublication() {
+        return albumService.getMyFavPublication()
                 .map((result) -> new ServiceResponse<>(result, true))
                 .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
     }

@@ -14,9 +14,16 @@ public class Album {
      */
     private long dirId;
 
+    /**
+     * 有版权的专辑id，专辑歌曲详情使用另外的接口
+     */
+    private String albumMid;
+    private long albumId;
+
     private String title;
     private String subtitle;
     private String picUrl;
+    private String author;
 
     public long getDissId() {
         return dissId;
@@ -32,6 +39,22 @@ public class Album {
 
     public void setDirId(long dirId) {
         this.dirId = dirId;
+    }
+
+    public String getAlbumMid() {
+        return albumMid;
+    }
+
+    public void setAlbumMid(String albumMid) {
+        this.albumMid = albumMid;
+    }
+
+    public long getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(long albumId) {
+        this.albumId = albumId;
     }
 
     public String getTitle() {
@@ -56,5 +79,13 @@ public class Album {
 
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

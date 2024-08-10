@@ -23,6 +23,9 @@ public class SongController {
         this.songService = songService;
     }
 
+    /**
+     * 歌曲详情
+     */
     @GetMapping("/album/{dissId}")
     public Mono<ServiceResponse<List<Song>>> getAlbumSongs(@PathVariable("dissId") long dissId) {
         return songService.getAlbumSongs(dissId)
@@ -30,6 +33,23 @@ public class SongController {
                 .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
     }
 
+    /**
+     * 专辑详情
+     */
+    @GetMapping("/public/{albumMid}")
+    public Mono<ServiceResponse<List<Song>>> getPublicationSongs(@PathVariable("albumMid") String albumMid,@RequestParam(value = "albumId", required = false) long albumId) {
+        try {
+            return songService.getPublicationSongs(albumMid, albumId)
+                    .map(result -> new ServiceResponse<>(result, true))
+                    .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
+        } catch (JsonProcessingException e) {
+            return Mono.just(new ServiceResponse<>(e.getMessage(), false));
+        }
+    }
+
+    /**
+     * 歌曲链接
+     */
     @GetMapping("/source/{songMid}")
     public Mono<ServiceResponse<SongSource>> getSongSource(
             @PathVariable("songMid") String songMid,

@@ -197,4 +197,78 @@ public class SongService {
                     }
                 });
     }
+
+    public Mono<List<Song>> getPublicationSongs(String albumMid, long albumId) throws JsonProcessingException {
+        return requestHeadersSession.get("https://u.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<>() {
+                    {
+                        put("g_tk", 5381);
+                        put("format", "json");
+                        put("inCharset", "utf-8");
+                        put("outCharset", "utf-8");
+
+                        String dataJsonText = new JsonMapper().writeValueAsString(new LinkedHashMap<>() {{
+                            put("comm", new LinkedHashMap<String, Object>() {{
+                                put("ct", 24);
+                                put("cv", 10000);
+                            }});
+
+                            put("albumSonglist", new LinkedHashMap<String, Object>() {{
+                                put("method", "GetAlbumSongList");
+                                put("cv", 10000);
+                                put("param", new LinkedHashMap<String, Object>() {{
+                                    put("albumMid", albumMid);
+                                    put("albumID", albumId);
+                                    put("begin", 0);
+                                    put("num", 999);
+                                    put("order", 2);
+                                }});
+                                put("module", "music.musichallAlbum.AlbumSongList");
+                            }});
+                        }});
+                        String dataJsonEncodeText = URLEncoder.encode(dataJsonText, StandardCharsets.UTF_8);
+                        put("data", dataJsonEncodeText);
+                    }
+                })
+                .header("Referer", "https://y.qq.com/n/yqq/playlist")
+                .retrieve()
+                .bodyToMono(String.class)
+                .handle((jsonText, sink) -> {
+                    try {
+                        List<Song> songList = new ArrayList<>();
+                        JsonMapper mapper = new JsonMapper();
+                        JsonNode root = mapper.readTree(jsonText);
+                        JsonNode arrSongList = root.at("/albumSonglist/data/songList");
+                        for (JsonNode songNode : arrSongList) {
+                            JsonNode songInfoNode = songNode.at("/songInfo");
+
+                            Song song = new Song();
+                            song.setSongId(songInfoNode.at("/id").asLong());
+                            song.setSongMid(songInfoNode.at("/mid").asText());
+                            song.setSongName(songInfoNode.at("/name").asText());
+                            song.setSongOrig(songInfoNode.at("/title").asText());
+                            song.setAlbumDesc(songInfoNode.at("/album/title").asText());
+                            song.setAlbumId(songInfoNode.at("/album/id").asLong());
+                            song.setAlbumName(songInfoNode.at("/album/name").asText());
+                            song.setAlbumMid(songInfoNode.at("/album/mid").asText());
+                            song.setStrMediaMid(songInfoNode.at("/file/media_mid").asText());
+                            song.setInterval(songInfoNode.at("/interval").asLong());
+                            song.setAlbumCoverUrl(String.format("https://y.qq.com/music/photo_new/T002R300x300M000%s.jpg", song.getAlbumMid()));
+                            song.setSingers(new ArrayList<>());
+                            JsonNode arrSingerList = songInfoNode.at("/singer");
+                            for (JsonNode singerNode : arrSingerList) {
+                                song.getSingers().add(new Singer() {{
+                                    setId(singerNode.at("/id").asLong());
+                                    setMid(singerNode.at("/mid").asText());
+                                    setName(singerNode.at("/name").asText());
+                                }});
+                            }
+
+                            songList.add(song);
+                        }
+                        sink.next(songList);
+                    } catch (Exception e) {
+                        sink.error(e);
+                    }
+                });
+    }
 }
