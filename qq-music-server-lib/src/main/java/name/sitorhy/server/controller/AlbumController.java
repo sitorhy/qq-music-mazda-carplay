@@ -37,7 +37,7 @@ public class AlbumController {
      */
     @GetMapping("/fav")
     Mono<ServiceResponse<List<Album>>> getMyFavAlbums(
-            @RequestParam(value = "pageNo", required = false, defaultValue = "0") Long pageNo,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
             @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
     ) {
         return albumService.getMyFavAlbums(pageNo, pageSize)
@@ -50,7 +50,7 @@ public class AlbumController {
      */
     @GetMapping("/public")
     Mono<ServiceResponse<List<Album>>> getMyFavPublication(
-            @RequestParam(value = "pageNo", required = false, defaultValue = "0") Long pageNo,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
             @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
     ) {
         return albumService.getMyFavPublication(pageNo, pageSize)

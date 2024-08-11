@@ -7,10 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class RequestHeadersSession {
@@ -18,6 +15,7 @@ public class RequestHeadersSession {
     private String cookie;
 
     private long uin = 0;
+    private String hostUin;
     private String qqMusicKey = "";
 
     @Value("${headers.default.Accept-Language}")
@@ -76,12 +74,29 @@ public class RequestHeadersSession {
         }
     }
 
+    private void setHostUin() {
+        if (this.cookie != null) {
+            String[] cookies = this.cookie.split(";");
+            Arrays.stream(cookies).filter(i -> i.trim().startsWith("euin=")).findFirst().ifPresentOrElse((cookie) -> {
+                this.hostUin = cookie.split("=")[1].trim();
+            }, () -> {
+                this.hostUin = "";
+            });
+        } else {
+            this.hostUin = "";
+        }
+    }
+
     public String getQQMusicKey() {
         return qqMusicKey;
     }
 
     public long getUin() {
         return this.uin;
+    }
+
+    public String getHostUin() {
+        return hostUin;
     }
 
     public String getCookie() {
@@ -93,6 +108,7 @@ public class RequestHeadersSession {
         this.cookie = cookie;
         this.setUin();
         this.setQQMusicKey();
+        this.setHostUin();
     }
 
     public String getAcceptLanguage() {
@@ -155,6 +171,10 @@ public class RequestHeadersSession {
     }
 
     public WebClient.RequestHeadersSpec<?> get(String uri, LinkedHashMap<String, Object> uriVariables) {
-        return WebClientUtils.create(this, HttpMethod.GET, createUrl(uri, uriVariables), uriVariables);
+        return WebClientUtils.create(this, HttpMethod.GET, createUrl(uri, uriVariables), new HashMap<>());
+    }
+
+    public WebClient.RequestHeadersSpec<?> post(String uri, LinkedHashMap<String, Object> uriVariables, Object bodyValue) {
+        return WebClientUtils.create(this, HttpMethod.POST, createUrl(uri, uriVariables), bodyValue);
     }
 }

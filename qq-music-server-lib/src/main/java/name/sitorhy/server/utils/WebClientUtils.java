@@ -6,7 +6,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URI;
-import java.util.Map;
 
 public class WebClientUtils {
     // 扩大接收缓存 4MB； 默认 256 KB 部分请求会溢出
@@ -26,53 +25,7 @@ public class WebClientUtils {
         httpHeaders.set("Cookie", requestHeadersSession.getCookie());
     }
 
-    public static WebClient.RequestHeadersSpec<? extends WebClient.RequestHeadersSpec<?>> create(RequestHeadersSession requestHeadersSession, HttpMethod httpMethod, URI uri) {
-        WebClient webClient = WebClient.create();
-        return webClient
-                .mutate()
-                .codecs(
-                        configurer -> configurer
-                                .defaultCodecs()
-                                .maxInMemorySize(RESPONSE_BUFFER_SIZE)
-                )
-                .build()
-                .method(httpMethod)
-                .uri(uri)
-                .headers(httpHeaders -> setDefaultHeaders(httpHeaders, requestHeadersSession));
-    }
-
     public static WebClient.RequestHeadersSpec<? extends WebClient.RequestHeadersSpec<?>> create(RequestHeadersSession requestHeadersSession, HttpMethod httpMethod, URI uri, Object bodyValue) {
-        WebClient webClient = WebClient.create();
-        return webClient
-                .mutate()
-                .codecs(
-                        configurer -> configurer
-                                .defaultCodecs()
-                                .maxInMemorySize(RESPONSE_BUFFER_SIZE)
-                )
-                .build()
-                .method(httpMethod)
-                .uri(uri)
-                .bodyValue(bodyValue)
-                .headers(httpHeaders -> setDefaultHeaders(httpHeaders, requestHeadersSession));
-    }
-
-    public static WebClient.RequestHeadersSpec<? extends WebClient.RequestHeadersSpec<?>> create(RequestHeadersSession requestHeadersSession, HttpMethod httpMethod, String uri, Map<String, Object> uriVariables) {
-        WebClient webClient = WebClient.create();
-        return webClient
-                .mutate()
-                .codecs(
-                        configurer -> configurer
-                                .defaultCodecs()
-                                .maxInMemorySize(RESPONSE_BUFFER_SIZE)
-                )
-                .build()
-                .method(httpMethod)
-                .uri(uri, uriVariables)
-                .headers(httpHeaders -> setDefaultHeaders(httpHeaders, requestHeadersSession));
-    }
-
-    public static WebClient.RequestHeadersSpec<? extends WebClient.RequestHeadersSpec<?>> create(RequestHeadersSession requestHeadersSession, HttpMethod httpMethod, String uri, Object bodyValue) {
         WebClient webClient = WebClient.create();
         return webClient
                 .mutate()

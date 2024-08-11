@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.util.Arrays;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler
