@@ -75,7 +75,7 @@ public class SongController {
                     .map(result -> {
                         ServiceResponse<SongSource> response = new ServiceResponse<>(result, true);
                         if (!StringUtils.hasLength(result.getUrl())) {
-                            response.setMessage("歌曲已下架");
+                            response.setMessage("歌曲不存在或已下架");
                         }
                         return response;
                     })
