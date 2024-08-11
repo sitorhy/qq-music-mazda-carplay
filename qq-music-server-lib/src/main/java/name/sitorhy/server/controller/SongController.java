@@ -37,9 +37,11 @@ public class SongController {
      * 专辑歌曲列表
      */
     @GetMapping("/public/{albumMid}")
-    public Mono<ServiceResponse<List<Song>>> getPublicationSongs(@PathVariable("albumMid") String albumMid, @RequestParam(value = "albumId", required = false) Long albumId) {
+    public Mono<ServiceResponse<List<Song>>> getPublicationSongs(
+            @PathVariable("albumMid") String albumMid,
+            @RequestParam(value = "albumId", required = false, defaultValue = "0") Long albumId) {
         try {
-            return songService.getPublicationSongs(albumMid, albumId == null ? 0 : albumId)
+            return songService.getPublicationSongs(albumMid, albumId)
                     .map(result -> new ServiceResponse<>(result, true))
                     .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
         } catch (JsonProcessingException e) {
@@ -51,7 +53,9 @@ public class SongController {
      * 专辑/歌单 歌单列表，自动识别参数
      */
     @GetMapping("/list/{resId}")
-    public Mono<ServiceResponse<List<Song>>> getSongs(@PathVariable("resId") String resId, @RequestParam(value = "albumId", required = false) Long albumId) {
+    public Mono<ServiceResponse<List<Song>>> getSongs(
+            @PathVariable("resId") String resId,
+            @RequestParam(value = "albumId", required = false, defaultValue = "0") Long albumId) {
         // dissId 是整型，不可能 '0' 开头
         if (resId.startsWith("0")) {
             return this.getPublicationSongs(resId, albumId);

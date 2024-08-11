@@ -71,7 +71,7 @@ public class AlbumService {
                 });
     }
 
-    public Mono<List<Album>> getMyFavAlbums() {
+    public Mono<List<Album>> getMyFavAlbums(long pageNo, long pageSize) {
         return requestHeadersSession
                 .get("https://c.y.qq.com/fav/fcgi-bin/fcg_get_profile_order_asset.fcg", new LinkedHashMap<>() {
                     {
@@ -79,8 +79,8 @@ public class AlbumService {
                         put("cid", 205360956);
                         put("userid", requestHeadersSession.getUin());
                         put("reqtype", 3);
-                        put("sin", 0);
-                        put("ein", 10);
+                        put("sin", (pageNo - 1) * pageSize);
+                        put("ein", pageNo * pageSize);
                     }
                 })
                 .retrieve()
@@ -109,7 +109,7 @@ public class AlbumService {
                 });
     }
 
-    public Mono<List<Album>> getMyFavPublication() {
+    public Mono<List<Album>> getMyFavPublication(long pageNo, long pageSize) {
         return requestHeadersSession
                 .get("https://c.y.qq.com/fav/fcgi-bin/fcg_get_profile_order_asset.fcg", new LinkedHashMap<>() {
                     {
@@ -117,8 +117,8 @@ public class AlbumService {
                         put("cid", 205360956);
                         put("userid", requestHeadersSession.getUin());
                         put("reqtype", 2);
-                        put("sin", 0);
-                        put("ein", 10);
+                        put("sin", (pageNo - 1) * pageSize);
+                        put("ein", pageNo * pageSize);
                     }
                 })
                 .retrieve()

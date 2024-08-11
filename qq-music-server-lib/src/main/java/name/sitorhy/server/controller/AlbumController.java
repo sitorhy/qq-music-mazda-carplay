@@ -6,6 +6,7 @@ import name.sitorhy.server.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -35,8 +36,11 @@ public class AlbumController {
      * 收藏的歌单
      */
     @GetMapping("/fav")
-    Mono<ServiceResponse<List<Album>>> getMyFavAlbums() {
-        return albumService.getMyFavAlbums()
+    Mono<ServiceResponse<List<Album>>> getMyFavAlbums(
+            @RequestParam(value = "pageNo", required = false, defaultValue = "0") Long pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
+    ) {
+        return albumService.getMyFavAlbums(pageNo, pageSize)
                 .map((result) -> new ServiceResponse<>(result, true))
                 .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
     }
@@ -45,8 +49,11 @@ public class AlbumController {
      * 收藏的有版权发行专辑
      */
     @GetMapping("/public")
-    Mono<ServiceResponse<List<Album>>> getMyFavPublication() {
-        return albumService.getMyFavPublication()
+    Mono<ServiceResponse<List<Album>>> getMyFavPublication(
+            @RequestParam(value = "pageNo", required = false, defaultValue = "0") Long pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
+    ) {
+        return albumService.getMyFavPublication(pageNo, pageSize)
                 .map((result) -> new ServiceResponse<>(result, true))
                 .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
     }
