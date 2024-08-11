@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.model.Album;
+import name.sitorhy.server.model.Singer;
 import name.sitorhy.server.session.RequestHeadersSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -138,6 +139,16 @@ public class AlbumService {
                                 this.setTitle(objNode.at("/albumname").asText());
                                 this.setDirId(0);
                                 this.setAuthor(objNode.at("/singername").asText());
+
+                                this.setSingers(new ArrayList<>());
+                                JsonNode arrSingerList = objNode.at("/singer");
+                                for (JsonNode singerNode : arrSingerList) {
+                                    this.getSingers().add(new Singer() {{
+                                        setId(0);
+                                        setMid(singerNode.at("/mid").asText());
+                                        setName(singerNode.at("/name").asText());
+                                    }});
+                                }
                             }});
                         }
                         sink.next(list);

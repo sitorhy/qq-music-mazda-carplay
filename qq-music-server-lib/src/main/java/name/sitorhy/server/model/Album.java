@@ -1,5 +1,7 @@
 package name.sitorhy.server.model;
 
+import java.util.List;
+
 /**
  * 歌单基本信息，不包含歌曲
  */
@@ -19,6 +21,11 @@ public class Album {
      */
     private String albumMid;
     private long albumId;
+
+    /**
+     * 专辑歌手，自建歌单为空
+     */
+    private List<Singer> singers;
 
     private String title;
     private String subtitle;
@@ -55,6 +62,14 @@ public class Album {
 
     public void setAlbumId(long albumId) {
         this.albumId = albumId;
+    }
+
+    public List<Singer> getSingers() {
+        return singers;
+    }
+
+    public void setSingers(List<Singer> singers) {
+        this.singers = singers;
     }
 
     public String getTitle() {
