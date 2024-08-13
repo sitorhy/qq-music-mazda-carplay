@@ -2,6 +2,7 @@ package name.sitorhy.server.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.model.Album;
 import name.sitorhy.server.model.Singer;
@@ -154,6 +155,68 @@ public class AlbumService {
                         sink.next(list);
                     } catch (JsonProcessingException e) {
                         sink.error(new RuntimeException(e));
+                    }
+                });
+    }
+
+    public Mono<List<Album>> getSingerPublication(String singerMid, long pageNo, long pageSize) {
+        return requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<>() {{
+                    put("_", System.currentTimeMillis());
+                }}, new LinkedHashMap<String, Object>() {{
+                    put("comm", new LinkedHashMap<String, Object>() {{
+                        put("ct", 24);
+                        put("cv", 0);
+                    }});
+
+                    put("singerAlbum", new LinkedHashMap<String, Object>() {{
+                        put("method", "get_singer_album");
+                        put("param", new LinkedHashMap<>() {{
+                            put("singermid", singerMid);
+                            put("order", "time");
+                            put("begin", (pageNo - 1) * pageSize);
+                            put("num", pageSize);
+                            put("exstatus", 1);
+                        }});
+                        put("module", "music.web_singer_info_svr");
+                    }});
+                }})
+                .retrieve()
+                .bodyToMono(String.class)
+                .handle((jsonText, sink) -> {
+                    try {
+                        List<Album> albums = new ArrayList<>();
+                        ObjectMapper mapper = new ObjectMapper();
+                        JsonNode root = mapper.readTree(jsonText);
+                        JsonNode arrList = root.at("/singerAlbum/data/list");
+                        if (arrList.isArray()) {
+                            for (JsonNode albumNode : arrList) {
+                                Album album = new Album() {{
+                                    this.setAlbumId(albumNode.at("/albumid").asLong());
+                                    this.setAlbumMid(albumNode.at("/album_mid").asText());
+                                    this.setAuthor(albumNode.at("/singer_name").asText());
+                                    this.setTitle(albumNode.at("/album_name").asText());
+                                    this.setSubtitle(albumNode.at("/desc").asText());
+                                    this.setPicUrl(String.format("https://y.gtimg.cn/music/photo_new/T002R300x300M000%s.jpg", this.getAlbumMid()));
+                                    this.setDirId(0);
+                                    this.setDissId(0);
+                                    List<Singer> singers = new ArrayList<>();
+                                    JsonNode arrSingerList = albumNode.at("/singers");
+                                    for (JsonNode singerNode : arrSingerList) {
+                                        singers.add(new Singer() {{
+                                            setId(singerNode.at("/singer_id").asLong());
+                                            setMid(singerNode.at("/singer_mid").asText());
+                                            setName(singerNode.at("/singer_name").asText());
+                                        }});
+                                    }
+                                    this.setSingers(singers);
+                                }};
+
+                                albums.add(album);
+                            }
+                        }
+                        sink.next(albums);
+                    } catch (Exception e) {
+                        sink.error(e);
                     }
                 });
     }

@@ -19,7 +19,7 @@ public class SongController {
     private SongService songService;
 
     @Autowired
-    public SongController(SongService songService) {
+    public void setSongService(SongService songService) {
         this.songService = songService;
     }
 
