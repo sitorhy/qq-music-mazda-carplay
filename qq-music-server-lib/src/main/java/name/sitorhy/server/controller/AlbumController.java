@@ -32,7 +32,7 @@ public class AlbumController {
     /**
      * 收藏的歌单
      */
-    @GetMapping("/my/fav")
+    @GetMapping("/fav/albums")
     Mono<ServiceResponse<List<Album>>> getMyFavAlbums(
             @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
             @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
@@ -45,7 +45,7 @@ public class AlbumController {
     /**
      * 收藏的有版权发行专辑
      */
-    @GetMapping("/my/public")
+    @GetMapping("/fav/public")
     Mono<ServiceResponse<List<Album>>> getMyFavPublication(
             @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
             @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize

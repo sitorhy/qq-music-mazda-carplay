@@ -3,10 +3,7 @@ package name.sitorhy.server.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import name.sitorhy.server.model.Singer;
-import name.sitorhy.server.model.Song;
-import name.sitorhy.server.model.SongSource;
-import name.sitorhy.server.model.SongTypeEnum;
+import name.sitorhy.server.model.*;
 import name.sitorhy.server.session.RequestHeadersSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -198,7 +195,7 @@ public class SongService {
                 });
     }
 
-    public Mono<List<Song>> getPublicationSongs(String albumMid, long albumId) throws JsonProcessingException {
+    public Mono<List<Song>> getPublicationSongs(String albumMid, long albumId, long pageNo, long pageSize) throws JsonProcessingException {
         return requestHeadersSession.get("https://u.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<>() {
                     {
                         put("g_tk", 5381);
@@ -218,8 +215,8 @@ public class SongService {
                                 put("param", new LinkedHashMap<String, Object>() {{
                                     put("albumMid", albumMid);
                                     put("albumID", albumId);
-                                    put("begin", 0);
-                                    put("num", 999);
+                                    put("begin", (pageNo - 1) * pageSize);
+                                    put("num", pageSize);
                                     put("order", 2);
                                 }});
                                 put("module", "music.musichallAlbum.AlbumSongList");
@@ -264,6 +261,69 @@ public class SongService {
                             }
 
                             songList.add(song);
+                        }
+                        sink.next(songList);
+                    } catch (Exception e) {
+                        sink.error(e);
+                    }
+                });
+    }
+
+    public Mono<List<Song>> getSingerTopSongs(String singerMid, long pageNo, long pageSize) throws JsonProcessingException {
+        return requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<>() {{
+                    put("_", System.currentTimeMillis());
+                }}, new LinkedHashMap<String, Object>() {{
+                    put("comm", new LinkedHashMap<String, Object>() {{
+                        put("ct", 24);
+                        put("cv", 0);
+                    }});
+
+                    put("singer", new LinkedHashMap<String, Object>() {{
+                        put("method", "get_singer_detail_info");
+                        put("param", new LinkedHashMap<>() {{
+                            put("sort", 5);
+                            put("singermid", singerMid);
+                            put("sin", (pageNo - 1) * pageSize);
+                            put("num", pageSize);
+                            put("exstatus", 1);
+                        }});
+                        put("module", "music.web_singer_info_svr");
+                    }});
+                }})
+                .retrieve()
+                .bodyToMono(String.class)
+                .handle((jsonText, sink) -> {
+                    try {
+                        List<Song> songList = new ArrayList<>();
+                        JsonMapper mapper = new JsonMapper();
+                        JsonNode root = mapper.readTree(jsonText);
+                        JsonNode songListArr = root.at("/singer/data/songlist");
+                        if (songListArr.isArray()) {
+                            for (JsonNode songNode : songListArr) {
+                                Song song = new Song();
+                                song.setSongId(songNode.at("/id").asLong());
+                                song.setSongMid(songNode.at("/mid").asText());
+                                song.setSongName(songNode.at("/name").asText());
+                                song.setSongOrig(songNode.at("/title").asText());
+                                song.setAlbumDesc(songNode.at("/album/title").asText());
+                                song.setAlbumId(songNode.at("/album/id").asLong());
+                                song.setAlbumName(songNode.at("/album/name").asText());
+                                song.setAlbumMid(songNode.at("/album/mid").asText());
+                                song.setStrMediaMid(songNode.at("/file/media_mid").asText());
+                                song.setInterval(songNode.at("/interval").asLong());
+                                song.setAlbumCoverUrl(String.format("https://y.qq.com/music/photo_new/T002R300x300M000%s.jpg", song.getAlbumMid()));
+                                song.setSingers(new ArrayList<>());
+                                JsonNode arrSingerList = songNode.at("/singer");
+                                for (JsonNode singerNode : arrSingerList) {
+                                    song.getSingers().add(new Singer() {{
+                                        setId(singerNode.at("/id").asLong());
+                                        setMid(singerNode.at("/mid").asText());
+                                        setName(singerNode.at("/name").asText());
+                                    }});
+                                }
+
+                                songList.add(song);
+                            }
                         }
                         sink.next(songList);
                     } catch (Exception e) {

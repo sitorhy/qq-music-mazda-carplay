@@ -39,9 +39,12 @@ public class SongController {
     @GetMapping("/public/{albumMid}")
     public Mono<ServiceResponse<List<Song>>> getPublicationSongs(
             @PathVariable("albumMid") String albumMid,
-            @RequestParam(value = "albumId", required = false, defaultValue = "0") Long albumId) {
+            @RequestParam(value = "albumId", required = false, defaultValue = "0") Long albumId,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
+    ) {
         try {
-            return songService.getPublicationSongs(albumMid, albumId)
+            return songService.getPublicationSongs(albumMid, albumId, pageNo, pageSize)
                     .map(result -> new ServiceResponse<>(result, true))
                     .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
         } catch (JsonProcessingException e) {
@@ -55,12 +58,30 @@ public class SongController {
     @GetMapping("/list/{resId}")
     public Mono<ServiceResponse<List<Song>>> getSongs(
             @PathVariable("resId") String resId,
-            @RequestParam(value = "albumId", required = false, defaultValue = "0") Long albumId) {
+            @RequestParam(value = "albumId", required = false, defaultValue = "0") Long albumId,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
+    ) {
         // dissId 是整型，不可能 '0' 开头
         if (resId.startsWith("0")) {
-            return this.getPublicationSongs(resId, albumId);
+            return this.getPublicationSongs(resId, albumId, pageNo, pageSize);
         } else {
             return this.getAlbumSongs(Long.parseLong(resId));
+        }
+    }
+
+    @GetMapping("/singer/{singerMid}/top")
+    public Mono<ServiceResponse<List<Song>>> getSongs(
+            @PathVariable("singerMid") String singerMid,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "12") Long pageSize
+    ) {
+        try {
+            return songService.getSingerTopSongs(singerMid, pageNo, pageSize)
+                    .map(result -> new ServiceResponse<>(result, true))
+                    .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
+        } catch (JsonProcessingException e) {
+            return Mono.just(new ServiceResponse<>(e.getMessage(), false));
         }
     }
 
