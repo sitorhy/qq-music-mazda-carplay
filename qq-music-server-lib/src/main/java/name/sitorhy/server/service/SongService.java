@@ -331,4 +331,37 @@ public class SongService {
                     }
                 });
     }
+
+    public Mono<String> getSongLyric(String songMid) {
+        return requestHeadersSession.get("http://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg", new LinkedHashMap<>() {
+                    {
+                        put("songmid", songMid);
+                        put("pcachetime", System.currentTimeMillis());
+                        put("g_tk", 5381);
+                        put("loginUin", 0);
+                        put("hostUin", 0);
+                        put("inCharset", "utf8");
+                        put("outCharset", "utf-8");
+                        put("notice", 0);
+                        put("platform", "yqq");
+                        put("needNewCode", 0);
+                    }
+                })
+                .header("Referer", "https://y.qq.com")
+                .retrieve()
+                .bodyToMono(String.class)
+                .handle((jsonpText, sink) -> {
+                    try {
+                        JsonMapper mapper = new JsonMapper();
+                        String dataJsonText = jsonpText.substring("MusicJsonCallback(".length(), jsonpText.length() - 1);
+                        JsonNode dataNode = mapper.readTree(dataJsonText);
+                        String lyricTextEncode = dataNode.at("/lyric").asText();
+                        byte[] decodedBytes = Base64.getDecoder().decode(lyricTextEncode);
+                        String lyricText = new String(decodedBytes);
+                        sink.next(lyricText);
+                    } catch (Exception e) {
+                        sink.error(e);
+                    }
+                });
+    }
 }

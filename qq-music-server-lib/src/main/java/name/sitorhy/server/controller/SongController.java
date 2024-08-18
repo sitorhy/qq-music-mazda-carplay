@@ -109,4 +109,21 @@ public class SongController {
             return Mono.just(new ServiceResponse<>(e.getMessage(), false));
         }
     }
+
+    @GetMapping("/lyric/{songMid}")
+    public Mono<ServiceResponse<String>> getSongLyric(
+            @PathVariable("songMid") String songMid
+    ) {
+        try {
+            return songService.getSongLyric(songMid)
+                    .map(result -> {
+                        ServiceResponse<String> response = new ServiceResponse<>();
+                        response.setData(result);
+                        return response;
+                    })
+                    .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
+        } catch (Exception e) {
+            return Mono.just(new ServiceResponse<>(e.getMessage(), false));
+        }
+    }
 }
