@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/category")
@@ -30,6 +29,21 @@ public class CategoryController {
     @GetMapping("/list")
     Mono<ServiceResponse<List<CategoryGroup>>> getRecommendCategories() {
         return categoryService.getRecommendCategories()
+                .map((result) -> new ServiceResponse<>(result, true))
+                .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
+    }
+
+    /**
+     * 自动识别分类
+     */
+    @GetMapping("/detail")
+    Mono<ServiceResponse<Category>> getCategoryDetail(
+            @RequestParam(value = "type", required = false, defaultValue = "RECOMMEND_FOR_ME") String type,
+            @RequestParam(value = "code", required = false, defaultValue = "1") Long code,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "25") Long pageSize
+    ) {
+        return categoryService.getCategoryDetail(type.toUpperCase(), code, pageNo, pageSize)
                 .map((result) -> new ServiceResponse<>(result, true))
                 .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
     }

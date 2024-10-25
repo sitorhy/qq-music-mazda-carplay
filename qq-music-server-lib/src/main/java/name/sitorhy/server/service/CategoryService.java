@@ -53,8 +53,7 @@ public class CategoryService {
                                                 setCategoryCode(i.at("/id").asText());
                                                 if (i.at("/id").asText().equals("0")) {
                                                     setCategoryType(CategoryTypeEnum.RECOMMEND_FOR_ME);
-                                                }
-                                                else {
+                                                } else {
                                                     setCategoryType(CategoryTypeEnum.RECOMMEND);
                                                 }
                                             }}).collect(Collectors.toUnmodifiableList());
@@ -216,6 +215,17 @@ public class CategoryService {
                         sink.error(e);
                     }
                 });
+    }
+
+    public Mono<Category> getCategoryDetail(String categoryType, long code, long pageNo, long pageSize) {
+        CategoryTypeEnum type = CategoryTypeEnum.valueOf(categoryType);
+        return switch (type) {
+            case RECOMMEND_FOR_ME -> getRecommendForMe(pageNo, pageSize);
+            case RECOMMEND -> getRecommend(code, pageNo, pageSize);
+            case NEW_SONG -> getNewSong(code, pageNo, pageSize);
+            case TOP_LIST -> getTopList(code, pageNo, pageSize);
+            default -> Mono.just(new Category());
+        };
     }
 
     // 为你推荐 不支持翻页查询
