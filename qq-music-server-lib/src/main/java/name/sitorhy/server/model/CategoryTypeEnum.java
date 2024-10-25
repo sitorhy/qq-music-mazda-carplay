@@ -9,4 +9,6 @@ public enum CategoryTypeEnum {
     NEW_SONG,
     // 首页 - 新碟首发
     NEW_ALBUM,
+    // 排行榜
+    TOP_LIST,
 }

@@ -76,7 +76,7 @@ public class CategoryController {
     }
 
     /**
-     * 新碟
+     * 新歌
      */
     @GetMapping("/song")
     Mono<ServiceResponse<Category>> getNewSong(
@@ -85,6 +85,20 @@ public class CategoryController {
             @RequestParam(value = "pageSize", required = false, defaultValue = "25") Long pageSize
     ) {
         return categoryService.getNewSong(code, pageNo, pageSize)
+                .map((result) -> new ServiceResponse<>(result, true))
+                .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
+    }
+
+    /**
+     * 排行榜
+     */
+    @GetMapping("/top")
+    Mono<ServiceResponse<Category>> getTopList(
+            @RequestParam(value = "code", required = false, defaultValue = "1") Long code,
+            @RequestParam(value = "pageNo", required = false, defaultValue = "1") Long pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "20") Long pageSize
+    ) {
+        return categoryService.getTopList(code, pageNo, pageSize)
                 .map((result) -> new ServiceResponse<>(result, true))
                 .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
     }
