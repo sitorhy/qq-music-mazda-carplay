@@ -28,7 +28,7 @@ public class CategoryController {
      */
     @GetMapping("/list")
     Mono<ServiceResponse<List<CategoryGroup>>> getRecommendCategories() {
-        return categoryService.getRecommendCategories()
+        return categoryService.getCategories()
                 .map((result) -> new ServiceResponse<>(result, true))
                 .onErrorResume(ex -> Mono.just(new ServiceResponse<>(ex.getMessage(), false)));
     }

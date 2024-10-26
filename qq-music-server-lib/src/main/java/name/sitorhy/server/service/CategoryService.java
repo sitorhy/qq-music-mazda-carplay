@@ -29,7 +29,7 @@ public class CategoryService {
     }
 
     // 首页推荐分类的信息
-    public Mono<List<CategoryGroup>> getRecommendCategories() {
+    public Mono<List<CategoryGroup>> getCategories() {
         return requestHeadersSession.get("https://y.qq.com/",
                         new LinkedHashMap<>())
                 .retrieve()
@@ -175,14 +175,20 @@ public class CategoryService {
                                         ObjectMapper mapper = new ObjectMapper();
                                         JsonNode root = mapper.readTree(jsonText);
                                         JsonNode listNode = root.at("/recomPlaylist/data/group");
+
                                         if (listNode.isArray()) {
                                             for (JsonNode node : listNode) {
+                                                String groupId = node.at("/groupId").asText();
+                                                String groupName = node.at("/groupName").asText();
+
                                                 JsonNode topListNode = node.at("/toplist");
                                                 if (topListNode.isArray()) {
                                                     for (JsonNode top : topListNode) {
                                                         metaList.add(new CategoryMeta() {{
                                                             setCategoryName(top.at("/title").asText());
                                                             setCategoryCode(top.at("/topId").asText());
+                                                            setGroupId(groupId);
+                                                            setGroupName(groupName);
                                                             setCategoryType(CategoryTypeEnum.TOP_LIST);
                                                         }});
                                                     }
