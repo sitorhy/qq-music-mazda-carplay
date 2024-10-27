@@ -4,7 +4,8 @@ import java.util.List;
 
 public class CategoryGroup {
     private String title;
-    private List<CategoryMeta> metaList;
+    private List<String> categoryTypes;
+    private List<CategoryMeta> categories;
 
     public String getTitle() {
         return title;
@@ -14,11 +15,19 @@ public class CategoryGroup {
         this.title = title;
     }
 
-    public List<CategoryMeta> getMetaList() {
-        return metaList;
+    public List<String> getCategoryTypes() {
+        return categoryTypes;
     }
 
-    public void setMetaList(List<CategoryMeta> metaList) {
-        this.metaList = metaList;
+    public void setCategoryTypes(List<String> categoryTypes) {
+        this.categoryTypes = categoryTypes;
+    }
+
+    public List<CategoryMeta> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategoryMeta> categories) {
+        this.categories = categories;
     }
 }

@@ -10,10 +10,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,7 +45,7 @@ public class CategoryService {
                                             ObjectMapper mapper = new ObjectMapper();
                                             JsonNode root = mapper.readTree("{" + matchText + "}");
                                             JsonNode nodes = root.at("/hotCategory");
-                                            List<CategoryMeta> metaList = StreamSupport.stream(nodes.spliterator(), false).map((i) -> new CategoryMeta() {{
+                                            List<CategoryMeta> categories = StreamSupport.stream(nodes.spliterator(), false).map((i) -> new CategoryMeta() {{
                                                 setCategoryName(i.at("/name").asText());
                                                 setCategoryCode(i.at("/id").asText());
                                                 if (i.at("/id").asText().equals("0")) {
@@ -59,7 +56,11 @@ public class CategoryService {
                                             }}).collect(Collectors.toUnmodifiableList());
                                             groups.add(new CategoryGroup() {{
                                                 setTitle("歌单推荐");
-                                                setMetaList(metaList);
+                                                setCategoryTypes(Arrays.asList(new String[] {
+                                                        CategoryTypeEnum.RECOMMEND_FOR_ME.toString(),
+                                                        CategoryTypeEnum.RECOMMEND.toString()
+                                                }));
+                                                setCategories(categories);
                                             }});
                                         }
                                     } catch (Exception e) {
@@ -87,13 +88,13 @@ public class CategoryService {
                                                 .retrieve()
                                                 .bodyToMono(String.class).block();
 
-                                        List<CategoryMeta> metaList = new ArrayList<>();
+                                        List<CategoryMeta> categories = new ArrayList<>();
                                         ObjectMapper mapper = new ObjectMapper();
                                         JsonNode root = mapper.readTree(jsonText);
                                         JsonNode listNode = root.at("/recomPlaylist/data/area");
                                         if (listNode.isArray()) {
                                             for (JsonNode node : listNode) {
-                                                metaList.add(new CategoryMeta() {{
+                                                categories.add(new CategoryMeta() {{
                                                     setCategoryName(node.at("/name").asText());
                                                     setCategoryCode(node.at("/id").asText());
                                                     setCategoryType(CategoryTypeEnum.NEW_ALBUM);
@@ -102,7 +103,10 @@ public class CategoryService {
                                         }
                                         groups.add(new CategoryGroup() {{
                                             setTitle("新碟首发");
-                                            setMetaList(metaList);
+                                            setCategoryTypes(Arrays.asList(new String[] {
+                                                    CategoryTypeEnum.NEW_ALBUM.toString(),
+                                            }));
+                                            setCategories(categories);
                                         }});
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -129,13 +133,13 @@ public class CategoryService {
                                                 .retrieve()
                                                 .bodyToMono(String.class).block();
 
-                                        List<CategoryMeta> metaList = new ArrayList<>();
+                                        List<CategoryMeta> categories = new ArrayList<>();
                                         ObjectMapper mapper = new ObjectMapper();
                                         JsonNode root = mapper.readTree(jsonText);
                                         JsonNode listNode = root.at("/recomPlaylist/data/lanlist");
                                         if (listNode.isArray()) {
                                             for (JsonNode node : listNode) {
-                                                metaList.add(new CategoryMeta() {{
+                                                categories.add(new CategoryMeta() {{
                                                     setCategoryName(node.at("/lan").asText());
                                                     setCategoryCode(node.at("/type").asText());
                                                     setCategoryType(CategoryTypeEnum.NEW_SONG);
@@ -144,7 +148,10 @@ public class CategoryService {
                                         }
                                         groups.add(new CategoryGroup() {{
                                             setTitle("新歌首发");
-                                            setMetaList(metaList);
+                                            setCategoryTypes(Arrays.asList(new String[] {
+                                                    CategoryTypeEnum.NEW_SONG.toString(),
+                                            }));
+                                            setCategories(categories);
                                         }});
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -171,7 +178,7 @@ public class CategoryService {
                                                 .retrieve()
                                                 .bodyToMono(String.class).block();
 
-                                        List<CategoryMeta> metaList = new ArrayList<>();
+                                        List<CategoryMeta> categories = new ArrayList<>();
                                         ObjectMapper mapper = new ObjectMapper();
                                         JsonNode root = mapper.readTree(jsonText);
                                         JsonNode listNode = root.at("/recomPlaylist/data/group");
@@ -184,7 +191,7 @@ public class CategoryService {
                                                 JsonNode topListNode = node.at("/toplist");
                                                 if (topListNode.isArray()) {
                                                     for (JsonNode top : topListNode) {
-                                                        metaList.add(new CategoryMeta() {{
+                                                        categories.add(new CategoryMeta() {{
                                                             setCategoryName(top.at("/title").asText());
                                                             setCategoryCode(top.at("/topId").asText());
                                                             setGroupId(groupId);
@@ -197,7 +204,10 @@ public class CategoryService {
                                         }
                                         groups.add(new CategoryGroup() {{
                                             setTitle("排行榜");
-                                            setMetaList(metaList);
+                                            setCategoryTypes(Arrays.asList(new String[] {
+                                                    CategoryTypeEnum.TOP_LIST.toString(),
+                                            }));
+                                            setCategories(categories);
                                         }});
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -229,6 +239,7 @@ public class CategoryService {
             case RECOMMEND_FOR_ME -> getRecommendForMe(pageNo, pageSize);
             case RECOMMEND -> getRecommend(code, pageNo, pageSize);
             case NEW_SONG -> getNewSong(code, pageNo, pageSize);
+            case NEW_ALBUM -> getNewAlbum(code, pageNo, pageSize);
             case TOP_LIST -> getTopList(code, pageNo, pageSize);
             default -> Mono.just(new Category());
         };
