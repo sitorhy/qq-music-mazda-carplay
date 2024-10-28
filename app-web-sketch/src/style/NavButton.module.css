@@ -1,0 +1,16 @@
+.button {
+    padding: 1vw 0 1vw 0;
+}
+
+.icon {
+    text-align: center;
+}
+
+.icon > span {
+    text-shadow: rgba(0, 0, 0, 0.26) 0 5px 5px;
+    font-size: 5vw;
+}
+
+.title {
+    text-align: center;
+}

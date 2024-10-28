@@ -1,0 +1,41 @@
+.MetaScaffold {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.MetaScaffold .tabs {
+    flex-shrink: 0;
+}
+
+.MetaScaffold .content {
+    flex-grow: 0;
+    overflow: auto;
+}
+
+.MetaScaffold .content .adm-space {
+    width: 100%;
+}
+
+.MetaScaffold .cover {
+    position: relative;
+}
+
+.MetaScaffold .cover .author {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    background: #088800;
+    color: white;
+    width: 8vw;
+    padding: 0.5em;
+    border-radius: 0 0 5vw 0;
+    box-shadow: black  0 0 5px;
+}
+
+.MetaScaffold .tags {
+    display: flex;
+    justify-content: space-between;
+}
