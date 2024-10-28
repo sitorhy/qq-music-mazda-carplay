@@ -557,6 +557,10 @@ public class CategoryService {
                                     this.setAlbumMid(songInfoNode.at("/albumMid").asText());
                                     this.setAlbumCoverUrl(songInfoNode.at("/cover").asText());
 
+                                    if (this.getAlbumCoverUrl().isBlank()) {
+                                        this.setAlbumCoverUrl(String.format("https://y.gtimg.cn/music/photo_new/T002R300x300M000%s.jpg", this.getAlbumMid()));
+                                    }
+
                                     this.setSingers(Arrays.asList(new Singer[] {
                                             new Singer() {{
                                                 setName(songInfoNode.at("/singerName").asText());
