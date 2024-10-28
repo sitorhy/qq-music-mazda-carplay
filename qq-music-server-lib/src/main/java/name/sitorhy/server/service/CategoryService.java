@@ -542,7 +542,7 @@ public class CategoryService {
 
                         ObjectMapper mapper = new ObjectMapper();
                         JsonNode root = mapper.readTree(jsonText);
-                        JsonNode listNode = root.at("/recomPlaylist/data/songInfoList");
+                        JsonNode listNode = root.at("/recomPlaylist/data/data/song");
 
                         category.setCategoryType(CategoryTypeEnum.TOP_LIST);
                         category.setCategoryCode(root.at("/recomPlaylist/data/data/topId").asText());
@@ -551,27 +551,18 @@ public class CategoryService {
                         if (listNode.isArray()) {
                             for (JsonNode songInfoNode : listNode) {
                                 songList.add(new Song() {{
-                                    this.setSongId(songInfoNode.at("/id").asLong());
-                                    this.setSongMid(songInfoNode.at("/mid").asText());
-                                    this.setSongName(songInfoNode.at("/name").asText());
+                                    this.setSongId(songInfoNode.at("/songId").asLong());
+                                    this.setSongName(songInfoNode.at("/title").asText());
                                     this.setSongOrig(songInfoNode.at("/title").asText());
-                                    this.setAlbumDesc(songInfoNode.at("/album/subtitle").asText());
-                                    this.setAlbumId(songInfoNode.at("/album/id").asLong());
-                                    this.setAlbumName(songInfoNode.at("/album/name").asText());
-                                    this.setAlbumMid(songInfoNode.at("/album/mid").asText());
-                                    this.setStrMediaMid(songInfoNode.at("/file/media_mid").asText());
-                                    this.setInterval(songInfoNode.at("/interval").asLong());
-                                    this.setAlbumCoverUrl(String.format("https://y.qq.com/music/photo_new/T002R300x300M000%s.jpg", this.getAlbumMid()));
+                                    this.setAlbumMid(songInfoNode.at("/albumMid").asText());
+                                    this.setAlbumCoverUrl(songInfoNode.at("/cover").asText());
 
-                                    this.setSingers(new ArrayList<>());
-                                    JsonNode arrSingerList = songInfoNode.at("/singer");
-                                    for (JsonNode singerNode : arrSingerList) {
-                                        this.getSingers().add(new Singer() {{
-                                            setId(singerNode.at("/id").asLong());
-                                            setMid(singerNode.at("/mid").asText());
-                                            setName(singerNode.at("/name").asText());
-                                        }});
-                                    }
+                                    this.setSingers(Arrays.asList(new Singer[] {
+                                            new Singer() {{
+                                                setName(songInfoNode.at("/singerName").asText());
+                                                setMid(songInfoNode.at("/singerMid").asText());
+                                            }}
+                                    }));
                                 }});
                             }
                         }
