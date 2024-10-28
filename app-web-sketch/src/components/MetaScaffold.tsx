@@ -1,5 +1,5 @@
 import {Tabs, ErrorBlock, Space, Tag, List, Image, Ellipsis, Button} from 'antd-mobile';
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {connect} from "react-redux";
 import {loadNextCategoryDetail, loadPopupCategoryDetail} from "../store/reducerCreator.ts";
 
@@ -212,11 +212,11 @@ function MetaScaffold(props: {
         }
     }, [props.metaList]);
 
-    function onMore(category: Category) {
+    const onMore = useCallback((category: Category) => {
         if (props.popupTag) {
             props.popupTag(category);
         }
-    }
+    }, [props.popupTag]);
 
     function onCategoryChange(tabKey: string, category: Category, index: number) {
         setState({
@@ -231,6 +231,31 @@ function MetaScaffold(props: {
         // @ts-expect-error
         props.loadNextCategoryDetail(category);
     }
+
+    const renderAlbumsMeme = useCallback(() => {
+        return renderAlbums(
+            props.metaList,
+            parseInt(state.activeKey),
+            state.activeCategoriesMap[state.activeKey]);
+    }, [
+        props.metaList,
+        state.activeKey,
+        state.activeCategoriesMap
+    ]);
+
+    const renderTabsMemo = useCallback(() => {
+        return renderTabs(
+            props.metaList,
+            state.activeCategoriesMap[state.activeKey],
+            onCategoryChange,
+            onMore
+        )
+    }, [
+        props.metaList,
+        state.activeCategoriesMap,
+        onCategoryChange,
+        onMore
+    ]);
 
     return (
         <div className={'MetaScaffold'}>
@@ -252,21 +277,13 @@ function MetaScaffold(props: {
                     }}
                 >
                     {
-                        renderTabs(
-                            props.metaList,
-                            state.activeCategoriesMap[state.activeKey],
-                            onCategoryChange,
-                            onMore
-                        )
+                        renderTabsMemo()
                     }
                 </Tabs>
             </div>
             <div className={'content'}>
                 {
-                    renderAlbums(
-                        props.metaList,
-                        parseInt(state.activeKey),
-                        state.activeCategoriesMap[state.activeKey])
+                    renderAlbumsMeme()
                 }
             </div>
         </div>
