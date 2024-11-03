@@ -1,6 +1,6 @@
 import {config} from 'axios-annotations/core/config';
-import RequestMapping from "axios-annotations/decorator/request-mapping";
 import Service from "axios-annotations/core/service";
+import RequestMapping from "axios-annotations/decorator/request-mapping";
 import RequestParam from "axios-annotations/decorator/request-param";
 
 config.protocol = "http";
@@ -60,6 +60,26 @@ class QQMusicAPI extends Service {
             ...params,
             pageNo: params.pageNo || 1,
             pageSize: params.pageSize || 20,
+        };
+    }
+
+    @RequestParam("songMid", true)
+    @RequestMapping("/song/source/{songMid}", "GET")
+    getSongSource(params: {
+        songMid: string;
+    }) {
+        return {
+            songMid: params.songMid,
+        };
+    }
+
+    @RequestParam("songMid", true)
+    @RequestMapping("/song/lyric/{songMid}", "GET")
+    getSongLyric(params: {
+        songMid: string;
+    }) {
+        return {
+            songMid: params.songMid,
         };
     }
 }

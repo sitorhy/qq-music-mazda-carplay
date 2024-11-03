@@ -20,9 +20,16 @@ declare interface Song {
     songName: string;
     songOrig: string;
     strMediaMid: string;
+    interval: number;
     singers?: {
        name: string;
     }[]
+}
+
+declare interface SongSource {
+    type: string;
+    expire: number;
+    url: string;
 }
 
 declare interface Category {

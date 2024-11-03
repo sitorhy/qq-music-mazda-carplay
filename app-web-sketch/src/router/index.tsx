@@ -3,6 +3,8 @@ import App from '../App.tsx';
 import Entry from '../components/Entry.tsx';
 import MusicHall from "../components/MusicHall.tsx";
 import Collection from "../components/Collection.tsx";
+import SongList from "../components/SongList.tsx";
+import PlayingScreen from "../components/PlayingScreen.tsx";
 
 const router = createBrowserRouter([
     {
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
             },
         ]
     },
+    {
+        path: '/songList',
+        element: <SongList/>
+    },
+    {
+        path: '/playing',
+        element: <PlayingScreen/>
+    }
 ]);
 
 export default router;

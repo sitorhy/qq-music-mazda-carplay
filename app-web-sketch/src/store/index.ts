@@ -3,6 +3,8 @@ import entryReducer from "./entryReducer.ts";
 import collectionReducer from "./collectionReducer.ts";
 import musicHallReducer from "./musicHallReducer.ts";
 import tagPopupReducer from "./tagPopupReducer.ts";
+import songListReducer from "./songListReducer.ts";
+import playingSongReducer from "./playingSongReducer.ts";
 import QQMusicAPI from "../api";
 
 const store = configureStore(
@@ -11,7 +13,9 @@ const store = configureStore(
             collection: collectionReducer,
             musicHall: musicHallReducer,
             entry: entryReducer,
-            tagPopup: tagPopupReducer
+            tagPopup: tagPopupReducer,
+            songList: songListReducer,
+            playingSong: playingSongReducer,
         }),
         middleware: getDefaultMiddleware => {
             return getDefaultMiddleware({

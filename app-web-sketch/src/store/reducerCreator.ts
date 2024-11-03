@@ -1,5 +1,6 @@
 import QQMusicAPI from "../api";
 import {c} from "vite/dist/node/types.d-aGj9QkWt";
+import {playAudio} from "../utils/globalAudioPlayer.ts";
 
 export function loadEntryMetaList() {
     return async (dispatch, getState: () => {
@@ -148,8 +149,7 @@ async function loadSelfCategoryDetail(
         },
     }, {api}: { api: QQMusicAPI }) {
     switch (category.categoryType) {
-        case 'MY_FAV_SONGS':
-        {
+        case 'MY_FAV_SONGS': {
             const res = await api.getMyAlbumList();
             const albums = res.data.data.filter((i) => {
                 // 我喜欢
@@ -169,7 +169,7 @@ async function loadSelfCategoryDetail(
                 });
             }
         }
-        break;
+            break;
         case 'MY_FAV_ALBUM': {
             const res = await api.getFavAlbumList();
             const albums = res.data.data;
@@ -180,9 +180,8 @@ async function loadSelfCategoryDetail(
                 albums
             });
         }
-        break;
-        case 'MY_FAV_PUB':
-        {
+            break;
+        case 'MY_FAV_PUB': {
             const res = await api.getMyFavPubList();
             const albums = res.data.data;
             dispatch({
@@ -192,9 +191,8 @@ async function loadSelfCategoryDetail(
                 albums
             });
         }
-        break;
-        case 'MY_DIR':
-        {
+            break;
+        case 'MY_DIR': {
             const res = await api.getMyAlbumList();
             const albums = res.data.data.filter((i) => i.dirId !== 201);
             dispatch({
@@ -204,7 +202,7 @@ async function loadSelfCategoryDetail(
                 albums
             });
         }
-        break;
+            break;
     }
 }
 
@@ -239,10 +237,9 @@ export function loadNextCategoryDetail(category: Category) {
             case 'MY_FAV_SONGS':
             case 'MY_FAV_ALBUM':
             case 'MY_FAV_PUB':
-            case 'MY_DIR':
-            {
+            case 'MY_DIR': {
                 // 转交我的模块处理
-                return loadSelfCategoryDetail(category, dispatch,getState, {api});
+                return loadSelfCategoryDetail(category, dispatch, getState, {api});
             }
             default:
                 return;
@@ -273,6 +270,13 @@ export function loadNextCategoryDetail(category: Category) {
             type: submitActionType,
             ...res.data.data
         })
+    }
+}
+
+export function setTagPopupVisible(visible: boolean) {
+    return {
+        type: 'SET_TAG_POPUP_VISIBILITY',
+        visible: visible
     }
 }
 
@@ -320,5 +324,109 @@ export function loadPopupCategoryDetail(category: Category) {
             });
         }
 
+    }
+}
+
+export function loadSongList(dissId: string) {
+    return async (
+        dispatch: (action: Record<string, unknown>) => void,
+        getState: () => {
+            songList: {
+                dissId: '',
+                albumCoverUrl: '',
+                albumDesc: '',
+                songList: [],
+                title: ''
+            },
+        }, {api}: { api: QQMusicAPI }
+    ) => {
+        const res = await api.getSongs({
+            resId: dissId
+        });
+        const songs = res.data.data;
+        dispatch({
+            type: 'SET_SONG_LIST',
+            songList: songs,
+            albumCoverUrl: songs[0].albumCoverUrl,
+            albumDesc: songs[0].albumDesc,
+            albumName: songs[0].dissName
+        });
+    }
+}
+
+export function setPlayingTime(currentTime: number) {
+    return {
+        type: 'UPDATE_CURRENT_TIME',
+        currentTime
+    }
+}
+
+export function loadPlayingSong(song: Song) {
+    return async (
+        dispatch: (action: Record<string, unknown>) => void,
+        getState: () => {
+            playingSong:  {
+                interval: number;
+                currentTime: number;
+                songUrl: string;
+                albumCoverUrl: string;
+                songName: string;
+                songMid: string;
+                singers?: {
+                    name: string;
+                }[];
+                lyricText: string;
+            }
+        },
+        {api}: { api: QQMusicAPI }
+    ) => {
+        const state = getState();
+        const res = await api.getSongSource({
+            songMid: song.songMid
+        });
+        const sourceRes: { data: SongSource } = res.data;
+        if (song.songMid !== state.playingSong.songMid) {
+            setTimeout(() => {
+               playAudio(sourceRes.data.url);
+            });
+        }
+        dispatch({
+            type: 'UPDATE_SONG',
+            songMid: song.songMid,
+            interval: song.interval,
+            currentTime: 0,
+            songUrl: sourceRes.data.url,
+            albumCoverUrl: song.albumCoverUrl,
+            songName: song.songName,
+            singers: song.singers,
+        });
+    }
+}
+
+export function loadSongLyricText(song: Song) {
+    return async (
+        dispatch: (action: Record<string, unknown>) => void,
+        getState: () => {
+            playingSong:  {
+                interval: number;
+                currentTime: number;
+                songUrl: string;
+                albumCoverUrl: string;
+                songName: string;
+                singers?: {
+                    name: string;
+                }[];
+                lyricText: string;
+            }
+        },
+        {api}: { api: QQMusicAPI }
+    ) => {
+        const lyricRes: { data: { data: string } } = await api.getSongLyric({
+            songMid: song.songMid
+        });
+        dispatch({
+            type: 'UPDATE_LYRIC_TEXT',
+            lyricText: lyricRes.data.data
+        });
     }
 }

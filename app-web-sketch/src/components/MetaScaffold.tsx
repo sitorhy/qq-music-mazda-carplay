@@ -1,9 +1,16 @@
 import {Tabs, ErrorBlock, Space, Tag, List, Image, Ellipsis, Button} from 'antd-mobile';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {connect} from "react-redux";
-import {loadNextCategoryDetail, loadPopupCategoryDetail} from "../store/reducerCreator.ts";
+import {
+    loadNextCategoryDetail,
+    loadPopupCategoryDetail,
+    loadPlayingSong,
+    setTagPopupVisible,
+    loadSongLyricText
+} from "../store/reducerCreator.ts";
 
 import "../style/MetaScaffold.css";
+import {createSearchParams, NavigateFunction, useNavigate} from "react-router-dom";
 
 function renderTabs(
     metaList: MetaList,
@@ -59,7 +66,13 @@ function renderTabs(
     }
 }
 
-function renderAlbums(metaList: MetaList, metaInddex: number, categoryIndex: number) {
+function renderAlbums(
+    metaList: MetaList,
+    metaInddex: number,
+    categoryIndex: number,
+    navigate: NavigateFunction,
+    onSongClick: (song: Song) => void,
+) {
     try {
         const COLUMNS = 5;
         const meta = metaList[metaInddex];
@@ -111,6 +124,13 @@ function renderAlbums(metaList: MetaList, metaInddex: number, categoryIndex: num
                                         return i ? (
                                             <div className={'cover'} key={Math.random()} style={{
                                                 width: '15vw',
+                                            }} onClick={() => {
+                                                navigate({
+                                                    pathname: "/songList",
+                                                    search: `?${createSearchParams({
+                                                        dissId: i.dissId || i.albumMid || ''
+                                                    })}`
+                                                });
                                             }}>
                                                 <div className={'author'}>
                                                     <Ellipsis content={String(i.author)}/>
@@ -142,7 +162,7 @@ function renderAlbums(metaList: MetaList, metaInddex: number, categoryIndex: num
                                         return i ? (
                                             <div className={'cover'} key={Math.random()} style={{
                                                 width: '15vw',
-                                            }}>
+                                            }} onClick={() => onSongClick(i)}>
                                                 {
                                                     Array.isArray(i.singers) ? <div className={'author'}>
                                                         <Ellipsis
@@ -176,11 +196,15 @@ function MetaScaffold(props: {
     metaList: MetaList;
     loadNextCategoryDetail?: (category: Category) => void;
     popupTag?: (category: Category) => void;
+    loadPlayingSong?: (song: Song) => Promise<void>;
+    loadSongLyricText?: (song: Song) => Promise<void>;
 } = {
     metaList: [],
     loadNextCategoryDetail: () => {
     }
 }) {
+    const navigate = useNavigate();
+
     const [state, setState] = useState<{
         activeKey: string;
         activeCategoriesMap: Record<string, number>
@@ -236,11 +260,25 @@ function MetaScaffold(props: {
         return renderAlbums(
             props.metaList,
             parseInt(state.activeKey),
-            state.activeCategoriesMap[state.activeKey]);
+            state.activeCategoriesMap[state.activeKey],
+            navigate,
+            async function (song) {
+                if (props.loadPlayingSong) {
+                    await props.loadPlayingSong(song);
+                    navigate({
+                        pathname: `/playing`,
+                    });
+                    if (props.loadSongLyricText) {
+                        props.loadSongLyricText(song);
+                    }
+                }
+            }
+        );
     }, [
         props.metaList,
         state.activeKey,
-        state.activeCategoriesMap
+        state.activeCategoriesMap,
+        navigate
     ]);
 
     const renderTabsMemo = useCallback(() => {
@@ -306,11 +344,10 @@ export default connect(
                     loadPopupCategoryDetail(category)
                 );
 
-                dispatch({
-                    type: 'SET_TAG_POPUP_VISIBILITY',
-                    visible: true
-                })
-            }
+                dispatch(setTagPopupVisible(true))
+            },
+            loadPlayingSong: (song: Song) => dispatch(loadPlayingSong(song)),
+            loadSongLyricText: (song: Song) => dispatch(loadSongLyricText(song))
         }
     }
 )(MetaScaffold);

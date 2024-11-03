@@ -1,6 +1,7 @@
 import {Popup, List, Space, Tag} from "antd-mobile";
 import {connect} from "react-redux";
 import {useMemo} from "react";
+import {setTagPopupVisible} from "../store/reducerCreator.ts";
 
 function TagPopup(props: {
     tagPopup?: {
@@ -101,10 +102,7 @@ export default connect(
     },
     function (dispatch) {
         return {
-            popupTag: (visible: boolean) => dispatch({
-                type: 'SET_TAG_POPUP_VISIBILITY',
-                visible
-            })
+            popupTag: (visible: boolean) => dispatch(setTagPopupVisible(visible))
         }
     }
 )(TagPopup);

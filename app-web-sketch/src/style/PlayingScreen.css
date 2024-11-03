@@ -1,0 +1,77 @@
+.playing {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.playing * {
+    color: #fff;
+}
+
+.playing > div:first-child {
+    flex-shrink: 0;
+}
+
+.playing .content {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.playing .content .cover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 25%;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.playing .content .cover img {
+    animation: rotate 30s linear infinite;
+}
+
+.playing .detail {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.playing .adm-grid {
+    height: 100%;
+}
+
+.playing .adm-grid .adm-grid-item {
+    height: 100%;
+    overflow: hidden;
+}
+
+.playing .detail .header {
+    flex-shrink: 0;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.playing .detail .body {
+    overflow: auto;
+    font-size: 1.25em;
+}
+
+.playing .control {
+    height: 16vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
