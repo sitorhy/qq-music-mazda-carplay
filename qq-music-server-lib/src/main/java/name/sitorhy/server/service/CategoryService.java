@@ -53,7 +53,7 @@ public class CategoryService {
                                                 } else {
                                                     setCategoryType(CategoryTypeEnum.RECOMMEND);
                                                 }
-                                            }}).collect(Collectors.toUnmodifiableList());
+                                            }}).collect(Collectors.toList());
                                             groups.add(new CategoryGroup() {{
                                                 setTitle("歌单推荐");
                                                 setCategoryTypes(Arrays.asList(new String[] {
@@ -70,10 +70,10 @@ public class CategoryService {
                                 new Thread(() -> {
                                     try {
                                         String jsonText = requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                                                        new LinkedHashMap<>() {{
+                                                        new LinkedHashMap<String, Object>() {{
                                                             put("_", System.currentTimeMillis());
                                                         }},
-                                                        new LinkedHashMap<>() {
+                                                        new LinkedHashMap<String, Object>() {
                                                             {
                                                                 put("comm", new LinkedHashMap<String, Object>() {{
                                                                     put("ct", 24);
@@ -115,10 +115,10 @@ public class CategoryService {
                                 new Thread(() -> {
                                     try {
                                         String jsonText = requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                                                        new LinkedHashMap<>() {{
+                                                        new LinkedHashMap<String, Object>() {{
                                                             put("_", System.currentTimeMillis());
                                                         }},
-                                                        new LinkedHashMap<>() {
+                                                        new LinkedHashMap<String, Object>() {
                                                             {
                                                                 put("comm", new LinkedHashMap<String, Object>() {{
                                                                     put("ct", 24);
@@ -160,10 +160,10 @@ public class CategoryService {
                                 new Thread(() -> {
                                     try {
                                         String jsonText = requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                                                        new LinkedHashMap<>() {{
+                                                        new LinkedHashMap<String, Object>() {{
                                                             put("_", System.currentTimeMillis());
                                                         }},
-                                                        new LinkedHashMap<>() {
+                                                        new LinkedHashMap<String, Object>() {
                                                             {
                                                                 put("comm", new LinkedHashMap<String, Object>() {{
                                                                     put("ct", 24);
@@ -216,14 +216,14 @@ public class CategoryService {
                         };
                         List<Throwable> exceptions = new ArrayList<>();
                         for (Thread task : tasks) {
-                            task.setUncaughtExceptionHandler((_, e) -> exceptions.add(e));
+                            task.setUncaughtExceptionHandler((_1, e) -> exceptions.add(e));
                             task.start();
                         }
                         for (Thread task : tasks) {
                             task.join();
                         }
                         if (!exceptions.isEmpty()) {
-                            sink.error(exceptions.getFirst());
+                            sink.error(exceptions.get(0));
                             return;
                         }
                         sink.next(groups);
@@ -235,23 +235,35 @@ public class CategoryService {
 
     public Mono<Category> getCategoryDetail(String categoryType, long code, long pageNo, long pageSize) {
         CategoryTypeEnum type = CategoryTypeEnum.valueOf(categoryType);
-        return switch (type) {
-            case RECOMMEND_FOR_ME -> getRecommendForMe(pageNo, pageSize);
-            case RECOMMEND -> getRecommend(code, pageNo, pageSize);
-            case NEW_SONG -> getNewSong(code, pageNo, pageSize);
-            case NEW_ALBUM -> getNewAlbum(code, pageNo, pageSize);
-            case TOP_LIST -> getTopList(code, pageNo, pageSize);
-            default -> Mono.just(new Category());
-        };
+        switch (type) {
+            case RECOMMEND_FOR_ME: {
+                return getRecommendForMe(pageNo, pageSize);
+            }
+            case RECOMMEND: {
+                return getRecommend(code, pageNo, pageSize);
+            }
+            case NEW_SONG: {
+                return getNewSong(code, pageNo, pageSize);
+            }
+            case NEW_ALBUM: {
+                return getNewAlbum(code, pageNo, pageSize);
+            }
+            case TOP_LIST: {
+                return getTopList(code, pageNo, pageSize);
+            }
+            default: {
+                return Mono.just(new Category());
+            }
+        }
     }
 
     // 为你推荐 不支持翻页查询
     public Mono<Category> getRecommendForMe(long pageNo, long pageSize) {
         return requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                        new LinkedHashMap<>() {{
+                        new LinkedHashMap<String, Object>() {{
                             put("_", System.currentTimeMillis());
                         }},
-                        new LinkedHashMap<>() {
+                        new LinkedHashMap<String, Object>() {
                             {
                                 put("comm", new LinkedHashMap<String, Object>() {{
                                     put("ct", 24);
@@ -311,10 +323,10 @@ public class CategoryService {
     // 歌单推荐
     public Mono<Category> getRecommend(long code, long pageNo, long pageSize) {
         return requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                        new LinkedHashMap<>() {{
+                        new LinkedHashMap<String, Object>() {{
                             put("_", System.currentTimeMillis());
                         }},
-                        new LinkedHashMap<>() {
+                        new LinkedHashMap<String, Object>() {
                             {
                                 put("comm", new LinkedHashMap<String, Object>() {{
                                     put("ct", 24);
@@ -371,10 +383,10 @@ public class CategoryService {
     // 新碟首发
     public Mono<Category> getNewAlbum(long code, long pageNo, long pageSize) {
         return requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                        new LinkedHashMap<>() {{
+                        new LinkedHashMap<String, Object>() {{
                             put("_", System.currentTimeMillis());
                         }},
-                        new LinkedHashMap<>() {
+                        new LinkedHashMap<String, Object>() {
                             {
                                 put("comm", new LinkedHashMap<String, Object>() {{
                                     put("ct", 24);
@@ -422,7 +434,7 @@ public class CategoryService {
                                             setName(singerNode.at("/name").asText());
                                         }});
                                     }
-                                    this.setAuthor(String.join(" /", this.getSingers().stream().map(Singer::getName).toList()));
+                                    this.setAuthor(this.getSingers().stream().map(Singer::getName).collect(Collectors.joining(" /")));
                                 }});
                             }
                         }
@@ -439,10 +451,10 @@ public class CategoryService {
     // 新歌首发
     public Mono<Category> getNewSong(long code, long pageNo, long pageSize) {
         return requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                        new LinkedHashMap<>() {{
+                        new LinkedHashMap<String, Object>() {{
                             put("_", System.currentTimeMillis());
                         }},
-                        new LinkedHashMap<>() {
+                        new LinkedHashMap<String, Object>() {
                             {
                                 put("comm", new LinkedHashMap<String, Object>() {{
                                     put("ct", 24);
@@ -512,10 +524,10 @@ public class CategoryService {
     // 新歌首发
     public Mono<Category> getTopList(long code, long pageNo, long pageSize) {
         return requestHeadersSession.post("http://u.y.qq.com/cgi-bin/musicu.fcg",
-                        new LinkedHashMap<>() {{
+                        new LinkedHashMap<String, Object>() {{
                             put("_", System.currentTimeMillis());
                         }},
-                        new LinkedHashMap<>() {
+                        new LinkedHashMap<String, Object>() {
                             {
                                 put("comm", new LinkedHashMap<String, Object>() {{
                                     put("ct", 24);
@@ -557,7 +569,7 @@ public class CategoryService {
                                     this.setAlbumMid(songInfoNode.at("/albumMid").asText());
                                     this.setAlbumCoverUrl(songInfoNode.at("/cover").asText());
 
-                                    if (this.getAlbumCoverUrl().isBlank()) {
+                                    if (this.getAlbumCoverUrl() != null && this.getAlbumCoverUrl().isEmpty()) {
                                         this.setAlbumCoverUrl(String.format("https://y.gtimg.cn/music/photo_new/T002R300x300M000%s.jpg", this.getAlbumMid()));
                                     }
 
