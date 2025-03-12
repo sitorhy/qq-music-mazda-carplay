@@ -1,0 +1,42 @@
+package name.sitorhy.server.model.song.source;
+
+public class Midurlinfo{
+    public String songmid;
+    public String filename;
+    public String purl;
+    public String errtype;
+    public int p2pfromtag;
+    public int qmdlfromtag;
+    public int common_downfromtag;
+    public int vip_downfromtag;
+    public int pdl;
+    public int premain;
+    public int hisdown;
+    public int hisbuy;
+    public int uiAlert;
+    public int isbuy;
+    public int pneedbuy;
+    public int pneed;
+    public int isonly;
+    public int onecan;
+    public int result;
+    public String tips;
+    public String opi48kurl;
+    public String opi96kurl;
+    public String opi192kurl;
+    public String opiflackurl;
+    public String opi128kurl;
+    public String opi192koggurl;
+    public String wififromtag;
+    public String flowfromtag;
+    public String wifiurl;
+    public String flowurl;
+    public String vkey;
+    public String opi30surl;
+    public String ekey;
+    public int auth_switch;
+    public int subcode;
+    public String opi96koggurl;
+    public int auth_switch2;
+    public String xcdnurl;
+}

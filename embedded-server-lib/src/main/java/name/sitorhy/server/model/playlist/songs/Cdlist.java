@@ -1,0 +1,50 @@
+package name.sitorhy.server.model.playlist.songs;
+
+import java.util.ArrayList;
+
+public class Cdlist{
+    public String disstid;
+    public int dir_show;
+    public int owndir;
+    public int dirid;
+    public String coveradurl;
+    public int dissid;
+    public String login;
+    public String uin;
+    public String encrypt_uin;
+    public String dissname;
+    public String logo;
+    public String pic_mid;
+    public String album_pic_mid;
+    public int pic_dpi;
+    public int isAd;
+    public String desc;
+    public int ctime;
+    public int mtime;
+    public String headurl;
+    public String ifpicurl;
+    public String nick;
+    public String nickname;
+    public int type;
+    public int singerid;
+    public String singermid;
+    public int isvip;
+    public int isdj;
+    public ArrayList<Object> tags;
+    public int songnum;
+    public String songids;
+    public String songtypes;
+    public int disstype;
+    public String dir_pic_url2;
+    public int song_update_time;
+    public int song_update_num;
+    public int total_song_num;
+    public int song_begin;
+    public int cur_song_num;
+    public ArrayList<Songlist> songlist;
+    public int visitnum;
+    public int cmtnum;
+    public int buynum;
+    public String scoreavage;
+    public int scoreusercount;
+}
