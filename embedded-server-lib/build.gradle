@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'name.sitorhy'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    runtimeOnly 'org.nanohttpd:nanohttpd:2.3.0'
+    implementation 'org.nanohttpd:nanohttpd-nanolets:2.3.1'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+}
+
+test {
+    useJUnitPlatform()
+}
