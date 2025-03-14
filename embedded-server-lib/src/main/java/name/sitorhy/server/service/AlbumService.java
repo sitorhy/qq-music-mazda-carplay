@@ -12,7 +12,7 @@ public class AlbumService {
         this.requestHeadersSession = requestHeadersSession;
     }
 
-    public String getMyAlbums() throws IOException {
+    public String getMyPlaylists() throws IOException {
         return requestHeadersSession
                 .get("http://c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg", new LinkedHashMap<String, Object>() {
                     {
@@ -23,7 +23,7 @@ public class AlbumService {
                 });
     }
 
-    public String getMyFavAlbums(long pageNo, long pageSize) throws IOException {
+    public String getMyFavPlaylists(long pageNo, long pageSize) throws IOException {
         return requestHeadersSession
                 .get("https://c.y.qq.com/fav/fcgi-bin/fcg_get_profile_order_asset.fcg", new LinkedHashMap<String, Object>() {
                     {
@@ -37,7 +37,7 @@ public class AlbumService {
                 });
     }
 
-    public String getMyFavPublication(long pageNo, long pageSize) throws IOException {
+    public String getMyFavAlbums(long pageNo, long pageSize) throws IOException {
         return requestHeadersSession
                 .get("https://c.y.qq.com/fav/fcgi-bin/fcg_get_profile_order_asset.fcg", new LinkedHashMap<String, Object>() {
                     {
@@ -51,7 +51,7 @@ public class AlbumService {
                 });
     }
 
-    public String getSingerPublication(String singerMid, long pageNo, long pageSize) throws IOException {
+    public String getSingerAlbums(String singerMid, long pageNo, long pageSize) throws IOException {
         return requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
                     put("_", System.currentTimeMillis());
                 }}, new LinkedHashMap<String, Object>() {{

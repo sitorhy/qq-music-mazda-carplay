@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.model.SongTypeEnum;
 import name.sitorhy.server.session.RequestHeadersSession;
+import name.sitorhy.server.utils.EncodingUtil;
 import name.sitorhy.server.utils.TextUtils;
 
 import java.io.IOException;
@@ -118,7 +119,7 @@ public class SongService {
                 }});
             }};
             String dataJsonText = new JsonMapper().writeValueAsString(dataMap);
-            String dataJsonEncodeText = URLEncoder.encode(dataJsonText);
+            String dataJsonEncodeText = EncodingUtil.encodeURIComponent(dataJsonText);
             put("data", dataJsonEncodeText);
         }};
 
@@ -126,7 +127,7 @@ public class SongService {
                 .get("https://u.y.qq.com/cgi-bin/musicu.fcg", variables);
     }
 
-    public String getPublicationSongs(String albumMid, long albumId, long pageNo, long pageSize) throws IOException {
+    public String getAlbumSongs(String albumMid, long albumId, long pageNo, long pageSize) throws IOException {
         return requestHeadersSession.get("https://u.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {
                     {
                         put("g_tk", 5381);
