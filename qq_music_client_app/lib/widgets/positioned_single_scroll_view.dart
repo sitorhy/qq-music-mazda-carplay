@@ -77,7 +77,6 @@ class _PositionedSingleScrollViewState
               crossAxisAlignment: widget.crossAxisAlignment,
               direction: widget.scrollDirection,
               children: widget.children.mapIndexed((index, child) {
-                print("${index} 构建");
                 widget.controller?.prepareMeasure(index: index);
                 return SizedSingleScrollItem(
                     index: index, tag: child.tag, child: child);
@@ -85,7 +84,6 @@ class _PositionedSingleScrollViewState
             ),
           ),
           onNotification: (notification) {
-            print("${notification.index} 测量完毕 ${notification.size}");
             widget.controller?.backpathMeasure(
                 index: notification.index, size: notification.size);
             return true;

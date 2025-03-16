@@ -10,7 +10,9 @@ import 'package:qq_music_client_app/widgets/positioned_single_scroll_controller.
 import 'package:qq_music_client_app/widgets/progress_slider.dart';
 
 class _ImmersivePage extends StatefulWidget {
-  const _ImmersivePage();
+  final Animation? animation;
+
+  const _ImmersivePage({this.animation});
 
   @override
   State<StatefulWidget> createState() {
@@ -18,7 +20,49 @@ class _ImmersivePage extends StatefulWidget {
   }
 }
 
-class _ImmersivePageState extends State<_ImmersivePage> {
+class _ImmersivePageState extends State<_ImmersivePage>
+    with TickerProviderStateMixin {
+  late AnimationController leftAnimationController;
+  late AnimationController rightAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.animation?.addStatusListener(routeAnimationStatusChanged);
+    leftAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    CurvedAnimation(parent: leftAnimationController, curve: Curves.easeOut);
+    leftAnimationController.addListener(() {
+      setState(() {});
+    });
+    leftAnimationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        rightAnimationController.forward(from: 0.0);
+      }
+    });
+    rightAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+    rightAnimationController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.animation?.removeStatusListener(routeAnimationStatusChanged);
+  }
+
+  void routeAnimationStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      leftAnimationController.forward(from: 0.0);
+    }
+  }
+
   PositionedSingleScrollController controller =
       PositionedSingleScrollController(direction: Axis.vertical);
 
@@ -58,6 +102,118 @@ class _ImmersivePageState extends State<_ImmersivePage> {
       ),
     );
 
+    var leftWidget = Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+          child: CircleCover(
+            size: 180,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: LayoutBuilder(builder: (c, s) {
+                  String title = "夏日漱石 (Summer Cozy Rock)";
+                  final TextPainter textPainter = TextPainter(
+                      text: TextSpan(
+                        text: title,
+                        style: TextStyle(
+                          decoration: TextDecoration.none,
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                      maxLines: 1,
+                      textDirection: TextDirection.ltr)
+                    ..layout(minWidth: 0, maxWidth: double.infinity);
+
+                  return Container(
+                    height: textPainter.height,
+                    // decoration: BoxDecoration(color: Colors.yellow),
+                    child: CarouselRichText(
+                      titleColor: Colors.white,
+                      titleSize: 15,
+                      title: title,
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              const Icon(
+                color: Colors.white70,
+                IconData(0xe601, fontFamily: "IconFont"),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
+          child: const Text(
+            "Fly By Midnight / Rachel Grae",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 13,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+          child: ProgressSlider(
+            height: 6,
+            direction: Axis.horizontal,
+          ),
+        ),
+        pageFooter,
+      ],
+    );
+
+    var rightWidget = Expanded(
+      flex: 9,
+      child: Column(
+        children: [
+          Expanded(
+            child: Opacity(
+              opacity: rightAnimationController.value,
+              child: ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.fromRGBO(0, 0, 0, 0.0),
+                      Color.fromRGBO(0, 0, 0, 0.65),
+                      Color.fromRGBO(0, 0, 0, 0.9),
+                      Color.fromRGBO(0, 0, 0, 1.0),
+                      Color.fromRGBO(0, 0, 0, 1.0),
+                      Color.fromRGBO(0, 0, 0, 0.9),
+                      Color.fromRGBO(0, 0, 0, 0.65),
+                      Color.fromRGBO(0, 0, 0, 0.0),
+                    ],
+                  ).createShader(bounds);
+                },
+                blendMode: BlendMode.dstIn,
+                child: LyricsRenderer(
+                  controller: controller,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
     var pageBody = FractionallySizedBox(
       widthFactor: 1850 / 1945,
       child: Row(
@@ -66,117 +222,18 @@ class _ImmersivePageState extends State<_ImmersivePage> {
         children: [
           Flexible(
             flex: 5,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
-                  child: CircleCover(
-                    size: 180,
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: LayoutBuilder(builder: (c, s) {
-                          String title = "夏日漱石 (Summer Cozy Rock)";
-                          final TextPainter textPainter = TextPainter(
-                              text: TextSpan(
-                                text: title,
-                                style: TextStyle(
-                                  decoration: TextDecoration.none,
-                                  fontSize: 15,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              maxLines: 1,
-                              textDirection: TextDirection.ltr)
-                            ..layout(minWidth: 0, maxWidth: double.infinity);
-
-                          return Container(
-                            height: textPainter.height,
-                            // decoration: BoxDecoration(color: Colors.yellow),
-                            child: CarouselRichText(
-                              titleColor: Colors.white,
-                              titleSize: 15,
-                              title: title,
-                            ),
-                          );
-                        }),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      const Icon(
-                        color: Colors.white70,
-                        IconData(0xe601, fontFamily: "IconFont"),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
-                  child: const Text(
-                    "Fly By Midnight / Rachel Grae",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-                  child: ProgressSlider(
-                    height: 6,
-                    direction: Axis.horizontal,
-                  ),
-                ),
-                pageFooter,
-              ],
+            child: Transform.translate(
+              offset: Offset((1.0 - leftAnimationController.value) * -50, 0),
+              child: Opacity(
+                opacity: (leftAnimationController.value),
+                child: leftWidget,
+              ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 15,
           ),
-          Expanded(
-            flex: 9,
-            child: Column(
-              children: [
-                Expanded(
-                  child: ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color.fromRGBO(0, 0, 0, 0.0),
-                          Color.fromRGBO(0, 0, 0, 0.65),
-                          Color.fromRGBO(0, 0, 0, 0.9),
-                          Color.fromRGBO(0, 0, 0, 1.0),
-                          Color.fromRGBO(0, 0, 0, 1.0),
-                          Color.fromRGBO(0, 0, 0, 0.9),
-                          Color.fromRGBO(0, 0, 0, 0.65),
-                          Color.fromRGBO(0, 0, 0, 0.0),
-                        ],
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: LyricsRenderer(
-                      controller: controller,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          rightWidget,
         ],
       ),
     );
@@ -193,7 +250,10 @@ class _ImmersivePageState extends State<_ImmersivePage> {
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(
-                  sigmaX: 80, sigmaY: 80, tileMode: TileMode.clamp),
+                sigmaX: 80,
+                sigmaY: 80,
+                tileMode: TileMode.clamp,
+              ),
               child: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -228,13 +288,15 @@ class ImmersivePage extends Page {
       settings: this,
       pageBuilder: (BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation) {
-        return const _ImmersivePage();
+        return _ImmersivePage(
+          animation: animation,
+        );
       },
       transitionDuration: const Duration(milliseconds: 500),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, 1.0);
         const end = Offset.zero;
-        const curve = Curves.ease;
+        const curve = Curves.linearToEaseOut;
 
         final tween = Tween(begin: begin, end: end);
         final curvedAnimation = CurvedAnimation(
