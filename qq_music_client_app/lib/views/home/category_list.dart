@@ -1,15 +1,21 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:qq_music_client_app/widgets/category_select_option.dart';
+import 'package:qq_music_client_app/widgets/circle_image_select_option.dart';
 import 'package:qq_music_client_app/widgets/positioned_single_scroll_item.dart';
-import 'package:qq_music_client_app/widgets/positioned_single_scroll_view.dart' show PositionedSingleScrollView;
+import 'package:qq_music_client_app/widgets/positioned_single_scroll_view.dart';
 
 class Category {
+  final String imageUrl;
   final String title;
   final String description;
   final String tag;
 
-  Category({required this.title, this.description = "", this.tag = ""});
+  Category(
+      {required this.title,
+      this.description = "",
+      this.tag = "",
+      this.imageUrl = ""});
 }
 
 class CategoryList extends StatefulWidget {
@@ -42,10 +48,16 @@ class _CategoryListState extends State<CategoryList> {
           child: GestureDetector(
             child: Container(
               padding: EdgeInsets.fromLTRB(index == 0 ? 0 : 6, 0, 0, 0),
-              child: CategorySelectOption(
-                text: category.title,
-                active: index == active,
-              ),
+              child: category.imageUrl.isEmpty
+                  ? CategorySelectOption(
+                      text: category.title,
+                      active: index == active,
+                    )
+                  : CircleImageSelectOption(
+                      imageUrl: category.imageUrl,
+                      text: category.title,
+                      active: index == active,
+                    ),
             ),
             onTap: () {
               setState(() {

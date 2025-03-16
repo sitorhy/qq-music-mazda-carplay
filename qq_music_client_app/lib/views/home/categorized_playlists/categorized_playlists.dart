@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qq_music_client_app/views/home/category_list.dart' show Category, CategoryList;
+import 'package:qq_music_client_app/views/home/category_list.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
 import 'package:qq_music_client_app/widgets/album_select_option.dart';
 import 'package:qq_music_client_app/widgets/positioned_list_item.dart';
