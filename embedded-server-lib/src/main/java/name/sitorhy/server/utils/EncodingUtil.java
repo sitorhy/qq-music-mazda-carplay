@@ -1,6 +1,5 @@
 package name.sitorhy.server.utils;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +27,7 @@ public class EncodingUtil
             return null;
         }
 
-        String result = null;
+        String result;
 
         result = URLDecoder.decode(s, StandardCharsets.UTF_8);
 
@@ -45,24 +44,15 @@ public class EncodingUtil
      */
     public static String encodeURIComponent(String s)
     {
-        String result = null;
+        String result;
 
-        try
-        {
-            result = URLEncoder.encode(s, "UTF-8")
-                    .replaceAll("\\+", "%20")
-                    .replaceAll("\\%21", "!")
-                    .replaceAll("\\%27", "'")
-                    .replaceAll("\\%28", "(")
-                    .replaceAll("\\%29", ")")
-                    .replaceAll("\\%7E", "~");
-        }
-
-        // This exception should never occur.
-        catch (UnsupportedEncodingException e)
-        {
-            result = s;
-        }
+        result = URLEncoder.encode(s, StandardCharsets.UTF_8)
+                .replaceAll("\\+", "%20")
+                .replaceAll("%21", "!")
+                .replaceAll("%27", "'")
+                .replaceAll("%28", "(")
+                .replaceAll("%29", ")")
+                .replaceAll("%7E", "~");
 
         return result;
     }
