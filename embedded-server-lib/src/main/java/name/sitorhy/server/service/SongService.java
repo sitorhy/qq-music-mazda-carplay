@@ -200,6 +200,58 @@ public class SongService {
                 .readValue(jsonText, name.sitorhy.server.model.singer.top.songs.Response.class);
     }
 
+    public String getNewSongs() throws IOException {
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+        }}, new LinkedHashMap<String, Object>() {{
+            put("comm", new LinkedHashMap<String, Object>() {{
+                put("ct", 24);
+                put("cv", 4747474);
+                put("format", "json");
+                put("platform", "yqq.json");
+                put("notice", 0);
+                put("inCharset", "utf-8");
+                put("outCharset", "utf-8");
+                put("uin", String.valueOf(requestHeadersSession.getUin()));
+            }});
+
+            put("req_1", new LinkedHashMap<String, Object>() {{
+                put("method", "get_new_song_info");
+                put("param", new LinkedHashMap<String, Object>() {{
+                    put("type", 5);
+                }});
+                put("module", "newsong.NewSongServer");
+            }});
+        }});
+
+        return jsonText;
+    }
+
+    public String getTopList() throws IOException {
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+        }}, new LinkedHashMap<String, Object>() {{
+            put("comm", new LinkedHashMap<String, Object>() {{
+                put("ct", 24);
+                put("cv", 4747474);
+                put("format", "json");
+                put("platform", "yqq.json");
+                put("notice", 0);
+                put("inCharset", "utf-8");
+                put("outCharset", "utf-8");
+                put("uin", String.valueOf(requestHeadersSession.getUin()));
+            }});
+
+            put("req_1", new LinkedHashMap<String, Object>() {{
+                put("method", "GetAll");
+                put("param", new LinkedHashMap<String, Object>() {{}});
+                put("module", "musicToplist.ToplistInfoServer");
+            }});
+        }});
+
+        return jsonText;
+    }
+
     public String getSongLyric(String songMid) throws IOException {
         String jsonpText = requestHeadersSession.get("http://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg", new LinkedHashMap<String, Object>() {
             {

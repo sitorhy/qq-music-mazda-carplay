@@ -89,4 +89,33 @@ public class AlbumService {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readValue(jsonText, name.sitorhy.server.model.singer.albums.Response.class);
     }
+
+    public String getNewAlbums() throws IOException {
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+        }}, new LinkedHashMap<String, Object>() {{
+            put("comm", new LinkedHashMap<String, Object>() {{
+                put("ct", 24);
+                put("cv", 4747474);
+                put("format", "json");
+                put("platform", "yqq.json");
+                put("notice", 0);
+                put("inCharset", "utf-8");
+                put("outCharset", "utf-8");
+                put("uin", String.valueOf(requestHeadersSession.getUin()));
+            }});
+
+            put("req_1", new LinkedHashMap<String, Object>() {{
+                put("method", "get_new_album_info");
+                put("param", new LinkedHashMap<String, Object>() {{
+                    put("area", 1);
+                    put("sin", 0);
+                    put("num", 20);
+                }});
+                put("module", "newalbum.NewAlbumServer");
+            }});
+        }});
+
+        return jsonText;
+    }
 }
