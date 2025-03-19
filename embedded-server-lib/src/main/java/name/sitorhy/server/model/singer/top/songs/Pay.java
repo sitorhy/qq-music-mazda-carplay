@@ -1,11 +1,11 @@
 package name.sitorhy.server.model.singer.top.songs;
 
 public class Pay{
-    public int pay_month;
-    public int price_track;
-    public int price_album;
-    public int pay_play;
-    public int pay_down;
-    public int pay_status;
-    public int time_free;
+    public long pay_month;
+    public long price_track;
+    public long price_album;
+    public long pay_play;
+    public long pay_down;
+    public long pay_status;
+    public long time_free;
 }

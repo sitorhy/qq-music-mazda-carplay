@@ -200,7 +200,7 @@ public class SongService {
                 .readValue(jsonText, name.sitorhy.server.model.singer.top.songs.Response.class);
     }
 
-    public String getNewSongs() throws IOException {
+    public name.sitorhy.server.model.song.newest.Response getNewSongs() throws IOException {
         String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
             put("_", System.currentTimeMillis());
         }}, new LinkedHashMap<String, Object>() {{
@@ -224,10 +224,12 @@ public class SongService {
             }});
         }});
 
-        return jsonText;
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.song.newest.Response.class);
     }
 
-    public String getTopList() throws IOException {
+    public name.sitorhy.server.model.song.top.Response getTopList() throws IOException {
         String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
             put("_", System.currentTimeMillis());
         }}, new LinkedHashMap<String, Object>() {{
@@ -249,7 +251,9 @@ public class SongService {
             }});
         }});
 
-        return jsonText;
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.song.top.Response.class);
     }
 
     public String getSongLyric(String songMid) throws IOException {

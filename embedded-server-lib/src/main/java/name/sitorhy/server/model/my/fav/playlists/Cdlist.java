@@ -3,16 +3,16 @@ package name.sitorhy.server.model.my.fav.playlists;
 public class Cdlist{
     public long dissid;
     public String dissname;
-    public int songnum;
-    public int listennum;
+    public long songnum;
+    public long listennum;
     public String logo;
-    public int dirid;
-    public int dirtype;
-    public int isshow;
-    public int dir_show;
-    public int uin;
+    public long dirid;
+    public long dirtype;
+    public long isshow;
+    public long dir_show;
+    public long uin;
     public String encrypt_uin;
     public String nickname;
-    public int createtime;
-    public int type;
+    public long createtime;
+    public long type;
 }

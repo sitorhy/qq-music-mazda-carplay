@@ -8,9 +8,9 @@ public class Data{
     @JsonProperty("Msg")
     public String msg;
     @JsonProperty("Total")
-    public int total;
+    public long total;
     @JsonProperty("FromLimit")
-    public int fromLimit;
+    public long fromLimit;
     @JsonProperty("List")
     public ArrayList<List> list;
     @JsonProperty("HasMore")
@@ -18,7 +18,7 @@ public class Data{
     @JsonProperty("LastPos")
     public String lastPos;
     @JsonProperty("LockFlag")
-    public int lockFlag;
+    public long lockFlag;
     @JsonProperty("LockMsg")
     public String lockMsg;
     @JsonProperty("SelfInfo")

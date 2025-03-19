@@ -18,7 +18,7 @@ public class List{
     @JsonProperty("MarkUrl")
     public String markUrl;
     @JsonProperty("FanNum")
-    public int fanNum;
+    public long fanNum;
     @JsonProperty("IsFollow")
     public boolean isFollow;
     @JsonProperty("OtherInfo")
@@ -31,7 +31,7 @@ public class List{
     @JsonProperty("BeFollowed")
     public boolean beFollowed;
     @JsonProperty("Time")
-    public int time;
+    public long time;
     @JsonProperty("Medal")
     public Medal medal;
 }

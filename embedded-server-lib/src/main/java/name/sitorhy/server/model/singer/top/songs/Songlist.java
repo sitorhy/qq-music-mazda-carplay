@@ -3,8 +3,8 @@ package name.sitorhy.server.model.singer.top.songs;
 import java.util.ArrayList;
 
 public class Songlist{
-    public int id;
-    public int type;
+    public long id;
+    public long type;
     public String mid;
     public String name;
     public String title;
@@ -12,15 +12,15 @@ public class Songlist{
     public ArrayList<Singer> singer;
     public Album album;
     public Mv mv;
-    public int interval;
-    public int isonly;
-    public int language;
-    public int genre;
-    public int index_cd;
-    public int index_album;
+    public long interval;
+    public long isonly;
+    public long language;
+    public long genre;
+    public long index_cd;
+    public long index_album;
     public String time_public;
-    public int status;
-    public int fnote;
+    public long status;
+    public long fnote;
     public File file;
     public Pay pay;
     public Action action;
@@ -28,13 +28,13 @@ public class Songlist{
     public Volume volume;
     public String label;
     public String url;
-    public int bpm;
-    public int version;
+    public long bpm;
+    public long version;
     public String trace;
-    public int data_type;
-    public int modify_stamp;
+    public long data_type;
+    public long modify_stamp;
     public String pingpong;
     public String ppurl;
-    public int tid;
-    public int ov;
+    public long tid;
+    public long ov;
 }

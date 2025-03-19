@@ -6,12 +6,12 @@ public class Mymusic{
     public String laypic;
     public String subtitle;
     public String jumpurl;
-    public int jumptype;
+    public long jumptype;
     public String jumpkey;
     public String id;
     public MusicBykey music_bykey;
-    public int type;
-    public int num0;
-    public int num1;
-    public int num2;
+    public long type;
+    public long num0;
+    public long num1;
+    public long num2;
 }

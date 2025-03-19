@@ -90,7 +90,7 @@ public class AlbumService {
                 .readValue(jsonText, name.sitorhy.server.model.singer.albums.Response.class);
     }
 
-    public String getNewAlbums() throws IOException {
+    public name.sitorhy.server.model.album.newest.Response getNewAlbums() throws IOException {
         String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
             put("_", System.currentTimeMillis());
         }}, new LinkedHashMap<String, Object>() {{
@@ -116,6 +116,8 @@ public class AlbumService {
             }});
         }});
 
-        return jsonText;
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.album.newest.Response.class);
     }
 }

@@ -4,25 +4,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Segment{
     @JsonProperty("Width")
-    public int width;
+    public long width;
     @JsonProperty("Height")
-    public int height;
+    public long height;
     @JsonProperty("DarkIconURL")
     public String darkIconURL;
     @JsonProperty("LightIconURL")
     public String lightIconURL;
     @JsonProperty("StretchLeft")
-    public int stretchLeft;
+    public long stretchLeft;
     @JsonProperty("StretchRight")
-    public int stretchRight;
+    public long stretchRight;
     @JsonProperty("Contents")
     public Object contents;
     @JsonProperty("MaxDisplayLen")
-    public int maxDisplayLen;
+    public long maxDisplayLen;
     @JsonProperty("PaddingLeft")
-    public int paddingLeft;
+    public long paddingLeft;
     @JsonProperty("PaddingRight")
-    public int paddingRight;
+    public long paddingRight;
     @JsonProperty("JumpURL")
     public String jumpURL;
 }

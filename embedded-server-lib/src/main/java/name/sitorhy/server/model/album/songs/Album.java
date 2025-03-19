@@ -1,7 +1,7 @@
 package name.sitorhy.server.model.album.songs;
 
 public class Album{
-    public int id;
+    public long id;
     public String mid;
     public String name;
     public String title;

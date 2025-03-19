@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 public class Response{
-    public int code;
-    public int subcode;
-    public int accessed_plaza_cache;
-    public int accessed_favbase;
+    public long code;
+    public long subcode;
+    public long accessed_plaza_cache;
+    public long accessed_favbase;
     public String login;
-    public int cdnum;
+    public long cdnum;
     public ArrayList<Cdlist> cdlist;
-    public int realcdnum;
+    public long realcdnum;
 }
 
 

@@ -1,12 +1,12 @@
 package name.sitorhy.server.model.playlist.songs;
 
 public class Pay{
-    public int payalbum;
-    public int payalbumprice;
-    public int paydownload;
-    public int payinfo;
-    public int payplay;
-    public int paytrackmouth;
-    public int paytrackprice;
-    public int timefree;
+    public long payalbum;
+    public long payalbumprice;
+    public long paydownload;
+    public long payinfo;
+    public long payplay;
+    public long paytrackmouth;
+    public long paytrackprice;
+    public long timefree;
 }

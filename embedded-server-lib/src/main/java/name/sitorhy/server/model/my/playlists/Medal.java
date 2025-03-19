@@ -1,7 +1,7 @@
 package name.sitorhy.server.model.my.playlists;
 
 public class Medal{
-    public int flag;
+    public long flag;
     public String iconurl;
     public String jumpurl;
     public String jumpkey;

@@ -7,9 +7,9 @@ public class Data{
     public SingerInfo singer_info;
     public String singer_brief;
     public ArrayList<Object> music_grp;
-    public int total_album;
-    public int total_mv;
-    public int total_song;
+    public long total_album;
+    public long total_mv;
+    public long total_song;
     public String yinyueren;
     public boolean show_singer_desc;
     public ArrayList<Extra> extras;

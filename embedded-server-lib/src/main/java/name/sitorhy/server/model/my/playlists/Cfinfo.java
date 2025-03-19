@@ -5,5 +5,5 @@ public class Cfinfo{
     public String jumpurl;
     public String jumpkey;
     public CfinfoBykey cfinfo_bykey;
-    public int similar;
+    public long similar;
 }

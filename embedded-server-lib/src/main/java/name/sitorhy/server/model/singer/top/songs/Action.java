@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Action{
     @JsonProperty("switch")
-    public int myswitch;
-    public int msgid;
-    public int alert;
-    public int icons;
-    public int msgshare;
-    public int msgfav;
-    public int msgdown;
-    public int msgpay;
+    public long myswitch;
+    public long msgid;
+    public long alert;
+    public long icons;
+    public long msgshare;
+    public long msgfav;
+    public long msgdown;
+    public long msgpay;
 }

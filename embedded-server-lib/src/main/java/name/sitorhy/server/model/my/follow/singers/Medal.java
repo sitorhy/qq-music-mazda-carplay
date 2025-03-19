@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Medal{
     @JsonProperty("ShowMedal")
-    public int showMedal;
+    public long showMedal;
     @JsonProperty("ShowValue")
-    public int showValue;
+    public long showValue;
     @JsonProperty("FansValue")
-    public int fansValue;
+    public long fansValue;
     @JsonProperty("Medal")
     public Medal medal;
     @JsonProperty("IsReceivedMedal")
-    public int isReceivedMedal;
+    public long isReceivedMedal;
     @JsonProperty("Scheme")
     public String scheme;
     @JsonProperty("Title")
@@ -24,5 +24,5 @@ public class Medal{
     @JsonProperty("Segment")
     public Segment segment;
     @JsonProperty("Style")
-    public int style;
+    public long style;
 }

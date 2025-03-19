@@ -1,5 +1,7 @@
 package name.sitorhy.server.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.session.RequestHeadersSession;
 
 import java.io.IOException;
@@ -12,7 +14,7 @@ public class CategoryService {
         this.requestHeadersSession = requestHeadersSession;
     }
 
-    public String getRecommendFeed(long pageNo, long pageSize) throws IOException {
+    public name.sitorhy.server.model.category.recommend.Response getRecommendFeed(long pageNo, long pageSize) throws IOException {
         String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
             put("_", System.currentTimeMillis());
         }}, new LinkedHashMap<String, Object>() {{
@@ -37,10 +39,12 @@ public class CategoryService {
             }});
         }});
 
-        return jsonText;
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.category.recommend.Response.class);
     }
 
-    public String getHotCategory() throws IOException {
+    public name.sitorhy.server.model.category.hot.category.Response getHotCategory() throws IOException {
         String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
             put("_", System.currentTimeMillis());
         }}, new LinkedHashMap<String, Object>() {{
@@ -63,10 +67,12 @@ public class CategoryService {
             }});
         }});
 
-        return jsonText;
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.category.hot.category.Response.class);
     }
 
-    public String getAllTag() throws IOException {
+    public name.sitorhy.server.model.category.tags.Response getAllTag() throws IOException {
         String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
             put("_", System.currentTimeMillis());
         }}, new LinkedHashMap<String, Object>() {{
@@ -87,10 +93,12 @@ public class CategoryService {
             }});
         }});
 
-        return jsonText;
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.category.tags.Response.class);
     }
 
-    public String getPlayListCategory(long categoryId, long pageNo, long pageSize) throws IOException {
+    public name.sitorhy.server.model.category.playlist.Response getPlayListCategory(long categoryId, long pageNo, long pageSize) throws IOException {
         String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
             put("_", System.currentTimeMillis());
         }}, new LinkedHashMap<String, Object>() {{
@@ -126,6 +134,8 @@ public class CategoryService {
             }});
         }});
 
-        return jsonText;
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.category.playlist.Response.class);
     }
 }

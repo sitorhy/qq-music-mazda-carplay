@@ -1,10 +1,10 @@
 package name.sitorhy.server.model.my.playlists;
 
 public class Nums{
-    public int visitornum;
-    public int fansnum;
-    public int follownum;
-    public int followusernum;
-    public int followsingernum;
-    public int frdnum;
+    public long visitornum;
+    public long fansnum;
+    public long follownum;
+    public long followusernum;
+    public long followsingernum;
+    public long frdnum;
 }

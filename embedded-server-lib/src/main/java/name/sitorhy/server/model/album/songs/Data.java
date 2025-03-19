@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 public class Data{
     public String albumMid;
-    public int totalNum;
+    public long totalNum;
     public ArrayList<SongList> songList;
     public ArrayList<Object> classicList;
-    public int sort;
+    public long sort;
     public String albumTips;
-    public int index;
-    public int schedule_status;
-    public int curBegin;
-    public int cdNewStyle;
+    public long index;
+    public long schedule_status;
+    public long curBegin;
+    public long cdNewStyle;
     public Object cdNameMap;
-    public int deviceValid;
+    public long deviceValid;
 }
