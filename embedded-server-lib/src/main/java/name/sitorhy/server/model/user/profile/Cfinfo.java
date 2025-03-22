@@ -1,4 +1,4 @@
-package name.sitorhy.server.model.my.playlists;
+package name.sitorhy.server.model.user.profile;
 
 public class Cfinfo{
     public String title;

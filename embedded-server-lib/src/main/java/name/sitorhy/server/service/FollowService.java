@@ -1,8 +1,10 @@
 package name.sitorhy.server.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.session.RequestHeadersSession;
+import name.sitorhy.server.utils.QQEncrypt;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -15,9 +17,7 @@ public class FollowService {
     }
 
     public name.sitorhy.server.model.my.follow.singers.Response getFollowSingers(long pageNo, long pageSize) throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("cv", 4747474);
                 put("ct", 24);
@@ -41,7 +41,14 @@ public class FollowService {
                     put("HostUin", requestHeadersSession.getHostUin());
                 }});
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

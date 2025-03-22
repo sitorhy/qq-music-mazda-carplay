@@ -44,7 +44,7 @@ public class RequestHeadersSession {
 
     private String secFetchSite = "same-site";
 
-    private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+    private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
 
     public RequestHeadersSession() {
         okHttpClient = new OkHttpClient().newBuilder().addInterceptor(new Interceptor() {

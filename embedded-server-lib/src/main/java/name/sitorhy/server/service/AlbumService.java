@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.session.RequestHeadersSession;
+import name.sitorhy.server.utils.QQEncrypt;
 
 public class AlbumService {
     private final RequestHeadersSession requestHeadersSession;
@@ -14,13 +16,25 @@ public class AlbumService {
         this.requestHeadersSession = requestHeadersSession;
     }
 
-    public name.sitorhy.server.model.my.playlists.Response getMyPlaylists() throws IOException {
+    public name.sitorhy.server.model.my.playlists.Response getMyPlaylists(long pageNo, long pageSize) throws IOException {
         String jsonText = requestHeadersSession
-                .get("http://c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg", new LinkedHashMap<String, Object>() {
+                .get("https://c6.y.qq.com/rsc/fcgi-bin/fcg_user_created_diss", new LinkedHashMap<String, Object>() {
                     {
-                        put("cid", 205360838);
-                        put("userid", requestHeadersSession.getUin());
-                        put("reqfrom", 1);
+                        put("r", System.currentTimeMillis());
+                        put("_", System.currentTimeMillis());
+                        put("cv", 4747474);
+                        put("ct", 24);
+                        put("inCharset", "utf-8");
+                        put("outCharset", "utf-8");
+                        put("notice", 0);
+                        put("platform", "yqq.json");
+                        put("needNewCode", 1);
+                        put("uin", requestHeadersSession.getUin());
+                        put("g_tk_new_20200303", 1419151954);
+                        put("g_tk", 1419151954);
+                        put("hostuin", requestHeadersSession.getUin());
+                        put("sin", pageNo);
+                        put("size", pageSize);
                     }
                 });
         return new JsonMapper()
@@ -64,12 +78,15 @@ public class AlbumService {
     }
 
     public name.sitorhy.server.model.singer.albums.Response getSingerAlbums(String singerMid, long pageNo, long pageSize) throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
-                put("cv", 0);
+                put("cv", 4747474);
+                put("format", "json");
+                put("platform", "yqq.json");
+                put("notice", 0);
+                put("inCharset", "utf-8");
+                put("outCharset", "utf-8");
             }});
 
             put("singerAlbum", new LinkedHashMap<String, Object>() {{
@@ -83,17 +100,22 @@ public class AlbumService {
                 }});
                 put("module", "music.web_singer_info_svr");
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .readValue(jsonText, name.sitorhy.server.model.singer.albums.Response.class);
     }
 
-    public name.sitorhy.server.model.album.newest.Response getNewAlbums() throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+    public name.sitorhy.server.model.album.newest.Response getNewAlbums(long pageNo, long pageSize) throws IOException {
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 4747474);
@@ -109,12 +131,19 @@ public class AlbumService {
                 put("method", "get_new_album_info");
                 put("param", new LinkedHashMap<String, Object>() {{
                     put("area", 1);
-                    put("sin", 0);
-                    put("num", 20);
+                    put("sin", pageNo);
+                    put("num", pageSize);
                 }});
                 put("module", "newalbum.NewAlbumServer");
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

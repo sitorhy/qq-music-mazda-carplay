@@ -1,5 +1,4 @@
-package name.sitorhy.server.model.my.playlists;
-
+package name.sitorhy.server.model.user.profile; 
 public class Typeinfo{
     public long type;
     public String jumpurl;

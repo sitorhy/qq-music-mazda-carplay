@@ -1,8 +1,10 @@
 package name.sitorhy.server.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.session.RequestHeadersSession;
+import name.sitorhy.server.utils.QQEncrypt;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -15,9 +17,7 @@ public class CategoryService {
     }
 
     public name.sitorhy.server.model.category.recommend.Response getRecommendFeed(long pageNo, long pageSize) throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 4747474);
@@ -37,7 +37,14 @@ public class CategoryService {
                     put("Size", pageSize);
                 }});
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -45,9 +52,7 @@ public class CategoryService {
     }
 
     public name.sitorhy.server.model.category.hot.category.Response getHotCategory() throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 4747474);
@@ -65,7 +70,14 @@ public class CategoryService {
                     put("location", 0);
                 }});
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -73,9 +85,7 @@ public class CategoryService {
     }
 
     public name.sitorhy.server.model.category.tags.Response getAllTag() throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 4747474);
@@ -89,9 +99,16 @@ public class CategoryService {
             put("req_1", new LinkedHashMap<String, Object>() {{
                 put("method", "GetAllTag");
                 put("module", "music.playlist.PlaylistSquare");
-                put("param", new LinkedHashMap<String, Object>() {{}});
+                put("param", new LinkedHashMap<String, Object>() {});
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -99,9 +116,7 @@ public class CategoryService {
     }
 
     public name.sitorhy.server.model.category.playlist.Response getPlayListCategory(long categoryId, long pageNo, long pageSize) throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 4747474);
@@ -132,7 +147,14 @@ public class CategoryService {
                     put("category_id", categoryId);
                 }});
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

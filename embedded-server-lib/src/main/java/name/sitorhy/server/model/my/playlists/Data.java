@@ -1,10 +1,9 @@
-package name.sitorhy.server.model.my.playlists;
-
+package name.sitorhy.server.model.my.playlists; 
 import java.util.ArrayList;
 
 public class Data{
-    public Creator creator;
-    public String mymusictype;
-    public ArrayList<Mymusic> mymusic;
-    public Mydiss mydiss;
+    public String encrypt_uin;
+    public String hostname;
+    public int totoal;
+    public ArrayList<Disslist> disslist;
 }

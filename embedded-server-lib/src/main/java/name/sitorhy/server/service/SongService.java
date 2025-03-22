@@ -1,20 +1,20 @@
 package name.sitorhy.server.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import name.sitorhy.server.model.SongTypeEnum;
 import name.sitorhy.server.session.RequestHeadersSession;
-import name.sitorhy.server.utils.EncodingUtil;
+import name.sitorhy.server.utils.QQEncrypt;
 import name.sitorhy.server.utils.TextUtils;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.*;
 
 public class SongService {
     private final RequestHeadersSession requestHeadersSession;
 
-    private final Map<String, Map<String, String>> typeMap = new HashMap<String, Map<String, String>>() {{
+    private final Map<String, Map<String, String>> typeMap = new HashMap<>() {{
         put("m4a", new HashMap<String, String>() {{
             put("s", "C400");
             put("e", ".m4a");
@@ -88,48 +88,47 @@ public class SongService {
         String file = String.format("%s%s%s%s", typeObj.get("s"), songMid, TextUtils.isEmpty(strMediaMid) ? strMediaMid : songMid, typeObj.get("e"));
         String guid = String.valueOf((long) (Math.random() * 10000000));
 
-        LinkedHashMap<String, Object> variables = new LinkedHashMap<String, Object>() {{
-            put("-", "getplaysongvkey");
-            put("g_tk", 5381);
-            put("loginUin", requestHeadersSession.getUin());
-            put("hostUin", 0);
-            put("format", "json");
-            put("inCharset", "utf-8");
-            put("outCharset", "utf-8");
-            put("platform", "yqq.json");
-            put("needNewCode", 0);
-
-            Map<String, Object> dataMap = new LinkedHashMap<String, Object>() {{
-                put("req_0", new LinkedHashMap<String, Object>() {{
-                    put("module", "vkey.GetVkeyServer");
-                    put("method", "CgiGetVkey");
-                    put("param", new LinkedHashMap<String, Object>() {{
-                        put("filename", new String[]{file});
-                        put("guid", guid);
-                        put("songmid", new String[]{songMid});
-                        put("songtype", new int[]{0});
-                        put("uin", String.valueOf(requestHeadersSession.getUin()));
-                        put("loginflag", 1);
-                        put("platform", "20");
-                    }});
-                }});
-
-                put("comm", new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
+            put("req_0", new LinkedHashMap<String, Object>() {{
+                put("module", "vkey.GetVkeyServer");
+                put("method", "CgiGetVkey");
+                put("param", new LinkedHashMap<String, Object>() {{
+                    put("filename", new String[]{file});
+                    put("guid", guid);
+                    put("songmid", new String[]{songMid});
+                    put("songtype", new int[]{0});
                     put("uin", String.valueOf(requestHeadersSession.getUin()));
-                    put("format", "json");
-                    put("platform", "yqq.json");
-                    put("ct", 19);
-                    put("cv", 0);
-                    put("authst", requestHeadersSession.getQQMusicKey());
+                    put("loginflag", 1);
+                    put("platform", "20");
                 }});
-            }};
-            String dataJsonText = new JsonMapper().writeValueAsString(dataMap);
-            String dataJsonEncodeText = EncodingUtil.encodeURIComponent(dataJsonText);
-            put("data", dataJsonEncodeText);
+            }});
+
+            put("comm", new LinkedHashMap<String, Object>() {{
+                put("uin", String.valueOf(requestHeadersSession.getUin()));
+                put("format", "json");
+                put("platform", "yqq.json");
+                put("ct", 19);
+                put("cv", 0);
+                put("authst", requestHeadersSession.getQQMusicKey());
+            }});
         }};
 
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
         String jsonText = requestHeadersSession
-                .get("https://u.y.qq.com/cgi-bin/musicu.fcg", variables);
+                .post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+                    put("_", System.currentTimeMillis());
+                    put("sign", sign);
+                    put("-", "getplaysongvkey");
+                    put("g_tk", 1419151954);
+                    put("loginUin", requestHeadersSession.getUin());
+                    put("hostUin", 0);
+                    put("format", "json");
+                    put("inCharset", "utf-8");
+                    put("outCharset", "utf-8");
+                    put("platform", "yqq.json");
+                    put("needNewCode", 1);
+                }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -137,36 +136,37 @@ public class SongService {
     }
 
     public name.sitorhy.server.model.album.songs.Response getAlbumSongs(String albumMid, long albumId, long pageNo, long pageSize) throws IOException {
-        String jsonText = requestHeadersSession.get("https://u.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {
             {
-                put("g_tk", 5381);
-                put("format", "json");
-                put("inCharset", "utf-8");
-                put("outCharset", "utf-8");
-
-                String dataJsonText = new JsonMapper().writeValueAsString(new LinkedHashMap<String, Object>() {{
-                    put("comm", new LinkedHashMap<String, Object>() {{
-                        put("ct", 24);
-                        put("cv", 10000);
-                    }});
-
-                    put("albumSonglist", new LinkedHashMap<String, Object>() {{
-                        put("method", "GetAlbumSongList");
-                        put("cv", 10000);
-                        put("param", new LinkedHashMap<String, Object>() {{
-                            put("albumMid", albumMid);
-                            put("albumID", albumId);
-                            put("begin", (pageNo - 1) * pageSize);
-                            put("num", pageSize);
-                            put("order", 2);
-                        }});
-                        put("module", "music.musichallAlbum.AlbumSongList");
-                    }});
+                put("comm", new LinkedHashMap<String, Object>() {{
+                    put("ct", 24);
+                    put("cv", 10000);
                 }});
-                String dataJsonEncodeText = URLEncoder.encode(dataJsonText);
-                put("data", dataJsonEncodeText);
+
+                put("albumSonglist", new LinkedHashMap<String, Object>() {{
+                    put("method", "GetAlbumSongList");
+                    put("cv", 10000);
+                    put("param", new LinkedHashMap<String, Object>() {{
+                        put("albumMid", albumMid);
+                        put("albumID", albumId);
+                        put("begin", (pageNo - 1) * pageSize);
+                        put("num", pageSize);
+                        put("order", 2);
+                    }});
+                    put("module", "music.musichallAlbum.AlbumSongList");
+                }});
             }
-        });
+        };
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<>() {{
+            put("g_tk", 5381);
+            put("format", "json");
+            put("inCharset", "utf-8");
+            put("outCharset", "utf-8");
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -174,9 +174,7 @@ public class SongService {
     }
 
     public name.sitorhy.server.model.singer.top.songs.Response getSingerTopSongs(String singerMid, long pageNo, long pageSize) throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 0);
@@ -193,7 +191,14 @@ public class SongService {
                 }});
                 put("module", "music.web_singer_info_svr");
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -201,9 +206,7 @@ public class SongService {
     }
 
     public name.sitorhy.server.model.song.newest.Response getNewSongs() throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 4747474);
@@ -222,7 +225,14 @@ public class SongService {
                 }});
                 put("module", "newsong.NewSongServer");
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -230,9 +240,7 @@ public class SongService {
     }
 
     public name.sitorhy.server.model.song.top.Response getTopList() throws IOException {
-        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musicu.fcg", new LinkedHashMap<String, Object>() {{
-            put("_", System.currentTimeMillis());
-        }}, new LinkedHashMap<String, Object>() {{
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
             put("comm", new LinkedHashMap<String, Object>() {{
                 put("ct", 24);
                 put("cv", 4747474);
@@ -246,10 +254,18 @@ public class SongService {
 
             put("req_1", new LinkedHashMap<String, Object>() {{
                 put("method", "GetAll");
-                put("param", new LinkedHashMap<String, Object>() {{}});
+                put("param", new LinkedHashMap<String, Object>() {{
+                }});
                 put("module", "musicToplist.ToplistInfoServer");
             }});
-        }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
 
         return new JsonMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

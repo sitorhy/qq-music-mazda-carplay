@@ -1,5 +1,4 @@
-package name.sitorhy.server.model.my.playlists;
-
+package name.sitorhy.server.model.user.profile; 
 public class Mymusic{
     public String title;
     public String picurl;

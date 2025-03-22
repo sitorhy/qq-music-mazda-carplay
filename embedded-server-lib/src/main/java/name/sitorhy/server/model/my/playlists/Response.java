@@ -1,9 +1,8 @@
 package name.sitorhy.server.model.my.playlists;
 
 public class Response {
-    public long code;
-    public long subcode;
-    public String msg;
+    public int code;
+    public int subcode;
+    public String message;
     public Data data;
 }
-
