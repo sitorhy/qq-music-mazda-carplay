@@ -6,7 +6,7 @@ import { FollowService } from './follow.service';
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
-  @Get("/singers")
+  @Get('/singers')
   getFollowSingers(pageNo: number, pageSize: number) {
     return this.followService.getFollowSingers(pageNo, pageSize);
   }

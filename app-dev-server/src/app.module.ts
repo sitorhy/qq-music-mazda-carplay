@@ -12,9 +12,16 @@ import { join } from 'path';
 @Module({
   controllers: [AppController],
   providers: [AppService],
-  imports: [ServeStaticModule.forRoot({
-    rootPath: join(__dirname, '..', 'public'),
-    serveRoot: '/assets'
-  }),AlbumsModule, CategoryModule, UserModule, SongModule, FollowModule],
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/assets',
+    }),
+    AlbumsModule,
+    CategoryModule,
+    UserModule,
+    SongModule,
+    FollowModule,
+  ],
 })
 export class AppModule {}

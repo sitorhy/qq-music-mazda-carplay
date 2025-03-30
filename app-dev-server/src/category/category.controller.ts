@@ -23,6 +23,10 @@ export class CategoryController {
 
   @Get('/playlist')
   getPlayListCategory(categoryId: number, pageNo: number, pageSize: number) {
-    return this.categoryService.getPlayListCategory(categoryId, pageNo, pageSize);
+    return this.categoryService.getPlayListCategory(
+      categoryId,
+      pageNo,
+      pageSize,
+    );
   }
 }
