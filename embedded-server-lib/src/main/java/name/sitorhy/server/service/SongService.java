@@ -272,6 +272,40 @@ public class SongService {
                 .readValue(jsonText, name.sitorhy.server.model.song.top.Response.class);
     }
 
+    public name.sitorhy.server.model.song.detail.Response getSongDetail(String songMid) throws IOException {
+        LinkedHashMap<String, Object> body = new LinkedHashMap<>() {{
+            put("comm", new LinkedHashMap<String, Object>() {{
+                put("ct", 24);
+                put("cv", 4747474);
+                put("format", "json");
+                put("platform", "yqq.json");
+                put("notice", 0);
+                put("inCharset", "utf-8");
+                put("outCharset", "utf-8");
+                put("uin", String.valueOf(requestHeadersSession.getUin()));
+            }});
+
+            put("req_1", new LinkedHashMap<String, Object>() {{
+                put("method", "get_song_detail_yqq");
+                put("module", "music.pf_song_detail_svr");
+                put("param", new LinkedHashMap<String, Object>() {{
+                    put("song_mid", songMid);
+                }});
+            }});
+        }};
+
+        String sign = QQEncrypt.getSign(new ObjectMapper().writeValueAsString(body));
+
+        String jsonText = requestHeadersSession.post("https://u6.y.qq.com/cgi-bin/musics.fcg", new LinkedHashMap<String, Object>() {{
+            put("_", System.currentTimeMillis());
+            put("sign", sign);
+        }}, body);
+
+        return new JsonMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(jsonText, name.sitorhy.server.model.song.detail.Response.class);
+    }
+
     public String getSongLyric(String songMid) throws IOException {
         String jsonpText = requestHeadersSession.get("http://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg", new LinkedHashMap<String, Object>() {
             {
