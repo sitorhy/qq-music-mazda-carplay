@@ -1,3 +1,23 @@
 {
-  "songMid": "002qD6Wk4Top6x"
+  "songId": 1795135,
+  "songMid": "002qD6Wk4Top6x",
+  "name": "緋色の空",
+  "title": "緋色の空 (绯色天空)",
+  "subtitle": "《灼眼的夏娜》TV动画第1-16集片头曲|《灼眼的夏娜Ⅲ-FINAL-》TV动画第24话插曲",
+  "singer": [
+    {
+      "id": 2001,
+      "mid": "001OWqx92gxwxf",
+      "name": "川田麻美",
+      "title": "川田麻美 (川田まみ)",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 141102,
+    "albumMid": "0024MK4b3MX0bR",
+    "name": "SEED",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M0000024MK4b3MX0bR.jpg"
+  }
 }

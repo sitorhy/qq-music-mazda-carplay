@@ -1,3 +1,23 @@
 {
-  "songMid": "001VT5df2TmRL1"
+  "songId": 314262232,
+  "songMid": "001VT5df2TmRL1",
+  "name": "Vivy -Unrivaled-",
+  "title": "Vivy -Unrivaled-",
+  "subtitle": "《薇薇 -萤石眼之歌-》TV动画配乐",
+  "singer": [
+    {
+      "id": 41619,
+      "mid": "003X6qCd4Ki2c1",
+      "name": "神前暁",
+      "title": "神前暁 (こうさき さとる)",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 20329070,
+    "albumMid": "002W6lFS0Yjag0",
+    "name": "Vivy -Fluorite Eye's Song- Original Soundtrack",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000002W6lFS0Yjag0.jpg"
+  }
 }

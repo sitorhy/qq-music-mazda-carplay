@@ -1,3 +1,23 @@
 {
-  "songMid": "000kjWi30mYMQl"
+  "songId": 241959481,
+  "songMid": "000kjWi30mYMQl",
+  "name": "Ebb and Flow",
+  "title": "Ebb and Flow (5 years after remix)",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 3832937,
+      "mid": "001a5Yhr44Yj2V",
+      "name": "Tamame",
+      "title": "Tamame",
+      "type": 3,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 8630127,
+    "albumMid": "0010Dyel388lcB",
+    "name": "Ebb and Flow (5 years after remix)",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M0000010Dyel388lcB.jpg"
+  }
 }

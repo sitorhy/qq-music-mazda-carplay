@@ -1,3 +1,31 @@
 {
-  "songMid": "0010G6XE3SkbEt"
+  "songId": 311837924,
+  "songMid": "0010G6XE3SkbEt",
+  "name": "愛の詩-words of love-",
+  "title": "愛の詩-words of love- (爱之诗)",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 8552237,
+      "mid": "003ybJZK0PxP6C",
+      "name": "千菅　春香",
+      "title": "千菅　春香",
+      "type": 0,
+      "uin": 0
+    },
+    {
+      "id": 6211475,
+      "mid": "004N26MY03bsCv",
+      "name": "Victor Music Arts, Inc.",
+      "title": "Victor Music Arts, Inc.",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 19887991,
+    "albumMid": "001ryzWg3jP5Wi",
+    "name": "愛の詩-words of love-",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000001ryzWg3jP5Wi.jpg"
+  }
 }

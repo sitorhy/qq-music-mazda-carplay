@@ -1,3 +1,23 @@
 {
-  "songMid": "001oMnX80KQmaX"
+  "songId": 105731873,
+  "songMid": "001oMnX80KQmaX",
+  "name": "彼女達のコントレイル",
+  "title": "彼女達のコントレイル (她们的轨迹)",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 64540,
+      "mid": "0017SqyA0f7Rgi",
+      "name": "Elements Garden",
+      "title": "Elements Garden (エレメンツ・ガーデン)",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 1303349,
+    "albumMid": "003djV5E1lpqkB",
+    "name": "あおかなサウンドトラックCD Vol.1",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000003djV5E1lpqkB.jpg"
+  }
 }

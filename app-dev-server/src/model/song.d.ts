@@ -1,4 +1,5 @@
 import { Singer } from './singer';
+import { Album } from './album';
 
 export interface Song {
   songId: number;
@@ -7,4 +8,5 @@ export interface Song {
   title: string;
   subtitle: string;
   singer: Array<Singer>;
+  album?: Album;
 }

@@ -1,3 +1,23 @@
 {
-  "songMid": "002a9GrQ4RpHqe"
+  "songId": 204231128,
+  "songMid": "002a9GrQ4RpHqe",
+  "name": "battle of the shadows",
+  "title": "battle of the shadows",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 7819,
+      "mid": "001TLcX3287o6C",
+      "name": "梶浦由记",
+      "title": "梶浦由记 (かじうら ゆき)",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 2265653,
+    "albumMid": "000nqnL13Wipgs",
+    "name": "TVアニメ『プリンセス・プリンシパル』オリジナルサウンドトラック「Sound of Foggy London」",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000000nqnL13Wipgs.jpg"
+  }
 }

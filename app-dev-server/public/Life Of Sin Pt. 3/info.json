@@ -1,3 +1,23 @@
 {
-  "songMid": "000HTakJ3vvLY9"
+  "songId": 201822501,
+  "songMid": "000HTakJ3vvLY9",
+  "name": "Life Of Sin Pt. 3",
+  "title": "Life Of Sin Pt. 3 (Original Mix)",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 158730,
+      "mid": "001ELuCx1qIxEv",
+      "name": "MitiS",
+      "title": "MitiS",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 2002680,
+    "albumMid": "000iKTrp0HbsqQ",
+    "name": "Life Of Sin Series",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000000iKTrp0HbsqQ.jpg"
+  }
 }

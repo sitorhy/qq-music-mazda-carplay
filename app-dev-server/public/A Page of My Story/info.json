@@ -1,3 +1,23 @@
 {
-  "songMid": "0008Pv8C4XgDX7"
+  "songId": 203411303,
+  "songMid": "0008Pv8C4XgDX7",
+  "name": "A Page of My Story",
+  "title": "A Page of My Story",
+  "subtitle": "《Princess Principal》TV动画片尾曲",
+  "singer": [
+    {
+      "id": 34983,
+      "mid": "004TZD3C2xDema",
+      "name": "日本群星",
+      "title": "日本群星 (オムニバス)",
+      "type": 3,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 2183451,
+    "albumMid": "001PHNQJ1ah2xs",
+    "name": "A Page of My Story",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000001PHNQJ1ah2xs.jpg"
+  }
 }

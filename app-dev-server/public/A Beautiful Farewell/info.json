@@ -1,3 +1,23 @@
 {
-  "songMid": "003ioYNo0nMT06"
+  "songId": 9104214,
+  "songMid": "003ioYNo0nMT06",
+  "name": "A Beautiful Farewell",
+  "title": "A Beautiful Farewell",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 37691,
+      "mid": "000Bqogd0BQDtr",
+      "name": "Soulostar",
+      "title": "Soulostar",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 779965,
+    "albumMid": "002sPNDS0fQnWE",
+    "name": "lovewell",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000002sPNDS0fQnWE.jpg"
+  }
 }

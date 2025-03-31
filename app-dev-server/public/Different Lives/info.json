@@ -1,3 +1,31 @@
 {
-  "songMid": "0040hzH70bQcQt"
+  "songId": 453688936,
+  "songMid": "0040hzH70bQcQt",
+  "name": "Different Lives",
+  "title": "Different Lives (Explicit)",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 1032783,
+      "mid": "002Z3sF30UL9zC",
+      "name": "Fly By Midnight",
+      "title": "Fly By Midnight",
+      "type": 2,
+      "uin": 0
+    },
+    {
+      "id": 8395540,
+      "mid": "000pV59D2j9oeE",
+      "name": "Rachel Grae",
+      "title": "Rachel Grae",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 44364682,
+    "albumMid": "002nF0gf1sxOS5",
+    "name": "Different Lives (Explicit)",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000002nF0gf1sxOS5.jpg"
+  }
 }

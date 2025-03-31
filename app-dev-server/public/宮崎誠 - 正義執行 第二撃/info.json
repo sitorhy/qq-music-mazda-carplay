@@ -1,3 +1,23 @@
 {
-  "songMid": "002XYVff4UNdjP"
+  "songId": 235446569,
+  "songMid": "002XYVff4UNdjP",
+  "name": "正義執行 第二撃",
+  "title": "正義執行 第二撃",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 947082,
+      "mid": "004a9s5U46K6Mx",
+      "name": "宮崎誠",
+      "title": "宮崎誠 (Miyazaki Makoto)",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 7285993,
+    "albumMid": "000Yb3UM3yDq1R",
+    "name": "TVアニメ『ワンパンマン』第2期 オリジナルサウンドトラック",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000000Yb3UM3yDq1R.jpg"
+  }
 }

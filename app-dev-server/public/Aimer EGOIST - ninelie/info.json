@@ -1,3 +1,31 @@
 {
-  "songMid": "002tXCu72qRNWC"
+  "songId": 107551815,
+  "songMid": "002tXCu72qRNWC",
+  "name": "ninelie",
+  "title": "ninelie",
+  "subtitle": "《甲铁城的卡巴内瑞》TV动画第2-10、12集片尾曲",
+  "singer": [
+    {
+      "id": 33716,
+      "mid": "0039EKtl4ec7wv",
+      "name": "Aimer",
+      "title": "Aimer (エメ)",
+      "type": 1,
+      "uin": 0
+    },
+    {
+      "id": 64337,
+      "mid": "003ioELr0gchIY",
+      "name": "chelly",
+      "title": "chelly",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 1326654,
+    "albumMid": "001SITnt4KExJr",
+    "name": "ナインリィイーピー",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000001SITnt4KExJr.jpg"
+  }
 }

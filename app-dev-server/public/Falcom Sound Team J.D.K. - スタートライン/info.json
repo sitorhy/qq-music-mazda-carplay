@@ -1,3 +1,23 @@
 {
-  "songMid": "003KJE5c3vvzxd"
+  "songId": 309715532,
+  "songMid": "003KJE5c3vvzxd",
+  "name": "スタートライン",
+  "title": "スタートライン",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 36505,
+      "mid": "0007JPMw2fpEpN",
+      "name": "Falcom Sound Team J.D.K.",
+      "title": "Falcom Sound Team J.D.K. (ふぁるこむ・さうんどちーむ・じぇいでぃーけい)",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 19603117,
+    "albumMid": "004OsaPq0Hr6IZ",
+    "name": "英雄伝説 閃の軌跡III オリジナルサウンドトラック 上巻 (1)",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000004OsaPq0Hr6IZ.jpg"
+  }
 }

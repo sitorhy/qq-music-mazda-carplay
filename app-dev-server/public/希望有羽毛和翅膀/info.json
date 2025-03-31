@@ -1,3 +1,39 @@
 {
-  "songMid": "004ArOCZ13Lvqo"
+  "songId": 486451866,
+  "songMid": "004ArOCZ13Lvqo",
+  "name": "希望有羽毛和翅膀",
+  "title": "希望有羽毛和翅膀",
+  "subtitle": "Hope Is the Thing With Feathers",
+  "singer": [
+    {
+      "id": 15908113,
+      "mid": "003HK9132IEj2d",
+      "name": "知更鸟",
+      "title": "知更鸟",
+      "type": 5,
+      "uin": 0
+    },
+    {
+      "id": 980851,
+      "mid": "001uz8tl04tdL8",
+      "name": "HOYO-MiX",
+      "title": "HOYO-MiX",
+      "type": 3,
+      "uin": 0
+    },
+    {
+      "id": 8769703,
+      "mid": "004GT4Zg3px1q5",
+      "name": "Chevy",
+      "title": "Chevy",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 49872892,
+    "albumMid": "002HgJfp494Uax",
+    "name": "崩坏星穹铁道-空气蛹 INSIDE",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000002HgJfp494Uax.jpg"
+  }
 }

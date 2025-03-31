@@ -1,3 +1,39 @@
 {
-  "songMid": "004DhAai3R0CEm"
+  "songId": 270910341,
+  "songMid": "004DhAai3R0CEm",
+  "name": "プラネタリウム",
+  "title": "プラネタリウム",
+  "subtitle": "《宝石幻想：光芒重现》TV动画片尾曲",
+  "singer": [
+    {
+      "id": 6422281,
+      "mid": "000tMXHO0iwscJ",
+      "name": "ラピスリライツ・スターズ",
+      "title": "ラピスリライツ・スターズ",
+      "type": 2,
+      "uin": 0
+    },
+    {
+      "id": 7534666,
+      "mid": "003vlXkz0gOVVk",
+      "name": "LiGHTs",
+      "title": "LiGHTs",
+      "type": 0,
+      "uin": 0
+    },
+    {
+      "id": 6712338,
+      "mid": "004Pj5q03ZO1vT",
+      "name": "Victor Music Arts, Inc.",
+      "title": "Victor Music Arts, Inc.",
+      "type": 3,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 13344504,
+    "albumMid": "004Bkr4H06astu",
+    "name": "私たちのSTARTRAIL / プラネタリウム",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000004Bkr4H06astu.jpg"
+  }
 }

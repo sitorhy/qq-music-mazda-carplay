@@ -1,3 +1,23 @@
 {
-  "songMid": "001viKrW3nev5H"
+  "songId": 542988932,
+  "songMid": "001viKrW3nev5H",
+  "name": "失眠症 Dance in a Deep Dream",
+  "title": "失眠症 Dance in a Deep Dream",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 980851,
+      "mid": "001uz8tl04tdL8",
+      "name": "HOYO-MiX",
+      "title": "HOYO-MiX",
+      "type": 3,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 58273787,
+    "albumMid": "002ABRvJ3uxKpe",
+    "name": "崩坏星穹铁道-星空剧场2 Astral Theater Vol.2",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000002ABRvJ3uxKpe.jpg"
+  }
 }

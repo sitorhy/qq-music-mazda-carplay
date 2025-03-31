@@ -1,3 +1,23 @@
 {
-  "songMid": "0033mPLc1VlLTN"
+  "songId": 102170393,
+  "songMid": "0033mPLc1VlLTN",
+  "name": "Blue Destination",
+  "title": "Blue Destination",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 36505,
+      "mid": "0007JPMw2fpEpN",
+      "name": "Falcom Sound Team J.D.K.",
+      "title": "Falcom Sound Team J.D.K. (ふぁるこむ・さうんどちーむ・じぇいでぃーけい)",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 961970,
+    "albumMid": "001IyIvn23Ut3P",
+    "name": "英雄伝説 閃の軌跡II オリジナルサウンドトラック",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000001IyIvn23Ut3P.jpg"
+  }
 }

@@ -1,3 +1,23 @@
 {
-  "songMid": "004G6cMB3fUhjj"
+  "songId": 328885079,
+  "songMid": "004G6cMB3fUhjj",
+  "name": "景星庆云",
+  "title": "景星庆云",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 15702,
+      "mid": "004WKN8e0hVsIG",
+      "name": "陈致逸",
+      "title": "陈致逸",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 22814595,
+    "albumMid": "001xU9n100S1jd",
+    "name": "仙剑奇侠传七 原声音乐集",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000001xU9n100S1jd.jpg"
+  }
 }

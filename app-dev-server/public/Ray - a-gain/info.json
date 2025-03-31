@@ -1,3 +1,23 @@
 {
-  "songMid": "000x3cZU1719EV"
+  "songId": 105584833,
+  "songMid": "000x3cZU1719EV",
+  "name": "a-gain",
+  "title": "a-gain",
+  "subtitle": "《苍之彼方的四重奏》TV动画第2-11集片尾曲",
+  "singer": [
+    {
+      "id": 13029512,
+      "mid": "000o5mm30EKIBz",
+      "name": "Ray",
+      "title": "Ray",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 1283394,
+    "albumMid": "002QzuE43PbFgf",
+    "name": "a-gain",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000002QzuE43PbFgf.jpg"
+  }
 }

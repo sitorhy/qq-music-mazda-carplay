@@ -1,3 +1,23 @@
 {
-  "songMid": "002BW8gj26MKXH"
+  "songId": 1163963,
+  "songMid": "002BW8gj26MKXH",
+  "name": "ビードロ模様",
+  "title": "ビードロ模様 (夏末光景)",
+  "subtitle": "《在盛夏等待》TV动画片尾曲",
+  "singer": [
+    {
+      "id": 38664,
+      "mid": "004XBjA330QytV",
+      "name": "やなぎなぎ",
+      "title": "やなぎなぎ (柳凪)",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 98616,
+    "albumMid": "0024bBmW0Ptkre",
+    "name": "ビードロ模様",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M0000024bBmW0Ptkre.jpg"
+  }
 }

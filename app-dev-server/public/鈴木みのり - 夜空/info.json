@@ -1,3 +1,31 @@
 {
-  "songMid": "002kRBXT09namE"
+  "songId": 311841970,
+  "songMid": "002kRBXT09namE",
+  "name": "夜空",
+  "title": "夜空",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 1158465,
+      "mid": "004bw0fd0U2q5H",
+      "name": "铃木实里",
+      "title": "铃木实里 (鈴木みのり)",
+      "type": 1,
+      "uin": 0
+    },
+    {
+      "id": 6211475,
+      "mid": "004N26MY03bsCv",
+      "name": "Victor Music Arts, Inc.",
+      "title": "Victor Music Arts, Inc.",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 19888385,
+    "albumMid": "000RJNnn21PaLI",
+    "name": "TVアニメ「恋する小惑星（アステロイド）」エンディングテーマ　夜空",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M000000RJNnn21PaLI.jpg"
+  }
 }

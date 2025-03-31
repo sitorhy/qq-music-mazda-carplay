@@ -1,3 +1,23 @@
 {
-  "songMid": "000n1jcp4UOHKn"
+  "songId": 281736377,
+  "songMid": "000n1jcp4UOHKn",
+  "name": "キミのとなりで",
+  "title": "キミのとなりで",
+  "subtitle": "《樱与抱月》TV动画片尾曲",
+  "singer": [
+    {
+      "id": 1486282,
+      "mid": "003jEeja1N2ruw",
+      "name": "鬼頭明里",
+      "title": "鬼頭明里 (きとう あかり)",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 15220136,
+    "albumMid": "0042Fb3S2wqmP0",
+    "name": "キミのとなりで",
+    "cover": "https://y.qq.com/music/photo_new/T002R300x300M0000042Fb3S2wqmP0.jpg"
+  }
 }
