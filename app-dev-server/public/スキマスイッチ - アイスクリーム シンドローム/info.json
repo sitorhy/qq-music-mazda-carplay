@@ -1,0 +1,23 @@
+{
+  "songId": 104119852,
+  "songMid": "001558oV2QgsJP",
+  "name": "アイスクリーム シンドローム",
+  "title": "アイスクリーム シンドローム (冰淇淋症候群) (Movie edition)",
+  "subtitle": "《神奇宝贝：幻影的霸者索罗亚克》剧场版片尾曲",
+  "singer": [
+    {
+      "id": 11689,
+      "mid": "004QxzFI3pZIyv",
+      "name": "无限开关",
+      "title": "无限开关 (スキマスイッチ)",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 1136158,
+    "albumMid": "000QDAlb2pZB69",
+    "name": "劇場版ポケットモンスター ダイヤモンド・パール「幻影の覇者 ゾロアーク」ミュージックコレクション",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000000QDAlb2pZB69.jpg"
+  }
+}

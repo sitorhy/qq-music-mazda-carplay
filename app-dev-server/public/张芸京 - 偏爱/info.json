@@ -1,0 +1,23 @@
+{
+  "songId": 473137,
+  "songMid": "003Ho2cO2RXwUc",
+  "name": "偏爱",
+  "title": "偏爱",
+  "subtitle": "《仙剑奇侠传3》电视剧插曲",
+  "singer": [
+    {
+      "id": 16012,
+      "mid": "000acPsp0cfUZr",
+      "name": "张芸京",
+      "title": "张芸京",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 38543,
+    "albumMid": "003ha6C92GRuVE",
+    "name": "破天荒",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000003ha6C92GRuVE.jpg"
+  }
+}

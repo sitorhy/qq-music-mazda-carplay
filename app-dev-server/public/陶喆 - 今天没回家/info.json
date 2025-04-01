@@ -1,0 +1,23 @@
+{
+  "songId": 4965995,
+  "songMid": "000aXlPu3Ole39",
+  "name": "今天没回家",
+  "title": "今天没回家",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 101,
+      "mid": "002cK0F12szD9T",
+      "name": "陶喆",
+      "title": "陶喆",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 13871,
+    "albumMid": "003TxsNg02BzE5",
+    "name": "Ultrasound 乐之路 1997-2003",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000003TxsNg02BzE5.jpg"
+  }
+}

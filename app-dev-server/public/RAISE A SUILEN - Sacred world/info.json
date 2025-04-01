@@ -1,0 +1,23 @@
+{
+  "songId": 291335996,
+  "songMid": "002fe5Hm1BgiJs",
+  "name": "Sacred world",
+  "title": "Sacred world",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 2787722,
+      "mid": "003jnoIR4eN7b5",
+      "name": "RAISE A SUILEN",
+      "title": "RAISE A SUILEN",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 16474765,
+    "albumMid": "002Apx2i0FV6ZF",
+    "name": "Sacred world",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000002Apx2i0FV6ZF.jpg"
+  }
+}

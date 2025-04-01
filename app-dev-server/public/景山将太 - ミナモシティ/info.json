@@ -1,0 +1,23 @@
+{
+  "songId": 104137907,
+  "songMid": "00028N891UmWbQ",
+  "name": "ミナモシティ",
+  "title": "ミナモシティ (水静市)",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 57225,
+      "mid": "003RfQ3j14DP8l",
+      "name": "増田順一",
+      "title": "増田順一 (Junichi Masuda)",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 1138003,
+    "albumMid": "001mHOxf3ePV2x",
+    "name": "ニンテンドー3DS ポケモン オメガルビー・アルファサファイア スーパーミュージックコンプリート",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000001mHOxf3ePV2x.jpg"
+  }
+}

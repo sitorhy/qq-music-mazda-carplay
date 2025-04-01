@@ -1,0 +1,23 @@
+{
+  "songId": 247817510,
+  "songMid": "000lu1gN36aAO9",
+  "name": "带我去找夜生活",
+  "title": "带我去找夜生活",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 1400123,
+      "mid": "002pfVN53lKI7x",
+      "name": "告五人",
+      "title": "告五人",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 9701222,
+    "albumMid": "000hAGW34YY1lL",
+    "name": "带我去找夜生活",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000000hAGW34YY1lL.jpg"
+  }
+}

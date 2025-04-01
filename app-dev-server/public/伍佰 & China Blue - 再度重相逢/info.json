@@ -1,0 +1,23 @@
+{
+  "songId": 3343,
+  "songMid": "002zmbfl20fPlG",
+  "name": "再度重相逢",
+  "title": "再度重相逢",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 5943,
+      "mid": "004OTPJW1frR0y",
+      "name": "伍佰 & China Blue",
+      "title": "伍佰 & China Blue",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 310,
+    "albumMid": "000tXk9a4Jnf2G",
+    "name": "泪桥",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000000tXk9a4Jnf2G.jpg"
+  }
+}

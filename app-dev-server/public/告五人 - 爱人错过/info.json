@@ -1,0 +1,23 @@
+{
+  "songId": 232967259,
+  "songMid": "0029B8mN2eOjhw",
+  "name": "爱人错过",
+  "title": "爱人错过",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 1400123,
+      "mid": "002pfVN53lKI7x",
+      "name": "告五人",
+      "title": "告五人",
+      "type": 2,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 6945443,
+    "albumMid": "003uVIiJ1SQEHm",
+    "name": "我肯定在几百年前就说过爱你",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000003uVIiJ1SQEHm.jpg"
+  }
+}

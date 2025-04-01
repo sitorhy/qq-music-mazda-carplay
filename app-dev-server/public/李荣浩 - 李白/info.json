@@ -1,0 +1,23 @@
+{
+  "songId": 5016168,
+  "songMid": "000rMFLS0ZnngN",
+  "name": "李白",
+  "title": "李白",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 60505,
+      "mid": "000aHmbL2aPXWH",
+      "name": "李荣浩",
+      "title": "李荣浩",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 435269,
+    "albumMid": "004AhJHV3slLjN",
+    "name": "模特",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000004AhJHV3slLjN.jpg"
+  }
+}

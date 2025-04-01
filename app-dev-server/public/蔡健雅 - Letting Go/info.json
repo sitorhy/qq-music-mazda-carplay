@@ -1,0 +1,23 @@
+{
+  "songId": 1030353,
+  "songMid": "004aJoYT3ia7al",
+  "name": "Letting Go",
+  "title": "Letting Go",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 112,
+      "mid": "000hNnWC3kko2c",
+      "name": "蔡健雅",
+      "title": "蔡健雅",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 87747,
+    "albumMid": "001aC9dM35U6KB",
+    "name": "说到爱",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000001aC9dM35U6KB.jpg"
+  }
+}

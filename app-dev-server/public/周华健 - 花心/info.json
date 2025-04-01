@@ -1,0 +1,23 @@
+{
+  "songId": 1139316,
+  "songMid": "003j8LMm293ttj",
+  "name": "花心",
+  "title": "花心",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 96,
+      "mid": "003NThQh3ujqIo",
+      "name": "周华健",
+      "title": "周华健",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 424,
+    "albumMid": "0049kNf81OKsYf",
+    "name": "花心",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M0000049kNf81OKsYf.jpg"
+  }
+}

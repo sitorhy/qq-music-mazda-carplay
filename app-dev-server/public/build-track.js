@@ -2,6 +2,74 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import path, { sep } from 'path';
 import { fileURLToPath } from 'url'
+import axios from 'axios';
+import iconv from 'iconv-lite';
+
+function parseHTML(str) {
+    let replacements = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '""': "&quot;",
+        "'": "&apos;",
+        "<>": "&lt;&gt;",
+    }
+    for (const i in replacements) {
+        str = str.replaceAll(replacements[i], i);
+    }
+    return str;
+}
+
+function getFileNameWithoutExtension(filePath) {
+    return filePath.split('.').slice(0, -1).join('.');
+}
+
+function download(url, location) {
+    axios({
+        method: 'get',
+        url: url,
+        responseType: 'stream'
+    })
+        .then(response => {
+            response.data.pipe(fs.createWriteStream(location));
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+function downloadLyric(songMid, location) {
+    axios({
+        method: 'get',
+        url: 'http://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg',
+        headers: {
+            Origin: 'https://y.qq.com',
+            Referer: 'https://y.qq.com/'
+        },
+        params: {
+            songmid: songMid,
+            pcachetime: Date.now(),
+            g_tk: 5381,
+            loginUin: 0,
+            hostUin: 0,
+            inCharset: "utf8",
+            outCharset: "utf-8",
+            notice: 0,
+            platform: "yqq",
+            needNewCode: 0,
+        }
+    })
+        .then(response => {
+            const jsonText = response.data.slice("MusicJsonCallback(".length, response.data.length - 1);
+            const json = JSON.parse(jsonText);
+            const bufB64 = Buffer.from(json.lyric, 'base64');
+            const lyricText = iconv.decode(bufB64, 'utf8');
+            fs.writeFileSync(location, parseHTML(lyricText));
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
 
 function fetchDetail(song_mid) {
     return fetch("https://u6.y.qq.com/cgi-bin/musicu.fcg?_=1743440320945&sign=zzcd56d910nvfg92m66mhdcfgew52imbfou097ed0eb3", {
@@ -58,7 +126,7 @@ function fetchDetail(song_mid) {
                 albumId: json.req_1.data.track_info.album.id,
                 albumMid: json.req_1.data.track_info.album.mid,
                 name: json.req_1.data.track_info.album.name,
-                cover: `https://y.qq.com/music/photo_new/T002R300x300M000${json.req_1.data.track_info.album.mid}.jpg`,
+                cover: `https://y.qq.com/music/photo_new/T002R800x800M000${json.req_1.data.track_info.album.mid}.jpg`,
             }
         }
         return song;
@@ -72,15 +140,24 @@ function readDir(path, child = '') {
     const dirs = fs.readdirSync(path);
     dirs.forEach(dir => {
         const full = `${path}${sep}${dir}`;
-        console.log(full);
-        if (fs.existsSync(full) && fs.statSync(full).isDirectory) {
+        if (fs.statSync(full).isDirectory()) {
+            console.log(full);
             const infoPath = `${full}${sep}info.json`;
+            const files = fs.readdirSync(full);
+            const hasCover = files.some(i => i.lastIndexOf('.jpg') >= 0 || i.lastIndexOf('.png') >= 0 || i.lastIndexOf('.webp') >= 0);
+            const hasLyric = files.some(i => i.lastIndexOf('.lrc') >= 0);
+            const mp3Name = files.find(i => i.lastIndexOf('.mp3') >= 0 || i.lastIndexOf('.ogg') >= 0 || i.lastIndexOf('.m4a') >= 0);
             if (fs.existsSync(infoPath) && fs.statSync(infoPath).isFile) {
                 const data = fs.readFileSync(infoPath, { encoding: "utf-8" });
                 try {
                     const info = JSON.parse(data);
-                    console.log(info);
                     fetchDetail(info.songMid).then(songDetail => {
+                        if (!hasCover) {
+                            download(songDetail.album.cover, `${full}${sep}${songDetail.album.cover.split('/').slice(-1)}`);
+                        }
+                        //if (!hasLyric) {
+                        downloadLyric(songDetail.songMid, `${full}${sep}${getFileNameWithoutExtension(mp3Name)}.lrc`);
+                        //}
                         fs.writeFileSync(infoPath, JSON.stringify(songDetail, null, 2));
                     });
                 } catch (e) {
