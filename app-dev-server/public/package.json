@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "build-track.js",
+  "main": "lyric-merge.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

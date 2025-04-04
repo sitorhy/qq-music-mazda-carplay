@@ -4,6 +4,7 @@ import path, { sep } from 'path';
 import { fileURLToPath } from 'url'
 import axios from 'axios';
 import iconv from 'iconv-lite';
+import { parseLyric, joinLyricData, toText } from './lyric-merge.js';
 
 function parseHTML(str) {
     let replacements = {
@@ -62,9 +63,26 @@ function downloadLyric(songMid, location) {
         .then(response => {
             const jsonText = response.data.slice("MusicJsonCallback(".length, response.data.length - 1);
             const json = JSON.parse(jsonText);
-            const bufB64 = Buffer.from(json.lyric, 'base64');
-            const lyricText = iconv.decode(bufB64, 'utf8');
-            fs.writeFileSync(location, parseHTML(lyricText));
+            if (!json.lyric) {
+                console.warn(`${songMid} 没有歌词.`);
+                return;
+            }
+            const lyricBufB64 = Buffer.from(json.lyric, 'base64');
+            const lyricText = iconv.decode(lyricBufB64, 'utf8');
+            if (json.trans) {
+                const transBufB64 = Buffer.from(json.trans, 'base64');
+                const transText = iconv.decode(transBufB64, 'utf8');
+                
+                const origLyricData = parseLyric(lyricText);
+                const transLyricData = parseLyric(transText);
+
+                const joinedData = joinLyricData(origLyricData.concat(transLyricData));
+                const joinedText = toText(joinedData);
+                fs.writeFileSync(location, parseHTML(joinedText));
+            }
+            else {
+                fs.writeFileSync(location, parseHTML(lyricText));
+            }
         })
         .catch(error => {
             console.log(error);
@@ -155,9 +173,9 @@ function readDir(path, child = '') {
                         if (!hasCover) {
                             download(songDetail.album.cover, `${full}${sep}${songDetail.album.cover.split('/').slice(-1)}`);
                         }
-                        //if (!hasLyric) {
-                        downloadLyric(songDetail.songMid, `${full}${sep}${getFileNameWithoutExtension(mp3Name)}.lrc`);
-                        //}
+                        if (!hasLyric) {
+                            downloadLyric(songDetail.songMid, `${full}${sep}${getFileNameWithoutExtension(mp3Name)}.lrc`);
+                        }
                         fs.writeFileSync(infoPath, JSON.stringify(songDetail, null, 2));
                     });
                 } catch (e) {

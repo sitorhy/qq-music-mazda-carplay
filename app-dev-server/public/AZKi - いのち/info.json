@@ -1,0 +1,23 @@
+{
+  "songId": 488079215,
+  "songMid": "002OznVo1N4Ilr",
+  "name": "いのち",
+  "title": "いのち",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 3240518,
+      "mid": "004fBdV9176TTN",
+      "name": "AZKi",
+      "title": "AZKi",
+      "type": 1,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 50215450,
+    "albumMid": "003LGTCg0cMWNw",
+    "name": "いのち",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000003LGTCg0cMWNw.jpg"
+  }
+}
