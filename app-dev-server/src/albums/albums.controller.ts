@@ -1,32 +1,32 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 
 @Controller('albums')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
-  @Get('/my/playlists')
-  getMyPlaylists(pageNo: number, pageSize: number) {
-    return this.albumsService.getMyPlaylists(pageNo, pageSize);
+  @Post('/my/playlists')
+  getMyPlaylists(@Body() params: { pageNo: number, pageSize: number; }) {
+    return this.albumsService.getMyPlaylists(params.pageNo, params.pageSize);
   }
 
-  @Get('my/playlists/fav')
-  getMyFavPlaylists(pageNo: number, pageSize: number) {
-    return this.albumsService.getMyFavPlaylists(pageNo, pageSize);
+  @Post('my/playlists/fav')
+  getMyFavPlaylists(@Body() params: { pageNo: number, pageSize: number; }) {
+    return this.albumsService.getMyFavPlaylists(params.pageNo, params.pageSize);
   }
 
-  @Get('/my/albums/fav')
-  getMyFavAlbums(pageNo: number, pageSize: number) {
-    return this.albumsService.getMyFavAlbums(pageNo, pageSize);
+  @Post('/my/albums/fav')
+  getMyFavAlbums(@Body() params: { pageNo: number, pageSize: number; }) {
+    return this.albumsService.getMyFavAlbums(params.pageNo, params.pageSize);
   }
 
-  @Get('/singer/albums')
-  getSingerAlbums(singerMid: string, pageNo: number, pageSize: number) {
-    return this.albumsService.getSingerAlbums(singerMid, pageNo, pageSize);
+  @Post('/singer/albums')
+  getSingerAlbums(@Body() params: { singerMid: string, pageNo: number, pageSize: number }) {
+    return this.albumsService.getSingerAlbums(params.singerMid, params.pageNo, params.pageSize);
   }
 
-  @Get('/newest')
-  getNewAlbums(pageNo: number, pageSize: number) {
-    return this.albumsService.getNewAlbums(pageNo, pageSize);
+  @Post('/newest')
+  getNewAlbums(@Body() params: { pageNo: number, pageSize: number }) {
+    return this.albumsService.getNewAlbums(params.pageNo, params.pageSize);
   }
 }

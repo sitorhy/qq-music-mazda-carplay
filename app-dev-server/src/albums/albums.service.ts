@@ -1,24 +1,27 @@
 import { Injectable } from '@nestjs/common';
+import { getAllPlaylists } from '../data/playlists';
+import { getAllAlbums } from '../data/albums';
+import { getSingerAlbums } from '../data/singers';
 
 @Injectable()
 export class AlbumsService {
-  getMyPlaylists(pageNo: number, pageSize: number) {
-    return Promise.resolve([]);
+  async getMyPlaylists(pageNo: number, pageSize: number) {
+    return getAllPlaylists();
   }
 
-  getMyFavPlaylists(pageNo: number, pageSize: number) {
-    return Promise.resolve([]);
+  async getMyFavPlaylists(pageNo: number, pageSize: number) {
+    return getAllPlaylists();
   }
 
-  getMyFavAlbums(pageNo: number, pageSize: number) {
-    return Promise.resolve([]);
+  async getMyFavAlbums(pageNo: number, pageSize: number) {
+    return getAllAlbums();
   }
 
-  getSingerAlbums(singerMid: string, pageNo: number, pageSize: number) {
-    return Promise.resolve([]);
+  async getSingerAlbums(singerMid: string, pageNo: number, pageSize: number) {
+    return getSingerAlbums(singerMid);
   }
 
-  getNewAlbums(pageNo: number, pageSize: number) {
-    return Promise.resolve([]);
+  async getNewAlbums(pageNo: number, pageSize: number) {
+    return getAllAlbums();
   }
 }

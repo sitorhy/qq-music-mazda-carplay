@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { SongService } from './song.service';
 
 @Controller('song')
@@ -10,19 +10,33 @@ export class SongController {
     return this.songService.getPlaylistSongs(dissId);
   }
 
-  @Get('/source')
-  getSongSource(songMid: string, strMediaMid: string, type?: string) {
-    return this.songService.getSongSource(songMid, strMediaMid, type);
+  @Post('/source')
+  getSongSource(
+    @Body() params: { songMid: string; strMediaMid: string; type?: string },
+  ) {
+    return this.songService.getSongSource(
+      params.songMid,
+      params.strMediaMid,
+      params.type,
+    );
   }
 
-  @Get('/album')
+  @Post('/album')
   getAlbumSongs(
-    albumMid: string,
-    albumId: number,
-    pageNo: number,
-    pageSize: number,
+    @Body()
+    params: {
+      albumMid: string;
+      albumId: number;
+      pageNo: number;
+      pageSize: number;
+    },
   ) {
-    return this.songService.getAlbumSongs(albumMid, albumId, pageNo, pageSize);
+    return this.songService.getAlbumSongs(
+      params.albumMid,
+      params.albumId,
+      params.pageNo,
+      params.pageSize,
+    );
   }
 
   @Get('/singer/top')
@@ -40,8 +54,8 @@ export class SongController {
     return this.songService.getTopList();
   }
 
-  @Get('/lyric')
-  getSongLyric(songMid: string) {
-    return this.songService.getSongLyric(songMid);
+  @Post('/lyric')
+  getSongLyric(@Body() params: { songMid: string }) {
+    return this.songService.getSongLyric(params.songMid);
   }
 }

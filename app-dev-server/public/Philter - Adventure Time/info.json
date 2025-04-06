@@ -1,0 +1,23 @@
+{
+  "songId": 101146184,
+  "songMid": "001Bj2473SK1I1",
+  "name": "Adventure Time",
+  "title": "Adventure Time",
+  "subtitle": "",
+  "singer": [
+    {
+      "id": 135268,
+      "mid": "001wCJdm46ynQq",
+      "name": "Philter",
+      "title": "Philter",
+      "type": 0,
+      "uin": 0
+    }
+  ],
+  "album": {
+    "albumId": 854227,
+    "albumMid": "003K8U1y4Gtono",
+    "name": "The Blossom Chronicles",
+    "cover": "https://y.qq.com/music/photo_new/T002R800x800M000003K8U1y4Gtono.jpg"
+  }
+}

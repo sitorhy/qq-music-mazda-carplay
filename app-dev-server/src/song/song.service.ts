@@ -1,37 +1,48 @@
 import { Injectable } from '@nestjs/common';
+import SongSource from '../model/source';
+import { getAllSongs, getSongLyricById, getSongSourceById } from '../data/songs';
+import { getAlbumSongs } from '../data/albums';
+import { getPlaylistSongsById } from '../data/playlists';
+import { getSingerTopSongs } from '../data/singers';
 
 @Injectable()
 export class SongService {
   getPlaylistSongs(dissId: number) {
-    return Promise.resolve([]);
+    return getPlaylistSongsById(dissId);
   }
 
-  getSongSource(songMid: string, strMediaMid: string, type?: string) {
-    return Promise.resolve([]);
+  async getSongSource(
+    songMid: string,
+    strMediaMid: string,
+    type?: string,
+  ): Promise<SongSource> {
+    return getSongSourceById(songMid);
   }
 
-  getAlbumSongs(
+  async getAlbumSongs(
     albumMid: string,
     albumId: number,
     pageNo: number,
     pageSize: number,
   ) {
-    return Promise.resolve([]);
+    return await getAlbumSongs(albumMid);
   }
 
-  getSingerTopSongs(singerMid: string, pageNo: number, pageSize: number) {
-    return Promise.resolve([]);
+  async getSingerTopSongs(singerMid: string, pageNo: number, pageSize: number) {
+    return getSingerTopSongs(singerMid);
   }
 
-  getNewSongs() {
-    return Promise.resolve([]);
+  async getNewSongs() {
+    const songs = await getAllSongs();
+    return songs.slice(0, 20);
   }
 
-  getTopList() {
-    return Promise.resolve([]);
+  async getTopList() {
+    const songs = await getAllSongs();
+    return songs.slice(10, 30);
   }
 
-  getSongLyric(songMid: string) {
-    return Promise.resolve([]);
+  async getSongLyric(songMid: string) {
+    return await getSongLyricById(songMid);
   }
 }

@@ -151,8 +151,8 @@ function fetchDetail(song_mid) {
     });
 }
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function readDir(path, child = '') {
     const dirs = fs.readdirSync(path);

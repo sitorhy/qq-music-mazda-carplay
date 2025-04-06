@@ -1,13 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
-import { AlbumsService } from '../albums/albums.service';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { FollowService } from './follow.service';
 
 @Controller('follow')
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
-  @Get('/singers')
-  getFollowSingers(pageNo: number, pageSize: number) {
-    return this.followService.getFollowSingers(pageNo, pageSize);
+  @Post('/singers')
+  getFollowSingers(@Body() params: { pageNo: number, pageSize: number; }) {
+    return this.followService.getFollowSingers(params?.pageNo, params?.pageSize);
   }
 }
