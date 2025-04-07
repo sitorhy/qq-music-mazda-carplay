@@ -1,7 +1,6 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { Song } from '../model/song';
-import SongSource from '../model/source';
 
 const songsCache: Song[] = [];
 const songMap = new Map<
@@ -123,14 +122,10 @@ export function getSongDirInfo(dir: string): Song {
   return JSON.parse(jsonText);
 }
 
-export async function getSongSourceById(songMid: string): Promise<SongSource> {
+export async function getSongSourceById(songMid: string): Promise<string> {
   const song = await findBySongId(songMid);
   const detail = songMap.get(songMid);
-  return {
-    code: song ? 0 : -1,
-    msg: song ? '' : '资源不存在或没有版权',
-    url: encodeURI(`/assets/${detail?.dir}/${detail?.audio}`),
-  };
+  return detail ? encodeURI(`/assets/${detail?.dir}/${detail?.audio}`) : '';
 }
 
 export async function getSongLyricById(songMid: string): Promise<string> {

@@ -189,5 +189,5 @@ export async function getAllPlaylists() {
 
 export async function getPlaylistSongsById(dissId: number) {
   await createPlaylists();
-  return playlistMap.get(dissId)?.songs;
+  return playlistMap.get(dissId)?.songs || [];
 }

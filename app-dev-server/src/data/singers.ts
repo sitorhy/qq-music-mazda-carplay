@@ -47,10 +47,10 @@ export async function getAllSingers() {
 
 export async function getSingerAlbums(singerMid: string) {
   await collectSingers();
-  return singersMapCache.get(singerMid)?.albums;
+  return singersMapCache.get(singerMid)?.albums || [];
 }
 
 export async function getSingerTopSongs(singerMid: string) {
   await collectSingers();
-  return singersMapCache.get(singerMid)?.topSongs;
+  return singersMapCache.get(singerMid)?.topSongs || [];
 }
