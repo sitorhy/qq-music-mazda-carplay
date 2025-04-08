@@ -1,14 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
-import { AlbumsService } from '../albums/albums.service';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CategoryService } from './category.service';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Get('/recommended')
-  getRecommendFeed(pageNo: number, pageSize: number) {
-    return this.categoryService.getRecommendFeed(pageNo, pageSize);
+  @Post('/recommended')
+  getRecommendFeed(@Body() params: { pageNo: number, pageSize: number; }) {
+    return this.categoryService.getRecommendFeed(params.pageNo, params.pageSize);
   }
 
   @Get('/hot')
@@ -21,12 +20,12 @@ export class CategoryController {
     return this.categoryService.getAllTag();
   }
 
-  @Get('/playlist')
-  getPlayListCategory(categoryId: number, pageNo: number, pageSize: number) {
+  @Post('/playlist')
+  getPlayListCategory(@Body() params: { categoryId: number, pageNo: number, pageSize: number; }) {
     return this.categoryService.getPlayListCategory(
-      categoryId,
-      pageNo,
-      pageSize,
+      params.categoryId,
+      params.pageNo,
+      params.pageSize,
     );
   }
 }
