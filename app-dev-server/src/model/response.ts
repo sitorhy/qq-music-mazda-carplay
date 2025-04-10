@@ -2,6 +2,7 @@ export class Response<T> {
   public data: T;
   public code: number = 0;
   public message: string = '';
+  public success: boolean = true;
 
   constructor(options: {
     data: T;
