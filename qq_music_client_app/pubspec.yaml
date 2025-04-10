@@ -38,6 +38,7 @@ dependencies:
   fluttericon: ^2.0.0
   crypt: ^4.3.1
   collection: ^1.19.1
+  dio: ^5.8.0+1
 
 dev_dependencies:
   flutter_test:
