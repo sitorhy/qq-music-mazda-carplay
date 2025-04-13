@@ -39,6 +39,8 @@ dependencies:
   crypt: ^4.3.1
   collection: ^1.19.1
   dio: ^5.8.0+1
+  just_audio: ^0.9.46
+  get: ^4.7.2
 
 dev_dependencies:
   flutter_test:
