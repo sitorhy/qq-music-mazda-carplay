@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:qq_music_client_app/router/client_router_delegate.dart';
 import 'package:qq_music_client_app/router/client_route_information_parser.dart';
+import 'package:qq_music_client_app/store/home_controller.dart';
+
+import 'api/http_response.dart';
 
 void main() {
+  HttpService service = HttpService.instance;
+  service.initDio();
+
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
+
+  Get.put(HomeController());
   runApp(ClientApp());
 }
 
 class ClientApp extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  
+
   ClientApp({super.key});
 
   /// MaterialApp.router 初始化
@@ -48,7 +57,7 @@ class ClientApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const Scaffold(
-        // body: WidgetsTestPage(),
+      // body: WidgetsTestPage(),
       //  body: HomeView(),
       //),
       routeInformationParser: ClientRouteInformationParser(),

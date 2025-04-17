@@ -85,7 +85,7 @@ class HomePageContentRouterDelegate extends RouterDelegate<String>
             return _HomePage(
               key: ValueKey(configuration),
               direction: TextDirection.ltr,
-              child: CategorizedPlaylists(),
+              child: const CategorizedPlaylists(),
             );
           }
         case "/recommendation":

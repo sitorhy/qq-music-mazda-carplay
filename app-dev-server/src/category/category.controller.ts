@@ -16,8 +16,13 @@ export class CategoryController {
   }
 
   @Get('/all')
-  getAllTag() {
-    return this.categoryService.getAllTag();
+  getAllGroups() {
+    return this.categoryService.getAllGroups();
+  }
+
+  @Post('/tags')
+  getTags(@Body() params: { tagGroupId: number; }) {
+    return this.categoryService.getTags(params.tagGroupId);
   }
 
   @Post('/playlist')

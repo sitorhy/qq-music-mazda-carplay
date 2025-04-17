@@ -21,10 +21,17 @@ export class CategoryService {
     });
   }
 
-  async getAllTag(): Promise<Response<TagGroup[]>> {
+  async getAllGroups(): Promise<Response<TagGroup[]>> {
     const groups= await getAllTagGroups();
     return new Response<TagGroup[]>({
         data: groups,
+    });
+  }
+
+  async getTags(tagGroupId: number): Promise<Response<Tag[]>> {
+    const tags = await getTagsByGroupId(tagGroupId);
+    return new Response<Tag[]>({
+      data: tags,
     });
   }
 
