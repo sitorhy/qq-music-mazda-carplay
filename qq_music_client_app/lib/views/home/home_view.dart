@@ -16,6 +16,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   String activePlacementName = "1";
+
   final HomePageContentRouterDelegate routerDelegate =
       HomePageContentRouterDelegate(globalKey: GlobalKey<NavigatorState>());
 
@@ -29,7 +30,6 @@ class _HomeViewState extends State<HomeView> {
       ),
       child: Container(
         decoration: const BoxDecoration(color: ClientColors.background),
-        // padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -50,14 +50,12 @@ class _HomeViewState extends State<HomeView> {
                             case "1":
                               routerDelegate.setNewRoutePath("/categorized");
                             case "2":
-                              routerDelegate.setNewRoutePath("/recommendation");
-                            case "3":
                               routerDelegate.setNewRoutePath("/my_playlists");
-                            case "4":
+                            case "3":
                               routerDelegate.setNewRoutePath("/my_favourite_playlists");
-                            case "5":
+                            case "4":
                               routerDelegate.setNewRoutePath("/my_favourite_singers");
-                            case "6":
+                            case "5":
                               routerDelegate.setNewRoutePath("/settings");
                             default:
                               routerDelegate.setNewRoutePath("/not_found");
@@ -73,32 +71,26 @@ class _HomeViewState extends State<HomeView> {
                           itemHeight: 36,
                         ),
                         PageTabItemPlacement(
-                          icon: const IconData(0xe7fc, fontFamily: "IconFont"),
+                          icon: const IconData(0xe72f, fontFamily: "IconFont"),
                           name: "2",
                           itemWidth: 64,
                           itemHeight: 36,
                         ),
                         PageTabItemPlacement(
-                          icon: const IconData(0xe72f, fontFamily: "IconFont"),
+                          icon: const IconData(0xe699, fontFamily: "IconFont"),
                           name: "3",
                           itemWidth: 64,
                           itemHeight: 36,
                         ),
                         PageTabItemPlacement(
-                          icon: const IconData(0xe699, fontFamily: "IconFont"),
+                          icon: const IconData(0xea4c, fontFamily: "IconFont"),
                           name: "4",
                           itemWidth: 64,
                           itemHeight: 36,
                         ),
                         PageTabItemPlacement(
-                          icon: const IconData(0xea4c, fontFamily: "IconFont"),
-                          name: "5",
-                          itemWidth: 64,
-                          itemHeight: 36,
-                        ),
-                        PageTabItemPlacement(
                           icon: const IconData(0xe60f, fontFamily: "IconFont"),
-                          name: "6",
+                          name: "5",
                           itemWidth: 64,
                           itemHeight: 36,
                         ),

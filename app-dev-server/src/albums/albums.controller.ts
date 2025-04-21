@@ -25,8 +25,18 @@ export class AlbumsController {
     return this.albumsService.getSingerAlbums(params.singerMid, params.pageNo, params.pageSize);
   }
 
-  @Post('/newest')
-  getNewAlbums(@Body() params: { pageNo: number, pageSize: number }) {
-    return this.albumsService.getNewAlbums(params.pageNo, params.pageSize);
+  @Get('/newest/albums/tags')
+  getNewAlbumTags() {
+    return this.albumsService.getNewAlbumTags();
+  }
+
+  @Get('/newest/song/tags')
+  getNewSongAlbumTags() {
+    return this.albumsService.getNewSongAlbumTags();
+  }
+
+  @Get('/top/tags')
+  getTopTags() {
+    return this.albumsService.getTopTags();
   }
 }

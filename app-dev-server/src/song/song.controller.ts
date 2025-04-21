@@ -44,16 +44,6 @@ export class SongController {
     return this.songService.getSingerTopSongs(singerMid, pageNo, pageSize);
   }
 
-  @Get('/newest')
-  getNewSongs() {
-    return this.songService.getNewSongs();
-  }
-
-  @Get('/top')
-  getTopList() {
-    return this.songService.getTopList();
-  }
-
   @Post('/lyric')
   getSongLyric(@Body() params: { songMid: string }) {
     return this.songService.getSongLyric(params.songMid);

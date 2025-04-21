@@ -5,7 +5,6 @@ import 'package:qq_music_client_app/views/home/categorized_playlists/categorized
 import 'package:qq_music_client_app/views/home/my_favourite_playlists/my_favourite_playlists.dart';
 import 'package:qq_music_client_app/views/home/my_favourite_singers/my_favourite_singers.dart';
 import 'package:qq_music_client_app/views/home/my_playlists/my_playlists.dart';
-import 'package:qq_music_client_app/views/home/recommendation/recommendation.dart';
 import 'package:qq_music_client_app/views/home/settings/settings.dart';
 
 class _AnimatedHomeContent extends AnimatedWidget {
@@ -85,22 +84,14 @@ class HomePageContentRouterDelegate extends RouterDelegate<String>
             return _HomePage(
               key: ValueKey(configuration),
               direction: TextDirection.ltr,
-              child: const CategorizedPlaylists(),
-            );
-          }
-        case "/recommendation":
-          {
-            return _HomePage(
-              key: ValueKey(configuration),
-              direction: TextDirection.rtl,
-              child: Recommendation(),
+              child: CategorizedPlaylists(),
             );
           }
         case "/my_playlists":
           {
             return _HomePage(
               key: ValueKey(configuration),
-              direction: TextDirection.ltr,
+              direction: TextDirection.rtl,
               child: MyPlaylists(),
             );
           }
@@ -108,7 +99,7 @@ class HomePageContentRouterDelegate extends RouterDelegate<String>
           {
             return _HomePage(
               key: ValueKey(configuration),
-              direction: TextDirection.rtl,
+              direction: TextDirection.ltr,
               child: MyFavouritePlaylists(),
             );
           }
@@ -116,7 +107,7 @@ class HomePageContentRouterDelegate extends RouterDelegate<String>
           {
             return _HomePage(
               key: ValueKey(configuration),
-              direction: TextDirection.ltr,
+              direction: TextDirection.rtl,
               child: MyFavouriteSingers(),
             );
           }
@@ -124,7 +115,7 @@ class HomePageContentRouterDelegate extends RouterDelegate<String>
           {
             return _HomePage(
               key: ValueKey(configuration),
-              direction: TextDirection.rtl,
+              direction: TextDirection.ltr,
               child: Settings(),
             );
           }

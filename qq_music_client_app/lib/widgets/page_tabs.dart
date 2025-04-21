@@ -19,11 +19,12 @@ class PageTabs extends StatelessWidget {
   final String activePlacementName;
   final void Function(String name, int index)? onItemTap;
 
-  const PageTabs(
-      {super.key,
-      this.itemPlacements = const [],
-      this.activePlacementName = "",
-      this.onItemTap});
+  const PageTabs({
+    super.key,
+    this.itemPlacements = const [],
+    this.activePlacementName = "",
+    this.onItemTap,
+  });
 
   @override
   Widget build(BuildContext context) {

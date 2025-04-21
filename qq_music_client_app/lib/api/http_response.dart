@@ -1,25 +1,37 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:qq_music_client_app/api/api_config.dart';
+import 'package:qq_music_client_app/utils/toast.dart';
 
 class HttpResponse<T> {
   int code = 200;
   String message = "";
   bool success = true;
-  T data;
+  T? data;
+  int? pageNo;
+  int? pageSize;
 
   HttpResponse({
     required this.data,
     this.code = 200,
     this.message = "",
     this.success = true,
+    this.pageNo,
+    this.pageSize,
   });
 
   HttpResponse.fromJson(Map<String, dynamic> json, this.data) {
     code = json['code'];
     message = json['message'];
     success = json['success'];
+    if (json["pageNo"] != null) {
+      pageNo = json["pageNo"];
+    }
+    if (json["pageSize"] != null) {
+      pageSize = json["pageSize"];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -28,6 +40,12 @@ class HttpResponse<T> {
     data['message'] = message;
     data['success'] = success;
     data['data'] = jsonEncode(this.data);
+    if (pageNo != null) {
+      data['pageNo'] = pageNo;
+    }
+    if (pageSize != null) {
+      data['pageSize'] = pageSize;
+    }
     return data;
   }
 }
@@ -43,7 +61,7 @@ class HttpService {
 
   Map<String, dynamic>? serviceHeader() {
     Map<String, dynamic> header = <String, dynamic>{};
-    // header["token"] = "";
+    header["token"] = "";
     return header;
   }
 
@@ -115,8 +133,6 @@ abstract class BaseApi<T> {
 
   String get path;
 
-  T fromJson(Map<String, dynamic> json);
-
   Map<String, String>? get header {
     switch (method) {
       case RequestMethod.post:
@@ -132,14 +148,13 @@ abstract class BaseApi<T> {
 
   Map<String, dynamic>? get body => null;
 
-  void request({
-    required void Function(T response) successCallBack,
-    required Function errorCallBack,
-  }) async {
+  T fromJson(dynamic data);
+
+  Future<HttpResponse<T>> request() async {
+    Completer<HttpResponse<T>> completer = Completer();
+
     HttpService service = HttpService.instance;
     Dio dio = service.dio;
-
-    Response? response;
 
     Map<String, String>? h = header;
     Map<String, dynamic>? q = query;
@@ -176,27 +191,56 @@ abstract class BaseApi<T> {
 
     Options options = Options(headers: headerParams);
 
-    try {
-      switch (method) {
-        case RequestMethod.get:
-          response = await dio.get(url,
-              queryParameters: queryParams, options: options);
-          break;
-        case RequestMethod.post:
-          response = await dio.post(url, data: bodyParams, options: options);
-          break;
-        default:
-          break;
-      }
-    } on DioException catch (error) {
-      errorCallBack(service.errorFactory(error));
+    switch (method) {
+      case RequestMethod.get:
+        dio
+            .get(url, queryParameters: queryParams, options: options)
+            .then((response) {
+          try {
+            String dataStr = json.encode(response.data);
+            Map<String, dynamic> dataMap = json.decode(dataStr);
+            dataMap = service.responseFactory(dataMap);
+            dynamic data = dataMap["data"];
+            if (data != null) {
+              completer
+                  .complete(HttpResponse.fromJson(dataMap, fromJson(data)));
+            } else {
+              completer.complete(HttpResponse.fromJson(dataMap, null));
+            }
+          } catch (e) {
+            toastError(e);
+            completer.completeError(e);
+          }
+        }).catchError((error) {
+          completer.completeError(error);
+        });
+        break;
+      case RequestMethod.post:
+        dio.post(url, data: bodyParams, options: options).then((response) {
+          try {
+            String dataStr = json.encode(response.data);
+            Map<String, dynamic> dataMap = json.decode(dataStr);
+            dataMap = service.responseFactory(dataMap);
+            dynamic data = dataMap["data"];
+            if (data != null) {
+              completer
+                  .complete(HttpResponse.fromJson(dataMap, fromJson(data)));
+            } else {
+              completer.complete(HttpResponse.fromJson(dataMap, null));
+            }
+          } catch (e) {
+            toastError(e);
+            completer.completeError(e);
+          }
+        }).catchError((error) {
+          completer.completeError(error);
+        });
+        break;
+      default:
+        completer.completeError(Exception("http method not supported."));
+        break;
     }
-    if (response != null && response.data != null) {
-      String dataStr = json.encode(response.data);
-      Map<String, dynamic> dataMap = json.decode(dataStr);
-      dataMap = service.responseFactory(dataMap);
-      successCallBack(fromJson(dataMap));
-    }
+
+    return completer.future;
   }
 }
-

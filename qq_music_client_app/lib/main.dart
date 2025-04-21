@@ -17,7 +17,7 @@ void main() {
     DeviceOrientation.landscapeRight,
   ]);
 
-  Get.put(HomeController());
+  Get.put(HomeController(), tag: "homeController");
   runApp(ClientApp());
 }
 

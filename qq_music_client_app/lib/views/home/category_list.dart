@@ -11,39 +11,32 @@ class Category {
   final String description;
   final String tag;
 
-  Category(
-      {required this.title,
-      this.description = "",
-      this.tag = "",
-      this.imageUrl = ""});
+  Category({
+    required this.title,
+    this.description = "",
+    this.tag = "",
+    this.imageUrl = "",
+  });
 }
 
-class CategoryList extends StatefulWidget {
+class CategoryList extends StatelessWidget {
   final List<Category> categories;
+  final int activeIndex;
+  final void Function (int index)? onActiveIndexChange;
 
-  const CategoryList({super.key, this.categories = const []});
-
-  @override
-  State<StatefulWidget> createState() {
-    return _CategoryListState();
-  }
-}
-
-class _CategoryListState extends State<CategoryList> {
-  int active = 1;
-  List<String> titles = [];
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  const CategoryList({
+    super.key,
+    this.activeIndex = -1,
+    this.categories = const [],
+    this.onActiveIndexChange,
+  });
 
   @override
   Widget build(BuildContext context) {
     return PositionedSingleScrollView(
       scrollDirection: Axis.horizontal,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: widget.categories.mapIndexed((index, category) {
+      children: categories.mapIndexed((index, category) {
         return PositionedSingleScrollItem(
           child: GestureDetector(
             child: Container(
@@ -51,18 +44,18 @@ class _CategoryListState extends State<CategoryList> {
               child: category.imageUrl.isEmpty
                   ? CategorySelectOption(
                       text: category.title,
-                      active: index == active,
+                      active: index == activeIndex,
                     )
                   : CircleImageSelectOption(
                       imageUrl: category.imageUrl,
                       text: category.title,
-                      active: index == active,
+                      active: index == activeIndex,
                     ),
             ),
             onTap: () {
-              setState(() {
-                active = index;
-              });
+              if (onActiveIndexChange != null) {
+                  onActiveIndexChange!(index);
+              }
             },
           ),
         );

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  getAllSongs,
   getSongLyricById,
   getSongSourceById,
 } from '../data/songs';
@@ -55,20 +54,6 @@ export class SongService {
       pageNo: pageNo,
       pageSize: pageSize,
       total: songs.length,
-    });
-  }
-
-  async getNewSongs(): Promise<Response<Song[]>> {
-    const songs = await getAllSongs();
-    return new Response<Song[]>({
-      data: songs.slice(0, 20),
-    });
-  }
-
-  async getTopList(): Promise<Response<Song[]>> {
-    const songs = await getAllSongs();
-    return new Response<Song[]>({
-      data: songs.slice(0, 20),
     });
   }
 
