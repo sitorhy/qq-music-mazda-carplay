@@ -5,9 +5,9 @@ import { SongService } from './song.service';
 export class SongController {
   constructor(private readonly songService: SongService) {}
 
-  @Get('/playlist')
-  getPlaylistSongs(dissId: number) {
-    return this.songService.getPlaylistSongs(dissId);
+  @Post('/playlist')
+  getPlaylistSongs(@Body() params: { dissId: number }) {
+    return this.songService.getPlaylistSongs(params.dissId);
   }
 
   @Post('/source')

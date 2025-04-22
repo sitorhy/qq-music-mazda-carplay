@@ -74,7 +74,7 @@ class SongSelectOption extends StatelessWidget {
       ],
     );
 
-    var songCover = Image.asset(
+    var songCover = Image.network(
       coverUrl,
       width: thumbSize,
       height: thumbSize,

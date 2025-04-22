@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:qq_music_client_app/api/albums_api.dart';
 import 'package:qq_music_client_app/api/categories_api.dart';
+import 'package:qq_music_client_app/api/song_api.dart';
 import 'package:qq_music_client_app/model/playlist.dart';
+import 'package:qq_music_client_app/model/song.dart';
 import 'package:qq_music_client_app/model/tag-group.dart';
 import 'package:qq_music_client_app/model/tag-playlist.dart';
 import 'package:qq_music_client_app/model/tag.dart';
@@ -12,21 +14,109 @@ class HomeController extends GetxController {
 
   // 歌单推荐
   RxList<TagPlaylists> recommendTagPlaylists = RxList([]);
+  Rx<int> recommendPlaylistIndex = RxInt(0);
+  Rx<String> recommendPlaylistId = Rx<String>("");
+  RxList<Playlist> recommendPlaylistsReduce = RxList([]);
 
   // 新歌首发
+  Rx<int> newSongTagIndex = RxInt(0);
+  Rx<String> newSongTagId = Rx("");
   RxList<Tag> newSongAlbumTags = RxList([]);
 
   // 新碟首发
+  Rx<int> newAlbumTagIndex = RxInt(0);
+  Rx<String> newAlbumTagId = Rx("");
   RxList<Tag> newAlbumTags = RxList([]);
+
+  // 排行榜
+  Rx<int> topAlbumTagIndex = RxInt(0);
+  Rx<String> topAlbumTagId = Rx("");
+  RxList<Tag> topAlbumTags = RxList([]);
+
+  // 当前歌单列表，公共区域，公用一个列表
+  RxList<Song> songs = RxList([]);
+
 
   @override
   void onInit() async {
     super.onInit();
     await loadTagGroups();
-    await loadrecommendTagPlaylists();
-    tagGroupIndex.listen((nextGroupIndex) {
-      loadrecommendTagPlaylists();
+    await loadTags();
+    tagGroupIndex.listen((nextGroupIndex) async {
+      await loadTags();
     });
+  }
+
+  // 推荐
+  handleRecommendPlaylistIndexChange() async {
+    var playlist = recommendPlaylistsReduce[recommendPlaylistIndex.value];
+    var res = await FetchPlaylistSongsRequest(dissId: playlist.dissId).request();
+    songs.value = res.data ?? [];
+  }
+
+  setRecommendPlaylistIndex(int index) {
+    String id = recommendPlaylistId.value;
+    var playlist = recommendPlaylistsReduce.elementAtOrNull(index);
+    if (playlist != null && playlist.uid != id) {
+      recommendPlaylistIndex.value = index % recommendPlaylistsReduce.length;
+      recommendPlaylistId.value = playlist.uid;
+      handleRecommendPlaylistIndexChange();
+    }
+  }
+
+  setFocusedRecommendPlaylist(Playlist playlist) {
+    setRecommendPlaylistIndex(recommendPlaylistsReduce.indexOf(playlist));
+  }
+
+  // 新歌
+  handleNewSongTagIndexChange() {}
+
+  setNewSongTagIndex(int index) {
+    String id = newSongTagId.value;
+    var tag = newSongAlbumTags.elementAtOrNull(index);
+    if (tag != null && tag.uid != id) {
+      newSongTagIndex.value = index % newSongAlbumTags.length;
+      newSongTagId.value = tag.uid;
+      handleNewSongTagIndexChange();
+    }
+  }
+
+  setFocusedNewSongTag(Tag tag) {
+    setNewSongTagIndex(newSongAlbumTags.indexOf(tag));
+  }
+
+  // 新碟
+  handleNewAlbumTagIndexChange() {}
+
+  setNewAlbumTagIndex(int index) {
+    String id = newAlbumTagId.value;
+    var tag = newAlbumTags.elementAtOrNull(index);
+    if (tag != null && tag.uid != id) {
+      newAlbumTagIndex.value = index % newAlbumTags.length;
+      newAlbumTagId.value = tag.uid;
+      handleNewAlbumTagIndexChange();
+    }
+  }
+
+  setFocusedNewAlbumTag(Tag tag) {
+    setNewAlbumTagIndex(newAlbumTags.indexOf(tag));
+  }
+
+  // 排行榜
+  handleTopAlbumTagIndexChange() {}
+
+  setTopAlbumTagIndex(int index) {
+    String id = topAlbumTagId.value;
+    var tag = topAlbumTags.elementAtOrNull(index);
+    if (tag != null && tag.uid != id) {
+      topAlbumTagIndex.value = index % topAlbumTags.length;
+      topAlbumTagId.value = tag.uid;
+      handleTopAlbumTagIndexChange();
+    }
+  }
+
+  setFocusedTopAlbumTag(Tag tag) {
+    setTopAlbumTagIndex(topAlbumTags.indexOf(tag));
   }
 
   loadTagGroups() async {
@@ -46,15 +136,35 @@ class HomeController extends GetxController {
     tagGroups.value = customTagGroups;
   }
 
-  loadrecommendTagPlaylists() async {
+  shouldLoadRecommendTags() async {
+    return recommendPlaylistsReduce.isEmpty;
+  }
+
+  shouldLoadNewSongTags() async {
+    return newSongAlbumTags.isEmpty;
+  }
+
+  shouldLoadNewAlbumsTags() async {
+    return newAlbumTags.isEmpty;
+  }
+
+  shouldLoadTopAlbumsTags() async {
+    return topAlbumTags.isEmpty;
+  }
+
+  loadTags() async {
     if (tagGroupIndex >= 0 && tagGroupIndex < tagGroups.length) {
       var tagGroup = tagGroups.elementAt(tagGroupIndex.value);
       switch (tagGroup.tagGroupId) {
         // 歌单推荐
         case 100:
           {
+            if (!(await shouldLoadRecommendTags())) {
+              return;
+            }
             var tagsResp = await FetchRecommendedTagsRequest().request();
             List<TagPlaylists> tagPlaylists = [];
+            List<Playlist> playlistsReduce = [];
             if (tagsResp.data != null) {
               for (var tag in tagsResp.data!) {
                 List<Playlist> playlists = [];
@@ -65,26 +175,50 @@ class HomeController extends GetxController {
                   playlists.addAll(playlistsResp.data!);
                 }
                 tagPlaylists.add(TagPlaylists(playlists: playlists, tag: tag));
+                playlistsReduce.addAll(playlists);
               }
               recommendTagPlaylists.value = tagPlaylists;
+              recommendPlaylistsReduce.value = playlistsReduce;
+              setRecommendPlaylistIndex(0);
             }
           }
           break;
         // 新歌首发
         case 101:
           {
+            if (!(await shouldLoadNewSongTags())) {
+              return;
+            }
             var tagsResp = await FetchNewestSongAlbumTagsRequest().request();
             if (tagsResp.data != null) {
               newSongAlbumTags.value = tagsResp.data ?? [];
+              setNewSongTagIndex(0);
             }
           }
           break;
         // 新歌首发
         case 102:
           {
+            if (!(await shouldLoadNewAlbumsTags())) {
+              return;
+            }
             var tagsResp = await FetchNewestAlbumTagsRequest().request();
             if (tagsResp.data != null) {
               newAlbumTags.value = tagsResp.data ?? [];
+              setNewAlbumTagIndex(0);
+            }
+          }
+          break;
+        // 排行榜
+        case 103:
+          {
+            if (!(await shouldLoadTopAlbumsTags())) {
+              return;
+            }
+            var tagsResp = await FetchTopAlbumTagsRequest().request();
+            if (tagsResp.data != null) {
+              topAlbumTags.value = tagsResp.data ?? [];
+              setTopAlbumTagIndex(0);
             }
           }
           break;

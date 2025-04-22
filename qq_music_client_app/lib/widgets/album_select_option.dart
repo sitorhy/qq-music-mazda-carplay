@@ -37,7 +37,7 @@ class AlbumSelectOptionState extends State<AlbumSelectOption> {
         color: status == AlbumSelectOptionStatus.hover
             ? ClientColors.focus
             : (status == AlbumSelectOptionStatus.active
-                ? ClientColors.border
+                ? ClientColors.textLight
                 : ClientColors.lightPrimary),
       ),
     );
@@ -51,7 +51,7 @@ class AlbumSelectOptionState extends State<AlbumSelectOption> {
           : const Duration(milliseconds: 0),
       curve: Curves.easeOut,
       child: const DecoratedBox(
-        decoration: BoxDecoration(color: ClientColors.subtitleLight),
+        decoration: BoxDecoration(color: ClientColors.background),
       ),
     );
 
@@ -89,7 +89,7 @@ class AlbumSelectOptionState extends State<AlbumSelectOption> {
             overflow: TextOverflow.ellipsis,
             color: status != AlbumSelectOptionStatus.active
                 ? ClientColors.text
-                : ClientColors.subtitleLight,
+                : ClientColors.textLight,
             fontWeight: FontWeight.bold,
             fontSize: widget.fontSize,
           ),

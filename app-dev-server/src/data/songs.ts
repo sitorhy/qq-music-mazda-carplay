@@ -1,6 +1,7 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { Song } from '../model/song';
+import { assertHost } from './config';
 
 const songsCache: Song[] = [];
 const songMap = new Map<
@@ -72,7 +73,7 @@ export async function collectSongs(): Promise<Song[]> {
                 albumId: json.album.albumId as number,
                 albumMid: json.album.albumMid as string,
                 name: json.album.name as string,
-                cover: encodeURI(`/assets/${file}/${coverPath}`),
+                cover: assertHost + encodeURI(`/assets/${file}/${coverPath}`),
               },
             }
           : null,
@@ -110,7 +111,7 @@ export function getSongDirCover(dir: string): string {
     f.endsWith('.png') ||
     f.endsWith('.webp') ||
     f.endsWith('.bmp'))[0];
-  return encodeURI(`/assets/${dir}/${file}`);
+  return assertHost + encodeURI(`/assets/${dir}/${file}`);
 }
 
 export function getSongDirInfo(dir: string): Song {
@@ -125,7 +126,7 @@ export function getSongDirInfo(dir: string): Song {
 export async function getSongSourceById(songMid: string): Promise<string> {
   const song = await findBySongId(songMid);
   const detail = songMap.get(songMid);
-  return detail ? encodeURI(`/assets/${detail?.dir}/${detail?.audio}`) : '';
+  return detail ? assertHost + encodeURI(`/assets/${detail?.dir}/${detail?.audio}`) : '';
 }
 
 export async function getSongLyricById(songMid: string): Promise<string> {

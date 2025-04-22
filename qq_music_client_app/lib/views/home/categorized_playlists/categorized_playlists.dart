@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qq_music_client_app/store/home_controller.dart';
-import 'package:qq_music_client_app/utils/toast.dart' show toastError;
+import 'package:qq_music_client_app/utils/toast.dart';
 import 'package:qq_music_client_app/views/home/category_list.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
-import 'package:qq_music_client_app/widgets/album_select_option.dart'
-    show AlbumSelectOption;
+import 'package:qq_music_client_app/widgets/album_select_option.dart';
 import 'package:qq_music_client_app/widgets/positioned_list_item.dart';
 import 'package:qq_music_client_app/widgets/positioned_list_view.dart';
 import 'package:qq_music_client_app/widgets/positioned_single_scroll_item.dart';
@@ -20,25 +19,28 @@ class CategorizedPlaylists extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var songList = PositionedListView.separated(
-      itemCount: 0,
-      separatorExtent: 4.0,
-      itemBuilder: (buildContext, index) {
-        return PositionedListItem(
-          index: index,
-          child: const SongSelectOption(
-            coverUrl: "images/cover.png",
-            fontSize: 15,
-            subtitleFontSize: 12,
-            thumbSize: 54,
-            title: "アインヘル小要塞",
-            singer: "Falcom Sound Team J.D.K.",
-            album: "英雄伝説 閃の軌跡III オリジナルサウンドトラック【上下巻】～完全版～",
-            duration: Duration(seconds: 156),
-          ),
-        );
-      },
-    );
+    var songList = Obx(() {
+      return PositionedListView.separated(
+        itemCount: homeController.songs.length,
+        separatorExtent: 4.0,
+        itemBuilder: (buildContext, index) {
+          var song = homeController.songs[index];
+          return PositionedListItem(
+            index: index,
+            child: SongSelectOption(
+              coverUrl: song.album?.cover ?? "",
+              fontSize: 15,
+              subtitleFontSize: 12,
+              thumbSize: 54,
+              title: song.title,
+              singer: song.singer.map((i) => i.name).join("/"),
+              album: song.album?.name ?? "",
+              duration: const Duration(seconds: 156),
+            ),
+          );
+        },
+      );
+    });
 
     return HomeContentContainer(
       child: Column(
@@ -71,6 +73,8 @@ class CategorizedPlaylists extends StatelessWidget {
                       switch (homeController.tagGroupIndex.value) {
                         case 0:
                           {
+                            String recommendPlaylistId =
+                                homeController.recommendPlaylistId.value;
                             for (var tagPlaylist
                                 in homeController.recommendTagPlaylists) {
                               if (tagPlaylist.playlists.isNotEmpty) {
@@ -85,16 +89,28 @@ class CategorizedPlaylists extends StatelessWidget {
                                 }
 
                                 for (var playlist in tagPlaylist.playlists) {
-                                  children.add(PositionedSingleScrollItem(
-                                    child: AlbumSelectOption(
-                                      looseDescription: true,
-                                      fontSize: 15,
-                                      subtitleFontSize: 12,
-                                      title: playlist.name,
-                                      description:
-                                          tagPlaylist.tag?.tagName ?? "",
+                                  children.add(
+                                    PositionedSingleScrollItem(
+                                      child: GestureDetector(
+                                        onTapDown: (detail) {
+                                          homeController
+                                              .setFocusedRecommendPlaylist(
+                                                  playlist);
+                                        },
+                                        child: AlbumSelectOption(
+                                          looseDescription: true,
+                                          fontSize: 15,
+                                          subtitleFontSize: 12,
+                                          title: playlist.name,
+                                          description: playlist.nickname ?? "",
+                                          status: recommendPlaylistId ==
+                                                  playlist.uid
+                                              ? AlbumSelectOptionStatus.active
+                                              : AlbumSelectOptionStatus.normal,
+                                        ),
+                                      ),
                                     ),
-                                  ));
+                                  );
                                 }
                               }
                             }
@@ -102,15 +118,25 @@ class CategorizedPlaylists extends StatelessWidget {
                           break;
                         case 1:
                           {
+                            String newSongTagId =
+                                homeController.newSongTagId.value;
                             for (var tag in homeController.newSongAlbumTags) {
                               children.add(
                                 PositionedSingleScrollItem(
-                                  child: AlbumSelectOption(
-                                    looseDescription: true,
-                                    fontSize: 15,
-                                    subtitleFontSize: 12,
-                                    title: tag.tagName,
-                                    description: "",
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      homeController.setFocusedNewSongTag(tag);
+                                    },
+                                    child: AlbumSelectOption(
+                                      status: newSongTagId == tag.uid
+                                          ? AlbumSelectOptionStatus.active
+                                          : AlbumSelectOptionStatus.normal,
+                                      looseDescription: true,
+                                      fontSize: 15,
+                                      subtitleFontSize: 12,
+                                      title: tag.tagName,
+                                      description: "",
+                                    ),
                                   ),
                                 ),
                               );
@@ -119,15 +145,52 @@ class CategorizedPlaylists extends StatelessWidget {
                           break;
                         case 2:
                           {
+                            String newAlbumTagId =
+                                homeController.newAlbumTagId.value;
                             for (var tag in homeController.newAlbumTags) {
                               children.add(
                                 PositionedSingleScrollItem(
-                                  child: AlbumSelectOption(
-                                    looseDescription: true,
-                                    fontSize: 15,
-                                    subtitleFontSize: 12,
-                                    title: tag.tagName,
-                                    description: "",
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      homeController.setFocusedNewAlbumTag(tag);
+                                    },
+                                    child: AlbumSelectOption(
+                                      status: newAlbumTagId == tag.uid
+                                          ? AlbumSelectOptionStatus.active
+                                          : AlbumSelectOptionStatus.normal,
+                                      looseDescription: true,
+                                      fontSize: 15,
+                                      subtitleFontSize: 12,
+                                      title: tag.tagName,
+                                      description: "",
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                          break;
+                        case 3:
+                          {
+                            String topAlbumTagId =
+                                homeController.topAlbumTagId.value;
+                            for (var tag in homeController.topAlbumTags) {
+                              children.add(
+                                PositionedSingleScrollItem(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      homeController.setFocusedTopAlbumTag(tag);
+                                    },
+                                    child: AlbumSelectOption(
+                                      status: topAlbumTagId == tag.uid
+                                          ? AlbumSelectOptionStatus.active
+                                          : AlbumSelectOptionStatus.normal,
+                                      looseDescription: true,
+                                      fontSize: 15,
+                                      subtitleFontSize: 12,
+                                      title: tag.tagName,
+                                      description: "",
+                                    ),
                                   ),
                                 ),
                               );

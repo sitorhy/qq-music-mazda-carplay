@@ -1,0 +1,1 @@
+export const assertHost = "http://192.168.120.1:3000";

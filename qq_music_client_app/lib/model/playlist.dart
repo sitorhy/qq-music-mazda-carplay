@@ -1,6 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'playlist.g.dart';
+
+const uuid = Uuid();
 
 @JsonSerializable()
 class Playlist {
@@ -10,6 +13,8 @@ class Playlist {
   final int dissId;
   final int? dirId;
   final String? nickname;
+
+  final String uid = uuid.v4();
 
   Playlist({
     required this.name,
