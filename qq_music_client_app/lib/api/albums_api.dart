@@ -1,5 +1,6 @@
 import 'package:qq_music_client_app/api/http_response.dart';
 import 'package:qq_music_client_app/model/album.dart';
+import 'package:qq_music_client_app/model/playlist.dart';
 import 'package:qq_music_client_app/model/tag.dart';
 
 class FetchNewestAlbumTagsRequest extends BaseApi<List<Tag>> {
@@ -86,6 +87,70 @@ class FetchAlbumsByAlbumTagRequest extends BaseApi<List<Album>> {
 
   @override
   String get path => "albums/tag/album";
+
+  @override
+  List<Album> fromJson(data) {
+    return (data as Iterable).map((e) => Album.fromJson(e)).toList();
+  }
+}
+
+
+class FetchMyPlaylistsRequest extends BaseApi<List<Playlist>> {
+  final int pageNo;
+  final int pageSize;
+
+  FetchMyPlaylistsRequest({ this.pageNo = 1, this.pageSize = 100 });
+
+  @override
+  RequestMethod get method => RequestMethod.post;
+
+  @override
+  String get path => "albums/my/playlists";
+
+  @override
+  Map<String, dynamic>? get body => { "pageNo": pageNo, "pageSize": pageSize };
+
+  @override
+  List<Playlist> fromJson(data) {
+    return (data as Iterable).map((e) => Playlist.fromJson(e)).toList();
+  }
+}
+
+class FetchMyFavPlaylistsRequest extends BaseApi<List<Playlist>> {
+  final int pageNo;
+  final int pageSize;
+
+  FetchMyFavPlaylistsRequest({ this.pageNo = 1, this.pageSize = 100 });
+
+  @override
+  RequestMethod get method => RequestMethod.post;
+
+  @override
+  String get path => "albums/my/playlists/fav";
+
+  @override
+  Map<String, dynamic>? get body => { "pageNo": pageNo, "pageSize": pageSize };
+
+  @override
+  List<Playlist> fromJson(data) {
+    return (data as Iterable).map((e) => Playlist.fromJson(e)).toList();
+  }
+}
+
+class FetchMyFavAlbumsRequest extends BaseApi<List<Album>> {
+  final int pageNo;
+  final int pageSize;
+
+  FetchMyFavAlbumsRequest({ this.pageNo = 1, this.pageSize = 100 });
+
+  @override
+  RequestMethod get method => RequestMethod.post;
+
+  @override
+  String get path => "albums/my/albums/fav";
+
+  @override
+  Map<String, dynamic>? get body => { "pageNo": pageNo, "pageSize": pageSize };
 
   @override
   List<Album> fromJson(data) {

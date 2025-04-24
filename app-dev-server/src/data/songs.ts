@@ -77,6 +77,7 @@ export async function collectSongs(): Promise<Song[]> {
               },
             }
           : null,
+        json.duration ? { duration: json.duration } : null,
       );
       songMap.set(info.songMid, {
         info,
@@ -106,18 +107,21 @@ export async function findBySongId(songMid: string): Promise<Song | undefined> {
 
 export function getSongDirCover(dir: string): string {
   const subDir = `${publicPath}${path.sep}${dir}`;
-  const file = fs.readdirSync(subDir).filter((f) =>
-    f.endsWith('.jpg') ||
-    f.endsWith('.png') ||
-    f.endsWith('.webp') ||
-    f.endsWith('.bmp'))[0];
+  const file = fs
+    .readdirSync(subDir)
+    .filter(
+      (f) =>
+        f.endsWith('.jpg') ||
+        f.endsWith('.png') ||
+        f.endsWith('.webp') ||
+        f.endsWith('.bmp'),
+    )[0];
   return assertHost + encodeURI(`/assets/${dir}/${file}`);
 }
 
 export function getSongDirInfo(dir: string): Song {
   const subDir = `${publicPath}${path.sep}${dir}`;
-  const file = fs.readdirSync(subDir).filter((f) =>
-    f.endsWith('.json'))[0];
+  const file = fs.readdirSync(subDir).filter((f) => f.endsWith('.json'))[0];
   const jsonPath = `${subDir}${path.sep}${file}`;
   const jsonText = fs.readFileSync(jsonPath).toString('utf8');
   return JSON.parse(jsonText);
@@ -126,11 +130,17 @@ export function getSongDirInfo(dir: string): Song {
 export async function getSongSourceById(songMid: string): Promise<string> {
   const song = await findBySongId(songMid);
   const detail = songMap.get(songMid);
-  return detail ? assertHost + encodeURI(`/assets/${detail?.dir}/${detail?.audio}`) : '';
+  return detail
+    ? assertHost + encodeURI(`/assets/${detail?.dir}/${detail?.audio}`)
+    : '';
 }
 
 export async function getSongLyricById(songMid: string): Promise<string> {
   await collectSongs();
   const detail = songMap.get(songMid);
-  return fs.readFileSync(`${publicPath}${path.sep}${detail?.dir}${path.sep}${detail?.lyric}`).toString('utf8');
+  return fs
+    .readFileSync(
+      `${publicPath}${path.sep}${detail?.dir}${path.sep}${detail?.lyric}`,
+    )
+    .toString('utf8');
 }

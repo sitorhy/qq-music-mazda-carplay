@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:qq_music_client_app/router/client_router_delegate.dart';
 import 'package:qq_music_client_app/router/client_route_information_parser.dart';
 import 'package:qq_music_client_app/store/home_controller.dart';
+import 'package:qq_music_client_app/store/my_playlists_controller.dart';
 
 import 'api/http_response.dart';
 
@@ -18,6 +19,8 @@ void main() {
   ]);
 
   Get.put(HomeController(), tag: "homeController");
+  Get.put(MyPlaylistsController(), tag: "myPlaylistsController");
+
   runApp(ClientApp());
 }
 

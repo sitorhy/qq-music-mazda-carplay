@@ -16,6 +16,7 @@ class Song {
   final String subtitle;
   final List<Singer> singer;
   final Album? album;
+  final int? duration;
 
   final String uid = uuid.v4();
 
@@ -27,6 +28,7 @@ class Song {
     required this.songMid,
     this.singer = const [],
     this.album,
+    this.duration,
   });
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);

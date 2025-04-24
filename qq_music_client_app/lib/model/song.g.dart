@@ -19,6 +19,7 @@ Song _$SongFromJson(Map<String, dynamic> json) => Song(
       album: json['album'] == null
           ? null
           : Album.fromJson(json['album'] as Map<String, dynamic>),
+      duration: (json['duration'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SongToJson(Song instance) => <String, dynamic>{
@@ -29,4 +30,5 @@ Map<String, dynamic> _$SongToJson(Song instance) => <String, dynamic>{
       'subtitle': instance.subtitle,
       'singer': instance.singer,
       'album': instance.album,
+      'duration': instance.duration,
     };

@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:qq_music_client_app/store/my_playlists_controller.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
 import 'package:qq_music_client_app/widgets/album_select_option.dart';
 import 'package:qq_music_client_app/widgets/positioned_list_item.dart';
@@ -6,52 +8,72 @@ import 'package:qq_music_client_app/widgets/positioned_list_view.dart';
 import 'package:qq_music_client_app/widgets/song_select_option.dart';
 
 class MyPlaylists extends StatelessWidget {
-  const MyPlaylists({super.key});
+  MyPlaylists({super.key});
+
+  final MyPlaylistsController myPlaylistsController = Get.find(tag: "myPlaylistsController");
 
   @override
   Widget build(BuildContext context) {
-    var albumList = PositionedListView.separated(
-      itemCount: 20,
-      separatorExtent: 5,
-      itemBuilder: (buildContext, index) {
-        return PositionedListItem(
-          index: index,
-          child: const AlbumSelectOption(
-            fontSize: 15,
-            subtitleFontSize: 12,
-            title: "带我去找夜生活",
-            description: "告五人",
-          ),
-        );
-      },
-    );
+    var playlists = Obx(() {
+      var myPlaylists = myPlaylistsController.myPlaylists;
+      String currentPlaylistId = myPlaylistsController.currentPlaylistId.value;
+      return PositionedListView.separated(
+        itemCount: myPlaylists.length,
+        separatorExtent: 5,
+        itemBuilder: (buildContext, index) {
+          var playlist = myPlaylists[index];
+          return PositionedListItem(
+            index: index,
+            child: GestureDetector(
+              child: AlbumSelectOption(
+                fontSize: 15,
+                subtitleFontSize: 12,
+                title: playlist.name,
+                description: playlist.nickname ?? "",
+                status: currentPlaylistId ==
+                    playlist.uid
+                    ? AlbumSelectOptionStatus.active
+                    : AlbumSelectOptionStatus.normal,
+              ),
+              onTap: () {
+                myPlaylistsController.setCurrentPlaylistIndex(index);
+              },
+            ),
+          );
+        },
+      );
+    });
 
-    var songList = PositionedListView.separated(
-      itemCount: 20,
-      separatorExtent: 4.0,
-      itemBuilder: (buildContext, index) {
-        return PositionedListItem(
-          index: index,
-          child: const SongSelectOption(
-            coverUrl: "images/cover.png",
-            fontSize: 15,
-            subtitleFontSize: 12,
-            thumbSize: 54,
-            title: "アインヘル小要塞",
-            singer: "Falcom Sound Team J.D.K.",
-            album: "英雄伝説 閃の軌跡III オリジナルサウンドトラック【上下巻】～完全版～",
-            duration: Duration(seconds: 156),
-          ),
-        );
-      },
-    );
+    var songList = Obx(() {
+      var currentPlaylistSongs = myPlaylistsController.currentPlaylistSongs;
+      return PositionedListView.separated(
+        itemCount: currentPlaylistSongs.length,
+        separatorExtent: 4.0,
+        itemBuilder: (buildContext, index) {
+          var song = currentPlaylistSongs[index];
+          return PositionedListItem(
+            index: index,
+            child: SongSelectOption(
+              coverUrl: song.album?.cover ?? "",
+              fontSize: 15,
+              subtitleFontSize: 12,
+              thumbSize: 54,
+              title: song.name,
+              singer: song.singer.map((i) => i.name).join("/"),
+              album: song.album?.name ?? "",
+              duration: song.duration == null ? null : Duration(seconds: song.duration!),
+            ),
+          );
+        },
+      );
+    });
 
     return HomeContentContainer(
       child: Row(
         children: [
           Expanded(
             flex: 23,
-            child: albumList,
+            child: playlists,
           ),
           const Expanded(
             flex: 2,

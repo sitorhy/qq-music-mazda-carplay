@@ -10,7 +10,7 @@ class SongSelectOption extends StatelessWidget {
   final String title;
   final String singer;
   final String album;
-  final Duration duration;
+  final Duration? duration;
   final double thumbSize;
 
   const SongSelectOption({
@@ -22,7 +22,7 @@ class SongSelectOption extends StatelessWidget {
     this.singer = "艺术家",
     this.album = "专辑名称",
     this.thumbSize = 64.0,
-    this.duration = const Duration(seconds: 0),
+    this.duration,
   });
 
   @override
@@ -33,7 +33,8 @@ class SongSelectOption extends StatelessWidget {
           flex: 12,
           child: Container(
             // decoration: BoxDecoration(color: Colors.yellow),
-            padding: EdgeInsets.only(right: fontSize, left: thumbSize + fontSize),
+            padding:
+                EdgeInsets.only(right: fontSize, left: thumbSize + fontSize),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -60,17 +61,19 @@ class SongSelectOption extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(
-          flex: 3,
-          child: Container(
-            // decoration: BoxDecoration(color: Colors.blue),
-            padding: const EdgeInsets.only(right: 20),
-            child: Text(
-              duration.toSongDurationFormat(),
-              style: TextStyle(fontSize: subtitleFontSize),
-            ),
-          ),
-        )
+        duration != null
+            ? Expanded(
+                flex: 3,
+                child: Container(
+                  // decoration: BoxDecoration(color: Colors.blue),
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Text(
+                    duration!.toSongDurationFormat(),
+                    style: TextStyle(fontSize: subtitleFontSize),
+                  ),
+                ),
+              )
+            : Container(),
       ],
     );
 

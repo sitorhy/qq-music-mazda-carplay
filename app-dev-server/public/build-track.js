@@ -145,7 +145,8 @@ function fetchDetail(song_mid) {
                 albumMid: json.req_1.data.track_info.album.mid,
                 name: json.req_1.data.track_info.album.name,
                 cover: `https://y.qq.com/music/photo_new/T002R800x800M000${json.req_1.data.track_info.album.mid}.jpg`,
-            }
+            },
+            duration: json.req_1.data.track_info.interval,
         }
         return song;
     });

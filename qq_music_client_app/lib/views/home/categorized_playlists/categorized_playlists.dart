@@ -37,6 +37,7 @@ class CategorizedPlaylists extends StatelessWidget {
                 title: song.title,
                 singer: song.singer.map((i) => i.name).join("/"),
                 album: song.album?.name ?? "",
+                duration: song.duration == null ? null : Duration(seconds: song.duration!),
               ),
             );
           },
@@ -128,7 +129,7 @@ class CategorizedPlaylists extends StatelessWidget {
                                   children.add(
                                     PositionedSingleScrollItem(
                                       child: GestureDetector(
-                                        onTapDown: (detail) {
+                                        onTap: () {
                                           homeController
                                               .setFocusedRecommendPlaylist(
                                                   playlist);

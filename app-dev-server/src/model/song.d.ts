@@ -13,4 +13,5 @@ export interface Song {
     name: string;
     cover: string;
   };
+  duration?: number;
 }
