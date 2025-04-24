@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { getAllPlaylists } from '../data/playlists';
-import { getAllAlbums } from '../data/albums';
+import { getAllAlbums, getRandomAlbums } from '../data/albums';
 import { getSingerAlbums } from '../data/singers';
 import { PaginationResponse, Response } from '../model/response';
 import { Playlist } from '../model/playlist';
@@ -62,6 +62,13 @@ export class AlbumsService {
     });
   }
 
+  async getAlbumsByAlbumTag() {
+    const albums = await getRandomAlbums();
+    return new Response<Album[]>({
+      data: albums,
+    });
+  }
+
   async getNewAlbumTags() {
     return new Response<Tag[]>({
       data: [
@@ -86,6 +93,13 @@ export class AlbumsService {
           tagName: '日本',
         },
       ],
+    });
+  }
+
+  async getAlbumsBySongAlbumTag() {
+    const albums = await getRandomAlbums();
+    return new Response<Album[]>({
+      data: albums,
     });
   }
 
@@ -117,6 +131,13 @@ export class AlbumsService {
           tagName: '日本',
         },
       ],
+    });
+  }
+
+  async getAlbumsByTopTag() {
+    const albums = await getRandomAlbums();
+    return new Response<Album[]>({
+      data: albums,
     });
   }
 

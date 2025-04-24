@@ -61,3 +61,17 @@ export async function getAlbumSongs(albumMid: string): Promise<Song[]> {
   }
   return [];
 }
+
+function getRandomInt(max: number): number {
+  return Math.floor(Math.random() * (max + 1));
+}
+
+export async function getRandomAlbums(maxSize: number = 20): Promise<Album[]> {
+  const albums = new Map<number, Album>();
+  const all = await getAllAlbums();
+  for (let i = 0; i < maxSize; i++) {
+    const index = getRandomInt(all.length - 1);
+    albums.set(index, all[index]);
+  }
+  return [...albums.values()];
+}

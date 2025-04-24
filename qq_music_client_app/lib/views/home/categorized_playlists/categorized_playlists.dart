@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qq_music_client_app/model/album.dart';
 import 'package:qq_music_client_app/store/home_controller.dart';
 import 'package:qq_music_client_app/utils/toast.dart';
 import 'package:qq_music_client_app/views/home/category_list.dart';
@@ -20,26 +21,61 @@ class CategorizedPlaylists extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var songList = Obx(() {
-      return PositionedListView.separated(
-        itemCount: homeController.songs.length,
-        separatorExtent: 4.0,
-        itemBuilder: (buildContext, index) {
-          var song = homeController.songs[index];
-          return PositionedListItem(
-            index: index,
-            child: SongSelectOption(
-              coverUrl: song.album?.cover ?? "",
-              fontSize: 15,
-              subtitleFontSize: 12,
-              thumbSize: 54,
-              title: song.title,
-              singer: song.singer.map((i) => i.name).join("/"),
-              album: song.album?.name ?? "",
-              duration: const Duration(seconds: 156),
-            ),
-          );
-        },
-      );
+      if ([0].contains(homeController.tagGroupIndex.value)) {
+        return PositionedListView.separated(
+          itemCount: homeController.recommendSongs.length,
+          separatorExtent: 4.0,
+          itemBuilder: (buildContext, index) {
+            var song = homeController.recommendSongs[index];
+            return PositionedListItem(
+              index: index,
+              child: SongSelectOption(
+                coverUrl: song.album?.cover ?? "",
+                fontSize: 15,
+                subtitleFontSize: 12,
+                thumbSize: 54,
+                title: song.title,
+                singer: song.singer.map((i) => i.name).join("/"),
+                album: song.album?.name ?? "",
+              ),
+            );
+          },
+        );
+      } else {
+        List<Album> albums;
+        switch (homeController.tagGroupIndex.value) {
+          case 1:
+            albums = homeController.newSongAlbums;
+            break;
+          case 2:
+            albums = homeController.newAlbums;
+            break;
+          case 3:
+            albums = homeController.topAlbums;
+            break;
+          default:
+            albums = [];
+        }
+        return PositionedListView.separated(
+          itemCount: albums.length,
+          separatorExtent: 4.0,
+          itemBuilder: (buildContext, index) {
+            var album = albums[index];
+            return PositionedListItem(
+              index: index,
+              child: SongSelectOption(
+                coverUrl: album.cover ?? "",
+                fontSize: 15,
+                subtitleFontSize: 12,
+                thumbSize: 54,
+                title: album.name,
+                singer: (album.singers ?? []).map((i) => i.name).join("/"),
+                album: album.description ?? "",
+              ),
+            );
+          },
+        );
+      }
     });
 
     return HomeContentContainer(

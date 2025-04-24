@@ -39,4 +39,19 @@ export class AlbumsController {
   getTopTags() {
     return this.albumsService.getTopTags();
   }
+
+  @Post('/tag/album')
+  getAlbumsByNewAlbumTag(@Body() params: { tagId: number }) {
+    return this.albumsService.getAlbumsByAlbumTag();
+  }
+
+  @Post('/tag/song')
+  getAlbumsByNewSongAlbumTag(@Body() params: { tagId: number }) {
+    return this.albumsService.getAlbumsBySongAlbumTag();
+  }
+
+  @Post('/tag/top')
+  getAlbumsByTopTag(@Body() params: { tagId: number }) {
+    return this.albumsService.getAlbumsByTopTag();
+  }
 }

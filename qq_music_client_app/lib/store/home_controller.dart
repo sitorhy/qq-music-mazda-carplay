@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:qq_music_client_app/api/albums_api.dart';
 import 'package:qq_music_client_app/api/categories_api.dart';
 import 'package:qq_music_client_app/api/song_api.dart';
+import 'package:qq_music_client_app/model/album.dart';
 import 'package:qq_music_client_app/model/playlist.dart';
 import 'package:qq_music_client_app/model/song.dart';
 import 'package:qq_music_client_app/model/tag-group.dart';
@@ -33,8 +34,13 @@ class HomeController extends GetxController {
   Rx<String> topAlbumTagId = Rx("");
   RxList<Tag> topAlbumTags = RxList([]);
 
-  // 当前歌单列表，公共区域，公用一个列表
-  RxList<Song> songs = RxList([]);
+  // 公共区域
+  // 渲染为单曲
+  RxList<Song> recommendSongs = RxList([]);
+  // 渲染为专辑
+  RxList<Album> newSongAlbums = RxList([]);
+  RxList<Album> newAlbums = RxList([]);
+  RxList<Album> topAlbums = RxList([]);
 
 
   @override
@@ -51,7 +57,7 @@ class HomeController extends GetxController {
   handleRecommendPlaylistIndexChange() async {
     var playlist = recommendPlaylistsReduce[recommendPlaylistIndex.value];
     var res = await FetchPlaylistSongsRequest(dissId: playlist.dissId).request();
-    songs.value = res.data ?? [];
+    recommendSongs.value = res.data ?? [];
   }
 
   setRecommendPlaylistIndex(int index) {
@@ -69,7 +75,11 @@ class HomeController extends GetxController {
   }
 
   // 新歌
-  handleNewSongTagIndexChange() {}
+  handleNewSongTagIndexChange() async {
+    var tag = newSongAlbumTags[newSongTagIndex.value];
+    var res = await FetchAlbumsBySongTagRequest(tagId: tag.tagId).request();
+    newSongAlbums.value = res.data ?? [];
+  }
 
   setNewSongTagIndex(int index) {
     String id = newSongTagId.value;
@@ -86,7 +96,11 @@ class HomeController extends GetxController {
   }
 
   // 新碟
-  handleNewAlbumTagIndexChange() {}
+  handleNewAlbumTagIndexChange() async {
+    var tag = newAlbumTags[newSongTagIndex.value];
+    var res = await FetchAlbumsByAlbumTagRequest(tagId: tag.tagId).request();
+    newAlbums.value = res.data ?? [];
+  }
 
   setNewAlbumTagIndex(int index) {
     String id = newAlbumTagId.value;
@@ -103,7 +117,11 @@ class HomeController extends GetxController {
   }
 
   // 排行榜
-  handleTopAlbumTagIndexChange() {}
+  handleTopAlbumTagIndexChange() async {
+    var tag = topAlbumTags[newSongTagIndex.value];
+    var res = await FetchAlbumsByTopTagRequest(tagId: tag.tagId).request();
+    topAlbums.value = res.data ?? [];
+  }
 
   setTopAlbumTagIndex(int index) {
     String id = topAlbumTagId.value;
@@ -122,16 +140,16 @@ class HomeController extends GetxController {
   loadTagGroups() async {
     List<TagGroup> customTagGroups = [];
     customTagGroups.add(
-      TagGroup(tagGroupId: 100, tagGroupName: "歌单推荐"),
+      TagGroup(tagGroupId: 0, tagGroupName: "歌单推荐"),
     );
     customTagGroups.add(
-      TagGroup(tagGroupId: 101, tagGroupName: "新歌首发"),
+      TagGroup(tagGroupId: 1, tagGroupName: "新歌首发"),
     );
     customTagGroups.add(
-      TagGroup(tagGroupId: 102, tagGroupName: "新碟首发"),
+      TagGroup(tagGroupId: 2, tagGroupName: "新碟首发"),
     );
     customTagGroups.add(
-      TagGroup(tagGroupId: 103, tagGroupName: "排行榜"),
+      TagGroup(tagGroupId: 3, tagGroupName: "排行榜"),
     );
     tagGroups.value = customTagGroups;
   }
@@ -157,7 +175,7 @@ class HomeController extends GetxController {
       var tagGroup = tagGroups.elementAt(tagGroupIndex.value);
       switch (tagGroup.tagGroupId) {
         // 歌单推荐
-        case 100:
+        case 0:
           {
             if (!(await shouldLoadRecommendTags())) {
               return;
@@ -184,7 +202,7 @@ class HomeController extends GetxController {
           }
           break;
         // 新歌首发
-        case 101:
+        case 1:
           {
             if (!(await shouldLoadNewSongTags())) {
               return;
@@ -196,8 +214,8 @@ class HomeController extends GetxController {
             }
           }
           break;
-        // 新歌首发
-        case 102:
+        // 新碟首发
+        case 2:
           {
             if (!(await shouldLoadNewAlbumsTags())) {
               return;
@@ -210,7 +228,7 @@ class HomeController extends GetxController {
           }
           break;
         // 排行榜
-        case 103:
+        case 3:
           {
             if (!(await shouldLoadTopAlbumsTags())) {
               return;
