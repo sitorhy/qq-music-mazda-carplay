@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:qq_music_client_app/store/favourite_controller.dart';
 import 'package:qq_music_client_app/views/home/category_list.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
 import 'package:qq_music_client_app/widgets/album_select_option.dart';
@@ -9,97 +11,111 @@ import 'package:qq_music_client_app/widgets/positioned_single_scroll_view.dart';
 import 'package:qq_music_client_app/widgets/song_select_option.dart';
 
 class MyFavouritePlaylists extends StatelessWidget {
-  const MyFavouritePlaylists({super.key});
+  MyFavouritePlaylists({super.key});
+
+  final FavouriteController favouriteController =
+      Get.find(tag: "favController");
 
   @override
   Widget build(BuildContext context) {
-    var albumList = const PositionedSingleScrollView(children: [
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "反向默契",
-          description: "李柯君",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "没有你我也可以过得好",
-          description: "洋澜一",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "新春福到丨蛇年行大运",
-          description: "Q音车载小小编",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "哔哩哔哩官方ACG精选",
-          description: "bilibili音乐",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "Strategy",
-          description: "Olivia Marsh",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "Fire Cry",
-          description: "分享Nicholas Witt",
-        ),
-      ),
-    ]);
-
-    var songList = PositionedListView.separated(
-      itemCount: 20,
-      separatorExtent: 4.0,
-      itemBuilder: (buildContext, index) {
-        return PositionedListItem(
-          index: index,
-          child: const SongSelectOption(
-            coverUrl: "images/cover.png",
-            fontSize: 15,
-            subtitleFontSize: 12,
-            thumbSize: 54,
-            title: "アインヘル小要塞",
-            singer: "Falcom Sound Team J.D.K.",
-            album: "英雄伝説 閃の軌跡III オリジナルサウンドトラック【上下巻】～完全版～",
-            duration: Duration(seconds: 156),
-          ),
+    var albumList = Obx(() {
+      var groupIndex = favouriteController.tagGroupIndex.value;
+      if (groupIndex == 0) {
+        var favPlaylists = favouriteController.favPlaylists;
+        String favPlaylistId = favouriteController.favPlaylistId.value;
+        return PositionedSingleScrollView(
+          children: favPlaylists.map((playlist) {
+            return PositionedSingleScrollItem(
+              child: GestureDetector(
+                onTap: () {
+                  favouriteController.setFavPlaylist(playlist);
+                },
+                child: AlbumSelectOption(
+                  status: favPlaylistId == playlist.uid
+                      ? AlbumSelectOptionStatus.active
+                      : AlbumSelectOptionStatus.normal,
+                  looseDescription: true,
+                  fontSize: 15,
+                  subtitleFontSize: 12,
+                  title: playlist.name,
+                  description: playlist.nickname ?? "",
+                ),
+              ),
+            );
+          }).toList(),
         );
-      },
-    );
+      } else {
+        var favAlbums = favouriteController.favAlbums;
+        var favAlbumId = favouriteController.favAlbumId.value;
+        return PositionedSingleScrollView(
+          children: favAlbums.map((album) {
+            return PositionedSingleScrollItem(
+              child: GestureDetector(
+                onTap: () {
+                  favouriteController.setFavAlbum(album);
+                },
+                child: AlbumSelectOption(
+                  status: favAlbumId == album.uid
+                      ? AlbumSelectOptionStatus.active
+                      : AlbumSelectOptionStatus.normal,
+                  looseDescription: true,
+                  fontSize: 15,
+                  subtitleFontSize: 12,
+                  title: album.name,
+                  description: (album.singers ?? [])
+                      .map((singer) => singer.name)
+                      .join("/"),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      }
+    });
+
+    var songList = Obx(() {
+      var songs = favouriteController.tagGroupIndex.value == 0
+          ? favouriteController.favPlaylistSongs
+          : favouriteController.favAlbumSongs;
+      return PositionedListView.separated(
+        itemCount: songs.length,
+        separatorExtent: 4.0,
+        itemBuilder: (buildContext, index) {
+          var song = songs[index];
+          return PositionedListItem(
+            index: index,
+            child: SongSelectOption(
+              coverUrl: song.album?.cover ?? "",
+              fontSize: 15,
+              subtitleFontSize: 12,
+              thumbSize: 54,
+              title: song.title,
+              singer: song.singer.map((i) => i.name).join("/"),
+              album: song.album?.name ?? "",
+              duration: song.duration == null
+                  ? null
+                  : Duration(seconds: song.duration!),
+            ),
+          );
+        },
+      );
+    });
 
     return HomeContentContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          CategoryList(
-            categories: [
-              Category(title: "收藏的歌单"),
-              Category(title: "收藏的专辑"),
-            ],
-          ),
+          Obx(() {
+            return CategoryList(
+              activeIndex: favouriteController.tagGroupIndex.value,
+              categories: favouriteController.tagGroups.map((tagGroup) {
+                return Category(title: tagGroup.tagGroupName);
+              }).toList(),
+              onActiveIndexChange: (nextIndex) {
+                favouriteController.tagGroupIndex.value = nextIndex;
+              },
+            );
+          }),
           const SizedBox(
             height: 8.0,
           ),

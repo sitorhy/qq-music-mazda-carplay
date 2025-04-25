@@ -1,7 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:qq_music_client_app/model/singer.dart';
+import 'package:uuid/uuid.dart';
 
 part 'album.g.dart';
+
+const uuid = Uuid();
 
 @JsonSerializable()
 class Album {
@@ -12,6 +15,8 @@ class Album {
   final int? songCount;
   final List<Singer>? singers;
   final String? description;
+
+  final String uid = uuid.v4();
 
   Album({
     required this.albumId,
