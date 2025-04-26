@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qq_music_client_app/theme/client_colors.dart';
@@ -77,12 +78,23 @@ class SongSelectOption extends StatelessWidget {
       ],
     );
 
-    var songCover = Image.network(
-      coverUrl,
+    var songCover = SizedBox(
       width: thumbSize,
       height: thumbSize,
-      fit: BoxFit.cover,
-      filterQuality: FilterQuality.medium,
+      child: CachedNetworkImage(
+        imageUrl: coverUrl,
+        placeholder: (context, url) => const CircularProgressIndicator(
+          color: ClientColors.textLight,
+          padding: EdgeInsets.all(8),
+        ),
+        errorWidget: (context, url, error) => Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/avatar.webp"),
+            ),
+          ),
+        ),
+      ),
     );
 
     return DefaultTextStyle(

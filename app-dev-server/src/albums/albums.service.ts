@@ -55,7 +55,7 @@ export class AlbumsService {
   ): Promise<PaginationResponse<Album[]>> {
     const singerAlbums = await getSingerAlbums(singerMid);
     return new PaginationResponse<Album[]>({
-      data: singerAlbums.slice(pageSize * (pageNo - 1), pageSize * pageNo),
+      data: singerAlbums,
       pageNo: pageNo,
       pageSize: pageSize,
       total: singerAlbums.length,

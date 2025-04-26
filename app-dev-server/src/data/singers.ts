@@ -13,6 +13,9 @@ const singersMapCache: Map<string, {
 const singersCache: Singer[] = [];
 
 async function collectSingers() {
+  if (singersMapCache.size) {
+    return;
+  }
   const albums = await getAllAlbums();
   const songs = await getAllSongs();
   albums.forEach(album => {
@@ -30,7 +33,10 @@ async function collectSingers() {
           topSongs: songs.filter((i) => i.singer.some(j => j.singerMid === singer.singerMid)),
         };
       }
-      detail.albums.push(album);
+
+      if (detail.albums.findIndex(i => i.albumMid === album.albumMid) < 0) {
+        detail.albums.push(album);
+      }
       singersMapCache.set(singer.singerMid, detail);
     });
   });

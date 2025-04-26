@@ -1,11 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:qq_music_client_app/model/album.dart';
 import 'package:qq_music_client_app/model/singer.dart';
-import 'package:uuid/uuid.dart';
 
 part 'song.g.dart';
-
-const uuid = Uuid();
 
 @JsonSerializable()
 class Song {
@@ -17,8 +14,7 @@ class Song {
   final List<Singer> singer;
   final Album? album;
   final int? duration;
-
-  final String uid = uuid.v4();
+  late final String uid;
 
   Song({
     this.songId = 0,
@@ -29,7 +25,9 @@ class Song {
     this.singer = const [],
     this.album,
     this.duration,
-  });
+  }) {
+    uid = songId.toString();
+  }
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
 

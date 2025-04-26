@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:qq_music_client_app/store/follow_controller.dart';
 import 'package:qq_music_client_app/views/home/category_list.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
 import 'package:qq_music_client_app/widgets/album_select_option.dart';
@@ -9,102 +11,86 @@ import 'package:qq_music_client_app/widgets/positioned_single_scroll_view.dart';
 import 'package:qq_music_client_app/widgets/song_select_option.dart';
 
 class MyFavouriteSingers extends StatelessWidget {
-  const MyFavouriteSingers({super.key});
+  MyFavouriteSingers({super.key});
+
+  final FollowController followController = Get.find(tag: "followController");
 
   @override
   Widget build(BuildContext context) {
-    var albumList = const PositionedSingleScrollView(children: [
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "反向默契",
-          description: "李柯君",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "没有你我也可以过得好",
-          description: "洋澜一",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "新春福到丨蛇年行大运",
-          description: "Q音车载小小编",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "哔哩哔哩官方ACG精选",
-          description: "bilibili音乐",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "Strategy",
-          description: "Olivia Marsh",
-        ),
-      ),
-      PositionedSingleScrollItem(
-        child: AlbumSelectOption(
-          looseDescription: true,
-          fontSize: 15,
-          subtitleFontSize: 12,
-          title: "Fire Cry",
-          description: "分享Nicholas Witt",
-        ),
-      ),
-    ]);
+    var albumList = Obx(() {
+      var currentAlbums = followController.currentAlbums;
+      String currentAlbumId = followController.currentAlbumId.value;
+      return PositionedSingleScrollView(
+        children: currentAlbums.map((album) {
+          return PositionedSingleScrollItem(
+            child: GestureDetector(
+              onTap: () {
+                followController.setCurrentAlbum(album);
+              },
+              child: AlbumSelectOption(
+                status: currentAlbumId == album.uid
+                    ? AlbumSelectOptionStatus.active
+                    : AlbumSelectOptionStatus.normal,
+                looseDescription: true,
+                fontSize: 15,
+                subtitleFontSize: 12,
+                title: album.name,
+                description: (album.singers ?? [])
+                    .map((singer) => singer.name)
+                    .join("/"),
+              ),
+            ),
+          );
+        }).toList(),
+      );
+    });
 
-    var songList = PositionedListView.separated(
-      itemCount: 20,
-      separatorExtent: 4.0,
-      itemBuilder: (buildContext, index) {
-        return PositionedListItem(
-          index: index,
-          child: const SongSelectOption(
-            coverUrl: "images/cover.png",
-            fontSize: 15,
-            subtitleFontSize: 12,
-            thumbSize: 54,
-            title: "アインヘル小要塞",
-            singer: "Falcom Sound Team J.D.K.",
-            album: "英雄伝説 閃の軌跡III オリジナルサウンドトラック【上下巻】～完全版～",
-            duration: Duration(seconds: 156),
-          ),
-        );
-      },
-    );
+    var songList = Obx(() {
+      var songs = followController.currentSongs;
+      return PositionedListView.separated(
+        itemCount: songs.length,
+        separatorExtent: 4.0,
+        itemBuilder: (buildContext, index) {
+          var song = songs[index];
+          return PositionedListItem(
+            index: index,
+            child: SongSelectOption(
+              coverUrl: song.album?.cover ?? "",
+              fontSize: 15,
+              subtitleFontSize: 12,
+              thumbSize: 54,
+              title: song.title,
+              singer: song.singer.map((i) => i.name).join("/"),
+              album: song.album?.name ?? "",
+              duration: song.duration == null
+                  ? null
+                  : Duration(seconds: song.duration!),
+            ),
+          );
+        },
+      );
+    });
 
     return HomeContentContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          CategoryList(
-            categories: [
-              Category(
-                title: "知更鸟",
-                imageUrl: "images/avatar_test.webp",
-              ),
-              Category(
-                title: "周杰伦",
-                imageUrl: "images/avatar_test.webp",
-              ),
-            ],
+          Obx(
+            () {
+              return CategoryList(
+                onActiveIndexChange: (nextIndex) => followController
+                    .setCurrentSinger(followController.singers[nextIndex]),
+                activeIndex: followController.currentSingerIndex.value,
+                categories: followController.singers
+                    .map(
+                      (singer) => Category(
+                        title: singer.name,
+                        imageUrl: singer.avatarUrl ?? "",
+                      ),
+                    )
+                    .toList(),
+              );
+            },
           ),
           const SizedBox(
             height: 8.0,

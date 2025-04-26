@@ -157,3 +157,25 @@ class FetchMyFavAlbumsRequest extends BaseApi<List<Album>> {
     return (data as Iterable).map((e) => Album.fromJson(e)).toList();
   }
 }
+
+class FetchSingerAlbumsRequest extends BaseApi<List<Album>> {
+  final int pageNo;
+  final int pageSize;
+  final String singerMid;
+
+  FetchSingerAlbumsRequest({ required this.singerMid ,this.pageNo = 1, this.pageSize = 100 });
+
+  @override
+  RequestMethod get method => RequestMethod.post;
+
+  @override
+  String get path => "albums/singer/albums";
+
+  @override
+  Map<String, dynamic>? get body => { "singerMid": singerMid ,"pageNo": pageNo, "pageSize": pageSize };
+
+  @override
+  List<Album> fromJson(data) {
+    return (data as Iterable).map((e) => Album.fromJson(e)).toList();
+  }
+}

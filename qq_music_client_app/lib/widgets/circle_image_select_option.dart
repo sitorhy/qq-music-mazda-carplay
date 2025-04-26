@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:qq_music_client_app/theme/client_colors.dart';
 
@@ -30,7 +31,7 @@ class CircleImageSelectOption extends StatelessWidget {
               color: active
                   ? ClientColors.activeSelectorBorder
                   : ClientColors.selectorBorder,
-              offset: Offset(0.0, 1.0), //阴影y轴偏移量
+              offset: const Offset(0.0, 1.0), //阴影y轴偏移量
               blurRadius: 2, //阴影模糊程度
               spreadRadius: 0 //阴影扩散程度
               )
@@ -42,8 +43,25 @@ class CircleImageSelectOption extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(imageUrl),
+          ClipOval(
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                placeholder: (context, url) => const CircularProgressIndicator(
+                  color: ClientColors.textLight,
+                  padding: EdgeInsets.all(8),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("images/avatar.webp"),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
           const SizedBox(
             width: 8,
