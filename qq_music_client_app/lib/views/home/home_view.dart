@@ -120,7 +120,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
                 height: 46,
-                child: const FractionallySizedBox(
+                child: FractionallySizedBox(
                   widthFactor: 1850 / 1945,
                   child: HomeViewFooter(),
                 ),

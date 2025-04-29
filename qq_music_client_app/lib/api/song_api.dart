@@ -53,3 +53,24 @@ class FetchAlbumSongsRequest extends BaseApi<List<Song>> {
     return (data as Iterable).map((e) => Song.fromJson(e)).toList();
   }
 }
+
+class FetchSongSourceRequest extends BaseApi<String> {
+  final String songMid;
+  final int songId;
+
+  FetchSongSourceRequest({required this.songMid, this.songId = 0});
+
+  @override
+  RequestMethod get method => RequestMethod.post;
+
+  @override
+  Map<String, dynamic>? get body => {"songMid": songMid, "songId": songId};
+
+  @override
+  String get path => "song/source";
+
+  @override
+  String fromJson(data) {
+    return data;
+  }
+}

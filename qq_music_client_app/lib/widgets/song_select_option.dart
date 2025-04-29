@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qq_music_client_app/theme/client_colors.dart';
 import 'package:qq_music_client_app/utils/duration_ext.dart';

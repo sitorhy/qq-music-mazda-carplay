@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/theme/client_colors.dart';
 
 class _PlayerItem extends StatelessWidget {
@@ -8,11 +10,12 @@ class _PlayerItem extends StatelessWidget {
   final double height;
   final double size;
 
-  const _PlayerItem(
-      {required this.icon,
-      required this.width,
-      required this.height,
-      required this.size});
+  const _PlayerItem({
+    required this.icon,
+    required this.width,
+    required this.height,
+    required this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,10 @@ class HomeViewFooterPlayer extends StatelessWidget {
   final double height;
   final double? width;
 
-  const HomeViewFooterPlayer({super.key, required this.height, this.width});
+  HomeViewFooterPlayer({super.key, required this.height, this.width});
+
+  final ImmersiveController immersiveController =
+      Get.find(tag: "immersiveController");
 
   @override
   Widget build(BuildContext context) {
@@ -53,47 +59,65 @@ class HomeViewFooterPlayer extends StatelessWidget {
         borderRadius: BorderRadius.all(
           Radius.circular(height / 2),
         ),
-        // boxShadow: [
-        //   BoxShadow(
-        //       color: Colors.grey,
-        //       offset: Offset.zero,
-        //       blurRadius: 1.0,
-        //       spreadRadius: 0.0)
-        // ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _PlayerItem(
-            icon: const IconData(0xe63c, fontFamily: "IconFont"),
-            width: height,
-            height: height,
-            size: 22,
+          GestureDetector(
+            onTap: () {
+              // 上一首
+            },
+            child: _PlayerItem(
+              icon: const IconData(0xe63c, fontFamily: "IconFont"),
+              width: height,
+              height: height,
+              size: 22,
+            ),
           ),
-          _PlayerItem(
-            icon: const IconData(0xe65f, fontFamily: "IconFont"),
-            width: height,
-            height: height,
-            size: 22,
+          GestureDetector(
+            onTap: () {
+              // 快退
+            },
+            child: _PlayerItem(
+              icon: const IconData(0xe65f, fontFamily: "IconFont"),
+              width: height,
+              height: height,
+              size: 22,
+            ),
           ),
-          _PlayerItem(
-            icon: const IconData(0xe610, fontFamily: "IconFont"),
-            width: height,
-            height: height,
-            size: 18,
+          GestureDetector(
+            onTap: () {
+              // 播放 / 暂停
+            },
+            child: _PlayerItem(
+              icon: const IconData(0xe610, fontFamily: "IconFont"),
+              width: height,
+              height: height,
+              size: 18,
+            ),
           ),
-          _PlayerItem(
-            icon: const IconData(0xe65e, fontFamily: "IconFont"),
-            width: height,
-            height: height,
-            size: 22,
+          GestureDetector(
+            onTap: () {
+              // 快进
+            },
+            child: _PlayerItem(
+              icon: const IconData(0xe65e, fontFamily: "IconFont"),
+              width: height,
+              height: height,
+              size: 22,
+            ),
           ),
-          _PlayerItem(
-            icon: const IconData(0xe63e, fontFamily: "IconFont"),
-            width: height,
-            height: height,
-            size: 22,
+          GestureDetector(
+            onTap: () {
+              // 下一首
+            },
+            child: _PlayerItem(
+              icon: const IconData(0xe63e, fontFamily: "IconFont"),
+              width: height,
+              height: height,
+              size: 22,
+            ),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qq_music_client_app/router/client_router_delegate.dart';
 import 'package:qq_music_client_app/views/immersive/circle_cover.dart';
 import 'package:qq_music_client_app/views/immersive/play_controls.dart';
@@ -9,6 +10,9 @@ import 'package:qq_music_client_app/widgets/lyrics_renderer.dart';
 import 'package:qq_music_client_app/widgets/positioned_single_scroll_controller.dart';
 import 'package:qq_music_client_app/widgets/progress_slider.dart';
 
+import '../store/immersive_controller.dart';
+
+// 播放页，使用动画必须使用 StatefulWidget
 class _ImmersivePage extends StatefulWidget {
   final Animation? animation;
 
@@ -25,13 +29,15 @@ class _ImmersivePageState extends State<_ImmersivePage>
   late AnimationController leftAnimationController;
   late AnimationController rightAnimationController;
 
+  final ImmersiveController immersiveController = Get.find(tag: "immersiveController");
+
   @override
   void initState() {
     super.initState();
     widget.animation?.addStatusListener(routeAnimationStatusChanged);
     leftAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 300),
     );
     CurvedAnimation(parent: leftAnimationController, curve: Curves.easeOut);
     leftAnimationController.addListener(() {
@@ -44,7 +50,7 @@ class _ImmersivePageState extends State<_ImmersivePage>
     });
     rightAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 200),
     );
     rightAnimationController.addListener(() {
       setState(() {});
@@ -70,7 +76,7 @@ class _ImmersivePageState extends State<_ImmersivePage>
   Widget build(BuildContext context) {
     var pageHeader = FractionallySizedBox(
       widthFactor: 1850 / 1945,
-      child: Container(
+      child: SizedBox(
         height: 30,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,7 +101,7 @@ class _ImmersivePageState extends State<_ImmersivePage>
 
     var pageFooter = Container(
       // decoration: const BoxDecoration(color: Colors.white24),
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: FractionallySizedBox(
         widthFactor: 1.0,
         child: PlayControls(),
@@ -284,10 +290,12 @@ class ImmersivePage extends Page {
 
   @override
   Route createRoute(BuildContext context) {
+    // PageRouteBuilder提供路由动画过渡效果
     return PageRouteBuilder(
       settings: this,
       pageBuilder: (BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation) {
+        // 返回实际页面组件，传入 animation 对象，用于监听过渡动画结束
         return _ImmersivePage(
           animation: animation,
         );
@@ -304,6 +312,7 @@ class ImmersivePage extends Page {
           curve: curve,
         );
 
+        // 平移动画
         return SlideTransition(
           position: tween.animate(curvedAnimation),
           child: child,

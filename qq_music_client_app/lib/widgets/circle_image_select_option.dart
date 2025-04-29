@@ -48,6 +48,7 @@ class CircleImageSelectOption extends StatelessWidget {
               width: 40,
               height: 40,
               child: CachedNetworkImage(
+                fit: BoxFit.fill,
                 imageUrl: imageUrl,
                 placeholder: (context, url) => const CircularProgressIndicator(
                   color: ClientColors.textLight,

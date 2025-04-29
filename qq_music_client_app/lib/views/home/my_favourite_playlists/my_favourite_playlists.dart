@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qq_music_client_app/store/favourite_controller.dart';
+import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/views/home/category_list.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
 import 'package:qq_music_client_app/widgets/album_select_option.dart';
@@ -15,6 +16,8 @@ class MyFavouritePlaylists extends StatelessWidget {
 
   final FavouriteController favouriteController =
       Get.find(tag: "favController");
+  final ImmersiveController immersiveController =
+      Get.find(tag: "immersiveController");
 
   @override
   Widget build(BuildContext context) {
@@ -84,17 +87,22 @@ class MyFavouritePlaylists extends StatelessWidget {
           var song = songs[index];
           return PositionedListItem(
             index: index,
-            child: SongSelectOption(
-              coverUrl: song.album?.cover ?? "",
-              fontSize: 15,
-              subtitleFontSize: 12,
-              thumbSize: 54,
-              title: song.title,
-              singer: song.singer.map((i) => i.name).join("/"),
-              album: song.album?.name ?? "",
-              duration: song.duration == null
-                  ? null
-                  : Duration(seconds: song.duration!),
+            child: GestureDetector(
+              onTap: () {
+                immersiveController.play(song);
+              },
+              child: SongSelectOption(
+                coverUrl: song.album?.cover ?? "",
+                fontSize: 15,
+                subtitleFontSize: 12,
+                thumbSize: 54,
+                title: song.title,
+                singer: song.singer.map((i) => i.name).join("/"),
+                album: song.album?.name ?? "",
+                duration: song.duration == null
+                    ? null
+                    : Duration(seconds: song.duration!),
+              ),
             ),
           );
         },
