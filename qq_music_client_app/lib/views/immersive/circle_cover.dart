@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -5,8 +6,9 @@ import 'package:flutter/services.dart';
 
 class CircleCover extends StatefulWidget {
   final double size;
+  final String coverUrl;
 
-  const CircleCover({super.key, this.size = 200});
+  const CircleCover({super.key, this.size = 200, this.coverUrl = ""});
 
   @override
   State<StatefulWidget> createState() {
@@ -14,26 +16,36 @@ class CircleCover extends StatefulWidget {
   }
 }
 
-class _CircleCoverState extends State<CircleCover> with SingleTickerProviderStateMixin {
+class _CircleCoverState extends State<CircleCover>
+    with SingleTickerProviderStateMixin {
   ui.Image? cover;
   ui.Image? mask;
   ui.Image? foreground;
   late AnimationController controller = AnimationController(vsync: this);
   late Animation animation;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.wait([
-      loadImage("images/cover.png"),
-      loadImage("images/cd_mask.png"),
-      loadImage("images/cd_foreground.png")
+  _reloadImageData(String coverUrl) {
+    return Future.wait([
+      loadImage(coverUrl),
+      mask == null ? loadImage("images/cd_mask.png") : Future.value(mask),
+      foreground == null
+          ? loadImage("images/cd_foreground.png")
+          : Future.value(foreground)
     ]).then((result) {
       cover = result[0];
       mask = result[1];
       foreground = result[2];
       setState(() {});
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _reloadImageData(
+      widget.coverUrl.isNotEmpty ? widget.coverUrl : "images/cd_default.png",
+    );
 
     controller.duration = const Duration(seconds: 60);
     Tween<double> tween = Tween(begin: 0, end: 360);
@@ -47,6 +59,15 @@ class _CircleCoverState extends State<CircleCover> with SingleTickerProviderStat
       }
     });
     controller.forward();
+  }
+
+
+  @override
+  void didUpdateWidget(CircleCover oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.coverUrl != widget.coverUrl) {
+      _reloadImageData(widget.coverUrl);
+    }
   }
 
   @override
@@ -70,6 +91,12 @@ class _CircleCoverState extends State<CircleCover> with SingleTickerProviderStat
 
 Future loadImage(String path) async {
   // 加载资源文件
+  if (path.startsWith("http")) {
+    Completer<ui.Image> completer = Completer();
+    NetworkImage(path).resolve(const ImageConfiguration()).addListener(
+        ImageStreamListener((info, _) => completer.complete(info.image)));
+    return completer.future;
+  }
   final data = await rootBundle.load(path);
   // 把资源文件转换成Uint8List类型
   final bytes = data.buffer.asUint8List();

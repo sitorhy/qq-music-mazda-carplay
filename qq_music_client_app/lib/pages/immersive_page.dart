@@ -3,14 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qq_music_client_app/router/client_router_delegate.dart';
+import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/views/immersive/circle_cover.dart';
+import 'package:qq_music_client_app/views/immersive/drawer_playlist.dart';
 import 'package:qq_music_client_app/views/immersive/play_controls.dart';
 import 'package:qq_music_client_app/widgets/carousel_rich_text.dart';
 import 'package:qq_music_client_app/widgets/lyrics_renderer.dart';
-import 'package:qq_music_client_app/widgets/positioned_single_scroll_controller.dart';
 import 'package:qq_music_client_app/widgets/progress_slider.dart';
-
-import '../store/immersive_controller.dart';
 
 // 播放页，使用动画必须使用 StatefulWidget
 class _ImmersivePage extends StatefulWidget {
@@ -29,7 +28,8 @@ class _ImmersivePageState extends State<_ImmersivePage>
   late AnimationController leftAnimationController;
   late AnimationController rightAnimationController;
 
-  final ImmersiveController immersiveController = Get.find(tag: "immersiveController");
+  final ImmersiveController immersiveController =
+      Get.find(tag: "immersiveController");
 
   @override
   void initState() {
@@ -69,9 +69,6 @@ class _ImmersivePageState extends State<_ImmersivePage>
     }
   }
 
-  PositionedSingleScrollController controller =
-      PositionedSingleScrollController(direction: Axis.vertical);
-
   @override
   Widget build(BuildContext context) {
     var pageHeader = FractionallySizedBox(
@@ -90,9 +87,18 @@ class _ImmersivePageState extends State<_ImmersivePage>
                 ClientRouterDelegate.of(context).pop();
               },
             ),
-            const Icon(
-              color: Colors.white70,
-              IconData(0xe643, fontFamily: "IconFont"),
+            GestureDetector(
+              child: const Icon(
+                color: Colors.white70,
+                IconData(0xe643, fontFamily: "IconFont"),
+              ),
+              onTap: () {
+                final ScaffoldState? result =
+                    context.findAncestorStateOfType<ScaffoldState>();
+                if (result != null) {
+                  result.openEndDrawer();
+                }
+              },
             ),
           ],
         ),
@@ -113,42 +119,51 @@ class _ImmersivePageState extends State<_ImmersivePage>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
-          child: CircleCover(
-            size: 180,
-          ),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
+          // 转盘封面
+          child: Obx(() {
+            String? coverUrl =
+                immersiveController.playingSong.value.album?.cover;
+            return CircleCover(
+              size: 180,
+              coverUrl: coverUrl ?? "",
+            );
+          }),
         ),
         Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(
-                child: LayoutBuilder(builder: (c, s) {
-                  String title = "夏日漱石 (Summer Cozy Rock)";
-                  final TextPainter textPainter = TextPainter(
-                      text: TextSpan(
-                        text: title,
-                        style: TextStyle(
-                          decoration: TextDecoration.none,
-                          fontSize: 15,
-                          color: Colors.white,
+                child: Obx(() {
+                  String songTitle =
+                      immersiveController.playingSong.value.title;
+                  String title = songTitle.isNotEmpty ? songTitle : "QQ音乐 听我想听";
+                  return LayoutBuilder(builder: (c, s) {
+                    final TextPainter textPainter = TextPainter(
+                        text: TextSpan(
+                          text: title,
+                          style: const TextStyle(
+                            decoration: TextDecoration.none,
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      maxLines: 1,
-                      textDirection: TextDirection.ltr)
-                    ..layout(minWidth: 0, maxWidth: double.infinity);
+                        maxLines: 1,
+                        textDirection: TextDirection.ltr)
+                      ..layout(minWidth: 0, maxWidth: double.infinity);
 
-                  return Container(
-                    height: textPainter.height,
-                    // decoration: BoxDecoration(color: Colors.yellow),
-                    child: CarouselRichText(
-                      titleColor: Colors.white,
-                      titleSize: 15,
-                      title: title,
-                    ),
-                  );
+                    return SizedBox(
+                      height: textPainter.height,
+                      child: CarouselRichText(
+                        titleColor: Colors.white,
+                        titleSize: 15,
+                        title: title,
+                      ),
+                    );
+                  });
                 }),
               ),
               const SizedBox(
@@ -162,24 +177,48 @@ class _ImmersivePageState extends State<_ImmersivePage>
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
-          child: const Text(
-            "Fly By Midnight / Rachel Grae",
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+          child: Obx(() {
+            String author = immersiveController.playingSong.value.singer
+                .map((i) => i.name)
+                .join('/');
+            return Text(
+              author.isNotEmpty ? author : "未知歌手",
+              textAlign: TextAlign.start,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 13,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            );
+          }),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-          child: ProgressSlider(
-            height: 6,
-            direction: Axis.horizontal,
-          ),
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+          child: Obx(() {
+            var duration = immersiveController.duration;
+            var current = immersiveController.current;
+            var progress = immersiveController.progress;
+            var disabled = ![
+              ProcessingStateAdapter.ready,
+              ProcessingStateAdapter.completed
+            ].contains(immersiveController.status.value);
+            var bufferedProgress = immersiveController.bufferedProgress;
+
+            return ProgressSlider(
+              height: 8,
+              direction: Axis.horizontal,
+              duration: duration.value,
+              current: current.value,
+              progress: progress.value,
+              disabled: disabled,
+              bufferedProgress: bufferedProgress.value,
+              onSeeking: (progress) {
+                immersiveController.seek(progress);
+              },
+            );
+          }),
         ),
         pageFooter,
       ],
@@ -210,9 +249,14 @@ class _ImmersivePageState extends State<_ImmersivePage>
                   ).createShader(bounds);
                 },
                 blendMode: BlendMode.dstIn,
-                child: LyricsRenderer(
-                  controller: controller,
-                ),
+                child: Obx(() {
+                  String lyricText = immersiveController.playingSongLyric.value;
+                  Duration current = immersiveController.current.value;
+                  return LyricsRenderer(
+                    lyricText: lyricText,
+                    current: current,
+                  );
+                }),
               ),
             ),
           ),
@@ -252,12 +296,23 @@ class _ImmersivePageState extends State<_ImmersivePage>
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('images/cover.png', fit: BoxFit.cover),
+          // 高斯背景
+          Transform.scale(
+            scale: 2.0,
+            child: Obx(() {
+              var coverUrl = immersiveController.playingSong.value.album?.cover ?? "";
+              var backgroundImgUrl = coverUrl.isNotEmpty ? coverUrl : 'images/bg_default.jpg';
+
+              return backgroundImgUrl.contains("http")
+                  ? Image.network(backgroundImgUrl)
+                  : Image.asset(backgroundImgUrl, fit: BoxFit.cover);
+            }),
+          ),
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(
-                sigmaX: 80,
-                sigmaY: 80,
+                sigmaX: 150,
+                sigmaY: 150,
                 tileMode: TileMode.clamp,
               ),
               child: Container(
@@ -285,6 +340,28 @@ class _ImmersivePageState extends State<_ImmersivePage>
   }
 }
 
+class _ImmersivePageWrapper extends StatelessWidget {
+  final Animation? animation;
+
+  const _ImmersivePageWrapper({this.animation});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _ImmersivePage(animation: animation),
+      endDrawer: Drawer(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.zero),
+        ),
+        width: 520,
+        child: SafeArea(
+          child: DrawerPlaylist(),
+        ), // Populate the Drawer in the last step.
+      ),
+    );
+  }
+}
+
 class ImmersivePage extends Page {
   const ImmersivePage({super.key});
 
@@ -296,7 +373,7 @@ class ImmersivePage extends Page {
       pageBuilder: (BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation) {
         // 返回实际页面组件，传入 animation 对象，用于监听过渡动画结束
-        return _ImmersivePage(
+        return _ImmersivePageWrapper(
           animation: animation,
         );
       },

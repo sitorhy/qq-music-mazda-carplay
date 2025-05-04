@@ -77,6 +77,7 @@ class MyFavouritePlaylists extends StatelessWidget {
     });
 
     var songList = Obx(() {
+      var playingSongMid = immersiveController.playingSong.value.uid;
       var songs = favouriteController.tagGroupIndex.value == 0
           ? favouriteController.favPlaylistSongs
           : favouriteController.favAlbumSongs;
@@ -89,9 +90,20 @@ class MyFavouritePlaylists extends StatelessWidget {
             index: index,
             child: GestureDetector(
               onTap: () {
-                immersiveController.play(song);
+                if (favouriteController.tagGroupIndex.value == 0) {
+                  var favPlaylists = favouriteController.favPlaylists;
+                  var playlist = favPlaylists[favouriteController.favPlaylistIndex.value];
+                  immersiveController.setPlayingList(songs, playlist);
+                  immersiveController.play(song);
+                } else {
+                  var favAlbums = favouriteController.favAlbums;
+                  var album = favAlbums[favouriteController.favAlbumIndex.value];
+                  immersiveController.setAlbum(album);
+                  immersiveController.play(song);
+                }
               },
               child: SongSelectOption(
+                highLight: playingSongMid == song.uid,
                 coverUrl: song.album?.cover ?? "",
                 fontSize: 15,
                 subtitleFontSize: 12,

@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7156146",
+      "name": "暂停",
+      "font_class": "zanting",
+      "unicode": "e693",
+      "unicode_decimal": 59027
+    },
+    {
       "icon_id": "201581",
       "name": "3.1关注1-选中",
       "font_class": "31guanzhu1xuanzhong",
@@ -55,13 +62,6 @@
       "unicode_decimal": 59468
     },
     {
-      "icon_id": "683294",
-      "name": "暂停",
-      "font_class": "zanting1",
-      "unicode": "e669",
-      "unicode_decimal": 58985
-    },
-    {
       "icon_id": "11808714",
       "name": "播放",
       "font_class": "icon_play",
@@ -81,13 +81,6 @@
       "font_class": "ai-rew-left",
       "unicode": "e65f",
       "unicode_decimal": 58975
-    },
-    {
-      "icon_id": "4908295",
-      "name": "暂停",
-      "font_class": "zanting",
-      "unicode": "e662",
-      "unicode_decimal": 58978
     },
     {
       "icon_id": "4908329",

@@ -74,3 +74,23 @@ class FetchSongSourceRequest extends BaseApi<String> {
     return data;
   }
 }
+
+class FetchSongLyricRequest extends BaseApi<String> {
+  final String songMid;
+
+  FetchSongLyricRequest({required this.songMid});
+
+  @override
+  RequestMethod get method => RequestMethod.post;
+
+  @override
+  Map<String, dynamic>? get body => {"songMid": songMid};
+
+  @override
+  String get path => "song/lyric";
+
+  @override
+  String fromJson(data) {
+    return data;
+  }
+}

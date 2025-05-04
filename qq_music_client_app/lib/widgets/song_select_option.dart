@@ -12,6 +12,10 @@ class SongSelectOption extends StatelessWidget {
   final String album;
   final Duration? duration;
   final double thumbSize;
+  final double thumbBorderRadius;
+  final EdgeInsetsGeometry thumbPadding;
+  final EdgeInsetsGeometry thumbMargin;
+  final bool highLight;
 
   const SongSelectOption({
     super.key,
@@ -22,7 +26,11 @@ class SongSelectOption extends StatelessWidget {
     this.singer = "艺术家",
     this.album = "专辑名称",
     this.thumbSize = 64.0,
+    this.thumbBorderRadius = 0,
+    this.thumbPadding = const EdgeInsets.all(0.0),
+    this.thumbMargin = const EdgeInsets.all(0.0),
     this.duration,
+    this.highLight = false,
   });
 
   @override
@@ -77,19 +85,24 @@ class SongSelectOption extends StatelessWidget {
       ],
     );
 
-    var songCover = SizedBox(
+    var songCover = Container(
+      padding: thumbPadding,
+      margin: thumbMargin,
       width: thumbSize,
       height: thumbSize,
-      child: CachedNetworkImage(
-        imageUrl: coverUrl,
-        placeholder: (context, url) => const CircularProgressIndicator(
-          color: ClientColors.textLight,
-          padding: EdgeInsets.all(8),
-        ),
-        errorWidget: (context, url, error) => Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/avatar.webp"),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(thumbBorderRadius),
+        child: CachedNetworkImage(
+          imageUrl: coverUrl,
+          placeholder: (context, url) => const CircularProgressIndicator(
+            color: ClientColors.textLight,
+            padding: EdgeInsets.all(8),
+          ),
+          errorWidget: (context, url, error) => Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("images/avatar.webp"),
+              ),
             ),
           ),
         ),
@@ -99,12 +112,14 @@ class SongSelectOption extends StatelessWidget {
     return DefaultTextStyle(
       style: TextStyle(
         fontSize: fontSize,
-        color: ClientColors.text,
+        color: highLight ? ClientColors.tabBackground : ClientColors.text,
         overflow: TextOverflow.ellipsis,
       ),
       child: Container(
-        decoration: const BoxDecoration(
-          color: ClientColors.lightPrimary,
+        decoration: BoxDecoration(
+          color: highLight
+              ? ClientColors.activeSelectorBorder
+              : ClientColors.lightPrimary,
         ),
         child: Stack(
           alignment: AlignmentDirectional.centerStart,

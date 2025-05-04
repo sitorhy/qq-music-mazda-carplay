@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qq_music_client_app/model/album.dart';
+import 'package:qq_music_client_app/model/song.dart';
 import 'package:qq_music_client_app/store/home_controller.dart';
+import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/utils/toast.dart';
 import 'package:qq_music_client_app/views/home/category_list.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
@@ -17,10 +19,14 @@ class CategorizedPlaylists extends StatelessWidget {
   CategorizedPlaylists({super.key});
 
   final HomeController homeController = Get.find(tag: "homeController");
+  final ImmersiveController immersiveController =
+      Get.find(tag: "immersiveController");
 
   @override
   Widget build(BuildContext context) {
     var songList = Obx(() {
+      var playingSongMid = immersiveController.playingSong.value.uid;
+
       if ([0].contains(homeController.tagGroupIndex.value)) {
         return PositionedListView.separated(
           itemCount: homeController.recommendSongs.length,
@@ -29,15 +35,29 @@ class CategorizedPlaylists extends StatelessWidget {
             var song = homeController.recommendSongs[index];
             return PositionedListItem(
               index: index,
-              child: SongSelectOption(
-                coverUrl: song.album?.cover ?? "",
-                fontSize: 15,
-                subtitleFontSize: 12,
-                thumbSize: 54,
-                title: song.title,
-                singer: song.singer.map((i) => i.name).join("/"),
-                album: song.album?.name ?? "",
-                duration: song.duration == null ? null : Duration(seconds: song.duration!),
+              child: GestureDetector(
+                onTap: () async {
+                  // 数据结构是歌单
+                  var playlist = homeController.recommendPlaylistsReduce[
+                      homeController.recommendPlaylistIndex.value];
+                  // 取出分类歌单 关联当前播放列表
+                  await immersiveController.setPlayingList(
+                      homeController.recommendSongs, playlist);
+                  immersiveController.play(song);
+                },
+                child: SongSelectOption(
+                  highLight: playingSongMid == song.uid,
+                  coverUrl: song.album?.cover ?? "",
+                  fontSize: 15,
+                  subtitleFontSize: 12,
+                  thumbSize: 54,
+                  title: song.title,
+                  singer: song.singer.map((i) => i.name).join("/"),
+                  album: song.album?.name ?? "",
+                  duration: song.duration == null
+                      ? null
+                      : Duration(seconds: song.duration!),
+                ),
               ),
             );
           },
@@ -62,16 +82,26 @@ class CategorizedPlaylists extends StatelessWidget {
           separatorExtent: 4.0,
           itemBuilder: (buildContext, index) {
             var album = albums[index];
+            var sessionAlbumMid = immersiveController.playingSession.value.albumMid;
             return PositionedListItem(
               index: index,
-              child: SongSelectOption(
-                coverUrl: album.cover ?? "",
-                fontSize: 15,
-                subtitleFontSize: 12,
-                thumbSize: 54,
-                title: album.name,
-                singer: (album.singers ?? []).map((i) => i.name).join("/"),
-                album: album.description ?? "",
+              child: GestureDetector(
+                onTap: () async {
+                  immersiveController.setAlbum(album);
+                  Song? song = immersiveController.playingSession.value.songs.elementAtOrNull(0);
+                  immersiveController.play(song);
+                },
+                child: SongSelectOption(
+                  // 高亮 本地测试后台为随机专辑不一定命中
+                  highLight: sessionAlbumMid == album.albumMid,
+                  coverUrl: album.cover ?? "",
+                  fontSize: 15,
+                  subtitleFontSize: 12,
+                  thumbSize: 54,
+                  title: album.name,
+                  singer: (album.singers ?? []).map((i) => i.name).join("/"),
+                  album: album.description ?? "",
+                ),
               ),
             );
           },

@@ -4,6 +4,11 @@ import 'dart:math' as math;
 class _MeasureSize {
   bool measured = false; // 是否已测量，false表示在build阶段
   Size size = Size.zero;
+
+  @override
+  String toString() {
+    return size.toString();
+  }
 }
 
 class PositionedSingleScrollController extends ScrollController {
@@ -45,11 +50,9 @@ class PositionedSingleScrollController extends ScrollController {
   // 刷新列表元素数目
   void allocateMeasuresSize(int childrenSize) {
     if (_sizes.length < childrenSize) {
-      _sizes.addAll(
-        List.generate(childrenSize - _sizes.length, (index) {
-          return _MeasureSize();
-        })
-      );
+      _sizes.addAll(List.generate(childrenSize - _sizes.length, (index) {
+        return _MeasureSize();
+      }));
     }
     _limit = childrenSize;
   }
@@ -64,17 +67,20 @@ class PositionedSingleScrollController extends ScrollController {
 
   double _calcPosition(int index, Axis direction) {
     double total = 0;
-    for (int i = 0; i < math.min(index, _limit); i++) {
+    for (int i = 0; i < math.min(math.min(index, _limit), _sizes.length); i++) {
       Size? size = _sizes[i].size;
       total += direction == Axis.vertical ? size.height : size.width;
     }
     total -= (direction == Axis.vertical ? clientHeight / 2 : clientWidth / 2);
-    if (index < _limit) {
-      Size target = _sizes[index].size;
-      total += (direction == Axis.vertical ? target.height : target.width) / 2;
+    if (index < _sizes.length) {
+      if (index < _limit) {
+        Size target = _sizes[index].size;
+        total +=
+            (direction == Axis.vertical ? target.height : target.width) / 2;
+      }
+      total +=
+          direction == Axis.vertical ? clientPadding.top : clientPadding.left;
     }
-    total +=
-        direction == Axis.vertical ? clientPadding.top : clientPadding.left;
     return math.max(total, 0);
   }
 

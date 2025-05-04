@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qq_music_client_app/store/follow_controller.dart';
+import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/views/home/category_list.dart';
 import 'package:qq_music_client_app/views/home/home_content_container.dart';
 import 'package:qq_music_client_app/widgets/album_select_option.dart';
@@ -14,6 +15,9 @@ class MyFavouriteSingers extends StatelessWidget {
   MyFavouriteSingers({super.key});
 
   final FollowController followController = Get.find(tag: "followController");
+
+  final ImmersiveController immersiveController =
+      Get.find(tag: "immersiveController");
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +51,15 @@ class MyFavouriteSingers extends StatelessWidget {
 
     var songList = Obx(() {
       var songs = followController.currentSongs;
+      var currentSingerIndex = followController.currentSingerIndex.value;
+      var singer = followController.singers[currentSingerIndex];
+      var selectedAlbumIndex =
+          followController.singerAlbumIndexMap[singer.singerMid];
+      var currentAlbums = followController.currentAlbums;
+      var album = currentAlbums[selectedAlbumIndex ?? 0];
+
+      var playingSongMid = immersiveController.playingSong.value.uid;
+
       return PositionedListView.separated(
         itemCount: songs.length,
         separatorExtent: 4.0,
@@ -54,17 +67,24 @@ class MyFavouriteSingers extends StatelessWidget {
           var song = songs[index];
           return PositionedListItem(
             index: index,
-            child: SongSelectOption(
-              coverUrl: song.album?.cover ?? "",
-              fontSize: 15,
-              subtitleFontSize: 12,
-              thumbSize: 54,
-              title: song.title,
-              singer: song.singer.map((i) => i.name).join("/"),
-              album: song.album?.name ?? "",
-              duration: song.duration == null
-                  ? null
-                  : Duration(seconds: song.duration!),
+            child: GestureDetector(
+              onTap: () {
+                immersiveController.setAlbum(album);
+                immersiveController.play(song);
+              },
+              child: SongSelectOption(
+                highLight: playingSongMid == song.uid,
+                coverUrl: song.album?.cover ?? "",
+                fontSize: 15,
+                subtitleFontSize: 12,
+                thumbSize: 54,
+                title: song.title,
+                singer: song.singer.map((i) => i.name).join("/"),
+                album: song.album?.name ?? "",
+                duration: song.duration == null
+                    ? null
+                    : Duration(seconds: song.duration!),
+              ),
             ),
           );
         },

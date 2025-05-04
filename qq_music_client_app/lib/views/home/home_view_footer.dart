@@ -19,7 +19,22 @@ class HomeViewFooter extends StatelessWidget {
       children: [
         Expanded(
           flex: 35,
-          child: HomeViewFooterSong(height: 38),
+          child: Obx(() {
+            String? playingSongCoverUrl =
+                immersiveController.playingSong.value.album?.cover;
+            String? playingSongTitle =
+                immersiveController.playingSong.value.title;
+            String? playingSongAuthor = immersiveController
+                .playingSong.value.singer
+                .map((i) => i.name)
+                .join('/');
+            return HomeViewFooterSong(
+              height: 38,
+              coverUrl: playingSongCoverUrl ?? "",
+              title: playingSongTitle,
+              author: playingSongAuthor,
+            );
+          }),
         ),
         const Expanded(
           flex: 2,
@@ -43,19 +58,18 @@ class HomeViewFooter extends StatelessWidget {
             var duration = immersiveController.duration;
             var current = immersiveController.current;
             var progress = immersiveController.progress;
-            var isLoading = immersiveController.isLoading;
-            var isSeeking = immersiveController.isSeeking;
-            var seekingProgress = immersiveController.seekingProgress;
-            var loadingProgress = immersiveController.loadingProgress;
+            var disabled = ![
+              ProcessingStateAdapter.ready,
+              ProcessingStateAdapter.completed
+            ].contains(immersiveController.status.value);
+            var bufferedProgress = immersiveController.bufferedProgress;
 
             return ProgressSlider(
               duration: duration.value,
               current: current.value,
               progress: progress.value,
-              isLoading: isLoading.value,
-              isSeeking: isSeeking.value,
-              seekingProgress: seekingProgress.value,
-              loadingProgress: loadingProgress.value,
+              disabled: disabled,
+              bufferedProgress: bufferedProgress.value,
               onSeeking: (progress) {
                 immersiveController.seek(progress);
               },

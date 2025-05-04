@@ -49,8 +49,14 @@ class PositionedSingleScrollView extends StatefulWidget {
 class _PositionedSingleScrollViewState
     extends State<PositionedSingleScrollView> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    // 分配尺寸记录空间
     widget.controller?.allocateMeasuresSize(widget.children.length);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     if (widget.padding != null) {
       widget.controller?.setClientPadding(widget.padding!);
     }
@@ -77,13 +83,15 @@ class _PositionedSingleScrollViewState
               crossAxisAlignment: widget.crossAxisAlignment,
               direction: widget.scrollDirection,
               children: widget.children.mapIndexed((index, child) {
-                widget.controller?.prepareMeasure(index: index);
                 return SizedSingleScrollItem(
                     index: index, tag: child.tag, child: child);
               }).toList(),
             ),
           ),
           onNotification: (notification) {
+            // 初始化记录空间
+            widget.controller?.prepareMeasure(index: notification.index);
+            // 回填尺寸
             widget.controller?.backpathMeasure(
                 index: notification.index, size: notification.size);
             return true;
@@ -91,6 +99,16 @@ class _PositionedSingleScrollViewState
         );
       },
     );
+  }
+
+
+  @override
+  void didUpdateWidget(PositionedSingleScrollView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.listViewKey != widget.listViewKey) {
+      // 重新分配空间 需要指定key（ObjectKey）
+      widget.controller?.allocateMeasuresSize(widget.children.length);
+    }
   }
 
   @override

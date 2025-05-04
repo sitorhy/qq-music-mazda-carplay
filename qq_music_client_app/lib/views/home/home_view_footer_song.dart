@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:qq_music_client_app/router/client_router_delegate.dart';
 import 'package:qq_music_client_app/theme/client_colors.dart';
@@ -6,8 +7,16 @@ import 'package:qq_music_client_app/widgets/carousel_rich_text.dart';
 
 class HomeViewFooterSong extends StatelessWidget {
   final double height;
+  final String coverUrl;
+  final String title;
+  final String author;
 
-  const HomeViewFooterSong({super.key, this.height = 40});
+  const HomeViewFooterSong(
+      {super.key,
+      this.height = 40,
+      this.coverUrl = "",
+      this.title = "",
+      this.author = ""});
 
   @override
   Widget build(BuildContext context) {
@@ -24,33 +33,36 @@ class HomeViewFooterSong extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 1, 8, 1),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4.0),
-                    child: Image.asset(
-                      "images/cover.png",
-                      width: height,
-                      height: height,
-                    ),
+                    child: coverUrl.startsWith("http")
+                        ? CachedNetworkImage(
+                            imageUrl: coverUrl,
+                            placeholder: (context, url) =>
+                                Image.asset("images/cd_default.png"),
+                            errorWidget: (context, url, error) =>
+                                Image.asset("images/cd_default.png"),
+                          )
+                        : Image.asset("images/cd_default.png"),
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Flexible(
                         child: CarouselRichText(
-                          title:
-                              "Get Over The Barrier! -Roaring Version- (「英雄伝説 零の軌跡」)",
+                          title: title.isNotEmpty ? title : "QQ音乐 听我想听",
                         ),
                       ),
                       Flexible(
                         child: Text(
+                          author.isNotEmpty ? author : "未知歌手",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          "Falcom Sound Team J.D.K.",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 12, color: ClientColors.subtitle),
                         ),
                       )

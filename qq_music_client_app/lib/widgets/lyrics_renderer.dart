@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:qq_music_client_app/widgets/positioned_single_scroll_controller.dart';
 import 'dart:math' as math;
 
@@ -12,16 +11,20 @@ class LyricsRenderer extends StatefulWidget {
   final double fontSizeHighlight;
   final Color fontColor;
   final Color fontColorHighlight;
-  final PositionedSingleScrollController? controller;
+  final String lyricText;
+  final Duration current;
+
+  // 测试用，显示行号
   final bool _debugShowIndex = false;
 
   const LyricsRenderer({
     super.key,
     this.fontSize = 15.0,
     this.fontColor = Colors.white,
-    this.controller,
     this.fontSizeHighlight = 16.0,
     this.fontColorHighlight = Colors.yellow,
+    this.lyricText = "",
+    this.current = Duration.zero,
   });
 
   @override
@@ -32,8 +35,10 @@ class LyricsRenderer extends StatefulWidget {
 
 class _LyricsRendererState extends State<LyricsRenderer> {
   _LyricsManager lyricsManager = _LyricsManager(text: "");
+  PositionedSingleScrollController controller =
+      PositionedSingleScrollController(direction: Axis.vertical);
   List<List<_LyricTag>> groupTimeLines = [];
-  int highlightIndex = -1;
+  int highlightIndex = 0;
 
   Size _textSize(String text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
@@ -47,31 +52,51 @@ class _LyricsRendererState extends State<LyricsRenderer> {
   @override
   void initState() {
     super.initState();
-    rootBundle
-        .loadString("lyrics/希望有羽毛和翅膀 - 知更鸟,HOYO-MiX,Chevy.lrc")
-        .then((lyrics) {
-      lyricsManager = _LyricsManager(text: lyrics);
-      lyricsManager.addListener(() {
-        setState(() {
-          groupTimeLines = lyricsManager.groupTimeLines;
-        });
+    lyricsManager = _LyricsManager(text: widget.lyricText);
+    lyricsManager.addListener(() {
+      setState(() {
+        groupTimeLines = lyricsManager.groupTimeLines;
       });
-      lyricsManager.rebuild();
+      print(groupTimeLines);
     });
-    widget.controller?.addListener(onControllerNotice);
+    lyricsManager.rebuild();
   }
 
-  void onControllerNotice() {
-    if (highlightIndex != widget.controller?.highlightIndex) {
-      setState(() {
-        highlightIndex = widget.controller?.highlightIndex ?? -1;
+  @override
+  void didUpdateWidget(LyricsRenderer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.lyricText != widget.lyricText) {
+      lyricsManager._text = widget.lyricText;
+      highlightIndex = 0; // 临时变量不需要触发setState
+      lyricsManager.rebuild();
+    }
+    if (widget.current != oldWidget.current) {
+      // 播放进度更新 更新歌词高亮行
+      int index = 0;
+      int nextHighLightIndex = groupTimeLines.indexWhere((lines) {
+        var rightTag =
+            groupTimeLines[math.min(groupTimeLines.length - 1, index + 1)]
+                .elementAt(0);
+        var leftTag = lines.elementAt(0);
+        if (leftTag.seconds <= widget.current.inSeconds &&
+            widget.current.inSeconds < rightTag.seconds) {
+          return true;
+        } else if (leftTag == rightTag) {
+          // 已经搜索到结尾
+          return true;
+        }
+        index++;
+        return false;
       });
+      if (highlightIndex != nextHighLightIndex && nextHighLightIndex >= 0) {
+        highlightIndex = nextHighLightIndex;
+        controller.animateToIndex(highlightIndex);
+      }
     }
   }
 
   @override
   void dispose() {
-    widget.controller?.removeListener(onControllerNotice);
     super.dispose();
   }
 
@@ -98,34 +123,44 @@ class _LyricsRendererState extends State<LyricsRenderer> {
         math.max(0, measuredHighlightFontSize.height - measuredFontSize.height);
 
     var children = groupTimeLines.mapIndexed((index, groupLines) {
+      // 是否背景音乐过渡行（没有歌词的行）
+      bool isEmptyLine = groupLines.every((i) => i.content.isEmpty);
+
       return PositionedSingleScrollItem(
         child: Container(
-          // decoration: BoxDecoration(color: Colors.white12),
+          // 过渡行尺寸直接0
           padding: EdgeInsets.fromLTRB(
             0,
-            (measuredFontSize.height + dyHighlight) / 2,
+            isEmptyLine ? 0 : (measuredFontSize.height + dyHighlight) / 2,
             0,
-            (measuredFontSize.height + dyHighlight) / 2,
+            isEmptyLine ? 0 : (measuredFontSize.height + dyHighlight) / 2,
           ),
-          child: Column(
-            children: groupLines.map(
-              (tag) {
-                return Text(
-                  textAlign: TextAlign.center,
-                  widget._debugShowIndex
-                      ? "$index.${tag.content}"
-                      : tag.content,
-                  style: highlightIndex == index ? highlightTextStyle : lyricTextStyle,
-                );
-              },
-            ).toList(),
-          ),
+          child: isEmptyLine
+              ? const SizedBox(
+                  height: 0,
+                )
+              : Column(
+                  children: groupLines.map(
+                    (tag) {
+                      return Text(
+                        textAlign: TextAlign.center,
+                        widget._debugShowIndex
+                            ? "$index.${tag.content}"
+                            : tag.content,
+                        style: highlightIndex == index
+                            ? highlightTextStyle
+                            : lyricTextStyle,
+                      );
+                    },
+                  ).toList(),
+                ),
         ),
       );
     }).toList();
 
     return PositionedSingleScrollView(
-      controller: widget.controller,
+      listViewKey: ObjectKey(widget.lyricText),
+      controller: controller,
       padding: EdgeInsets.fromLTRB(
         0,
         constraints.maxHeight / 2 - (measuredFontSize.height),
@@ -146,7 +181,7 @@ class _LyricsRendererState extends State<LyricsRenderer> {
         maxHeight: double.infinity,
       ),
       child: LayoutBuilder(builder: (context, constraints) {
-        widget.controller?.setClientSize(
+        controller.setClientSize(
           constraints.maxWidth,
           constraints.maxHeight,
         );
@@ -197,9 +232,56 @@ class _LyricsManager extends ChangeNotifier {
       }
     }
 
+    // 填充非时间轴行，平均分配时间轴（作者，标题等）
+    _writeNonTimeTagFrames(nextGroupTimeLines);
+
     groupTimeLines = nextGroupTimeLines;
 
     notifyListeners();
+  }
+
+  _writeNonTimeTagFrames(List<List<_LyricTag>> groupTimeLines) {
+    // 非时间轴行
+    int left = groupTimeLines
+        .indexWhere((group) => group.elementAt(0).strTime.isEmpty);
+    // 最近的时间轴行
+    int right = left;
+
+    if (left < 0) {
+      return;
+    }
+
+    while (left < groupTimeLines.length && right < groupTimeLines.length) {
+      // 查找下一个最近的时间轴行
+      int nextRight = groupTimeLines.indexWhere(
+          (group) => group.elementAt(0).strTime.isNotEmpty, left);
+
+      if (nextRight >= 0) {
+        // 存在空白的排轴片段
+        right = nextRight;
+      } else {
+        break;
+      }
+
+      // 平均分配片段时间排轴
+      for (int i = left; i < right; ++i) {
+        for (var tag in groupTimeLines[i]) {
+          tag.seconds = ((groupTimeLines[right].elementAt(0).seconds -
+                          groupTimeLines[left].elementAt(0).seconds) /
+                      (right - left)) *
+                  (i - left) +
+              groupTimeLines[left].elementAt(0).seconds;
+          tag.seconds = double.parse(tag.seconds.toStringAsFixed(2));
+        }
+      }
+      int nextLeft = groupTimeLines.indexWhere(
+          (group) => group.elementAt(0).strTime.isEmpty, right + 1);
+      if (nextLeft < 0) {
+        left = groupTimeLines.length;
+      } else {
+        left = nextLeft;
+      }
+    }
   }
 }
 
@@ -226,7 +308,8 @@ class _LyricTag {
         tag = "";
         strTime = timeMatch.group(0)!;
         strTime = strTime.substring(1, strTime.length - 1);
-        seconds = strTime.split(":").reversed.toList().mapIndexed((index, numStr) {
+        seconds =
+            strTime.split(":").reversed.toList().mapIndexed((index, numStr) {
           return double.parse(numStr) * math.pow(60, index);
         }).reduce((s, e) {
           return s + e;
@@ -238,5 +321,10 @@ class _LyricTag {
     } else {
       tag = "";
     }
+  }
+
+  @override
+  String toString() {
+    return "{$seconds: ${content.isEmpty ? (tag.isEmpty ? 'EMPTY' : tag) : (content.isEmpty ? 'EMPTY' : content)}}";
   }
 }
