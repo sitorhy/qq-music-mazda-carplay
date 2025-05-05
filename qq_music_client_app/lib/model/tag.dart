@@ -7,6 +7,7 @@ part 'tag.g.dart';
 class Tag {
   final int tagId;
   final String tagName;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   late final String uid;
 
   Tag({

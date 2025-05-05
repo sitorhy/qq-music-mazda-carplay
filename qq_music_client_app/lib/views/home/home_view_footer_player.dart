@@ -90,6 +90,7 @@ class HomeViewFooterPlayer extends StatelessWidget {
               if (_btnDisabled()) {
                 return;
               }
+              immersiveController.playPrev();
             },
             child: Obx(() {
               return _PlayerItem(
@@ -179,6 +180,7 @@ class HomeViewFooterPlayer extends StatelessWidget {
                 return;
               }
               // 下一首
+              immersiveController.playNext();
             },
             child: Obx(() {
               return _PlayerItem(

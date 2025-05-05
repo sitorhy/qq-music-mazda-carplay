@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qq_music_client_app/model/song.dart';
+import 'package:qq_music_client_app/store/favourite_controller.dart';
 import 'package:qq_music_client_app/store/immersive_controller.dart';
+import 'package:qq_music_client_app/store/profile_controller.dart';
+import 'package:qq_music_client_app/utils/songs.dart';
 import 'package:qq_music_client_app/views/home/home_view_footer_player.dart';
 import 'package:qq_music_client_app/widgets/progress_slider.dart';
 import 'package:qq_music_client_app/views/home/home_view_footer_song.dart';
@@ -9,7 +13,10 @@ class HomeViewFooter extends StatelessWidget {
   HomeViewFooter({super.key});
 
   final ImmersiveController immersiveController =
-      Get.find(tag: "immersiveController");
+  Get.find(tag: "immersiveController");
+
+  final ProfileController profileController =
+  Get.find(tag: "profileController");
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +35,22 @@ class HomeViewFooter extends StatelessWidget {
                 .playingSong.value.singer
                 .map((i) => i.name)
                 .join('/');
+            Song playingSong = immersiveController.playingSong.value;
+            List<Song> favSongs = profileController.favSongs;
             return HomeViewFooterSong(
               height: 38,
               coverUrl: playingSongCoverUrl ?? "",
               title: playingSongTitle,
               author: playingSongAuthor,
+              favBtnOutline: !favSongs.hasSong(playingSong),
+              favDisabled: playingSong.songMid.isEmpty,
+              onFavClick: (bool outline) {
+                if (outline) {
+                  profileController.addFavSong(playingSong.songMid);
+                } else {
+                  profileController.removeFavSong(playingSong.songMid);
+                }
+              },
             );
           }),
         ),

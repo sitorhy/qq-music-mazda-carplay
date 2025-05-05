@@ -21,4 +21,5 @@ final class ClientColors {
   static const Color activeSelectorBorder = Color(0xFFE9C177);
   static const Color dividerColor = Color(0xFFC2C2C3);
   static const Color dividerTitleColor = Color(0xFF4B4A4A);
+  static const Color highLightColor = Color(0xFFE1CEAB);
 }

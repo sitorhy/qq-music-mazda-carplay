@@ -11,6 +11,7 @@ class Playlist {
   final int dissId;
   final int? dirId;
   final String? nickname;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   late final String uid;
 
   Playlist({

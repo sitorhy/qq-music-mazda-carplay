@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qq_music_client_app/model/song.dart';
 import 'package:qq_music_client_app/router/client_router_delegate.dart';
 import 'package:qq_music_client_app/store/immersive_controller.dart';
+import 'package:qq_music_client_app/store/profile_controller.dart';
+import 'package:qq_music_client_app/utils/songs.dart';
 import 'package:qq_music_client_app/views/immersive/circle_cover.dart';
 import 'package:qq_music_client_app/views/immersive/drawer_playlist.dart';
 import 'package:qq_music_client_app/views/immersive/play_controls.dart';
@@ -30,6 +33,9 @@ class _ImmersivePageState extends State<_ImmersivePage>
 
   final ImmersiveController immersiveController =
       Get.find(tag: "immersiveController");
+
+  final ProfileController profileController =
+      Get.find(tag: "profileController");
 
   @override
   void initState() {
@@ -169,10 +175,24 @@ class _ImmersivePageState extends State<_ImmersivePage>
               const SizedBox(
                 width: 15,
               ),
-              const Icon(
-                color: Colors.white70,
-                IconData(0xe601, fontFamily: "IconFont"),
-              ),
+              Obx(() {
+                Song playingSong = immersiveController.playingSong.value;
+                List<Song> favSongs = profileController.favSongs;
+                bool outline = !favSongs.hasSong(playingSong);
+                return GestureDetector(
+                  onTap: () {
+                    if (outline) {
+                      profileController.addFavSong(playingSong.songMid);
+                    } else {
+                      profileController.removeFavSong(playingSong.songMid);
+                    }
+                  },
+                  child: Icon(
+                    color: Colors.red,
+                    IconData(outline ? 0xe601 : 0xe600, fontFamily: "IconFont"),
+                  ),
+                );
+              }),
             ],
           ),
         ),
@@ -300,8 +320,10 @@ class _ImmersivePageState extends State<_ImmersivePage>
           Transform.scale(
             scale: 2.0,
             child: Obx(() {
-              var coverUrl = immersiveController.playingSong.value.album?.cover ?? "";
-              var backgroundImgUrl = coverUrl.isNotEmpty ? coverUrl : 'images/bg_default.jpg';
+              var coverUrl =
+                  immersiveController.playingSong.value.album?.cover ?? "";
+              var backgroundImgUrl =
+                  coverUrl.isNotEmpty ? coverUrl : 'images/bg_default.jpg';
 
               return backgroundImgUrl.contains("http")
                   ? Image.network(backgroundImgUrl)

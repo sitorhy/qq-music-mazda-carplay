@@ -14,6 +14,7 @@ class Song {
   final List<Singer> singer;
   final Album? album;
   final int? duration;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   late final String uid;
 
   Song({

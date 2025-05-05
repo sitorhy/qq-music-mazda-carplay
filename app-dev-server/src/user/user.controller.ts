@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -8,5 +8,20 @@ export class UserController {
   @Get('/profile')
   getProfile() {
     return this.userService.getProfile();
+  }
+
+  @Get('/fav/songs')
+  getFavSongs() {
+    return this.userService.getFavSongs();
+  }
+
+  @Post('/fav/songs/add')
+  addFavSong(@Body() params: { songMid: string }) {
+    return this.userService.addFavSong(params.songMid);
+  }
+
+  @Post('/fav/songs/del')
+  removeFavSong(@Body() params: { songMid: string }) {
+    return this.userService.removeFavSong(params.songMid);
   }
 }

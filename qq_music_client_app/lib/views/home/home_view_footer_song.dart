@@ -10,13 +10,20 @@ class HomeViewFooterSong extends StatelessWidget {
   final String coverUrl;
   final String title;
   final String author;
+  final bool favBtnOutline;
+  final bool favDisabled;
+  final void Function(bool outline)? onFavClick;
 
-  const HomeViewFooterSong(
-      {super.key,
-      this.height = 40,
-      this.coverUrl = "",
-      this.title = "",
-      this.author = ""});
+  const HomeViewFooterSong({
+    super.key,
+    this.height = 40,
+    this.coverUrl = "",
+    this.title = "",
+    this.author = "",
+    this.favBtnOutline = true,
+    this.favDisabled = true,
+    this.onFavClick,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +80,22 @@ class HomeViewFooterSong extends StatelessWidget {
             ),
           ),
         ),
-        const Row(
+        Row(
           children: [
-            HomeViewFooterSongButton(
-              icon: Icons.favorite,
+            GestureDetector(
+              onTap: () {
+                if (favDisabled) {
+                  return;
+                }
+                if (onFavClick != null) {
+                  onFavClick!(favBtnOutline);
+                }
+              },
+              child: HomeViewFooterSongButton(
+                color: Colors.red,
+                disabled: favDisabled,
+                icon: favBtnOutline ? Icons.favorite_outline : Icons.favorite,
+              ),
             ),
           ],
         ),

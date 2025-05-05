@@ -8,6 +8,7 @@ import 'package:qq_music_client_app/store/follow_controller.dart';
 import 'package:qq_music_client_app/store/home_controller.dart';
 import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/store/my_playlists_controller.dart';
+import 'package:qq_music_client_app/store/profile_controller.dart';
 
 import 'api/http_response.dart';
 
@@ -26,6 +27,7 @@ void main() {
   Get.put(FavouriteController(), tag: "favController");
   Get.put(FollowController(), tag: "followController");
   Get.put(ImmersiveController(), tag: "immersiveController");
+  Get.put(ProfileController(), tag: "profileController");
 
   runApp(ClientApp());
 }

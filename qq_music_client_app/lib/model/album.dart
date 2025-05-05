@@ -13,6 +13,7 @@ class Album {
   final int? songCount;
   final List<Singer>? singers;
   final String? description;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   late final String uid;
 
   Album({

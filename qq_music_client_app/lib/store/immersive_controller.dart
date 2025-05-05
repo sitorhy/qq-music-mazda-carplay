@@ -48,11 +48,7 @@ class ImmersiveController extends GetxController {
 
     status.listen((value) {
       if (value == ProcessingStateAdapter.completed) {
-        int index = playingSession.value.songs
-            .indexWhere((s) => s.uid == playingSong.value.uid);
-        if (index >= 0 && index + 1 < playingSession.value.songs.length) {
-          play(playingSession.value.songs[index + 1]);
-        }
+        playNext();
       }
     });
 
@@ -139,7 +135,7 @@ class ImmersiveController extends GetxController {
     }
     int nextSecs = math.min(duration.value.inSeconds,
         current.value.inSeconds - seekingInterval.value);
-    player.seek(Duration(seconds: nextSecs));
+    player.seek(Duration(seconds: math.max(0, nextSecs)));
   }
 
   fastForward() {
@@ -210,6 +206,22 @@ class ImmersiveController extends GetxController {
       playingSongLyric.value = lyricText;
     } catch (e) {
       toastError(e);
+    }
+  }
+
+  playNext() {
+    int index = playingSession.value.songs
+        .indexWhere((s) => s.uid == playingSong.value.uid);
+    if (index >= 0 && index + 1 < playingSession.value.songs.length) {
+      play(playingSession.value.songs[index + 1]);
+    }
+  }
+
+  playPrev() {
+    int index = playingSession.value.songs
+        .indexWhere((s) => s.uid == playingSong.value.uid);
+    if (index >= 0 && index - 1 < playingSession.value.songs.length) {
+      play(playingSession.value.songs[math.max(0, index - 1)]);
     }
   }
 

@@ -70,6 +70,7 @@ class PlayControls extends StatelessWidget {
               if (_btnDisabled()) {
                 return;
               }
+              immersiveController.playPrev();
             },
             child: _ControlItem(
               icon: const IconData(0xe63c, fontFamily: "IconFont"),
@@ -165,6 +166,7 @@ class PlayControls extends StatelessWidget {
                 return;
               }
               // 下一首
+              immersiveController.playNext();
             },
             child: Obx(() {
               return _ControlItem(

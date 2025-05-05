@@ -118,7 +118,7 @@ class SongSelectOption extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: highLight
-              ? ClientColors.activeSelectorBorder
+              ? ClientColors.highLightColor
               : ClientColors.lightPrimary,
         ),
         child: Stack(
