@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:qq_music_client_app/store/device_info_controller.dart';
 import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/store/profile_controller.dart';
 import 'package:qq_music_client_app/theme/client_colors.dart';
@@ -15,6 +16,8 @@ class Settings extends StatelessWidget {
       Get.find(tag: "immersiveController");
   final ProfileController profileController =
       Get.find(tag: "profileController");
+  final DeviceInfoController deviceInfoController =
+      Get.find(tag: "deviceInfoController");
 
   Settings({super.key});
 
@@ -102,30 +105,84 @@ class Settings extends StatelessWidget {
                         const TitleDivider(
                           title: "设备信息",
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
-                          child: Table(
-                            children: [
-                              TableRow(
-                                children: [Text("分辨率"), Text("1024 * 768")],
-                              ),
-                              TableRow(
-                                children: [Text("DPI"), Text("800")],
-                              ),
-                              TableRow(
-                                children: [Text("系统版本"), Text("Android 13")],
-                              ),
-                              TableRow(
-                                children: [Text("RAM"), Text("2GB")],
-                              ),
-                              TableRow(
-                                children: [Text("内置存储"), Text("2GB")],
-                              ),
-                              TableRow(
-                                children: [Text("外置存储"), Text("2GB")],
-                              ),
-                            ],
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: ClientColors.textLight),
+                            color: ClientColors.lightPrimary,
                           ),
+                          padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
+                          child: Obx(() {
+                            String platform =
+                                deviceInfoController.platform.value;
+                            String manufacturer =
+                                deviceInfoController.manufacturer.value;
+                            ResolutionRatio ratio =
+                                deviceInfoController.resolutionRatio.value;
+
+                            int memoryTotal =
+                                deviceInfoController.memoryTotal.value;
+                            int memoryAvail =
+                                deviceInfoController.memoryAvail.value;
+
+                            int storageTotal =
+                                deviceInfoController.storageTotal.value;
+                            int storageAvail =
+                                deviceInfoController.storageAvail.value;
+
+                            int extStorageTotal =
+                                deviceInfoController.extStorageTotal.value;
+                            int extStorageAvail =
+                                deviceInfoController.extStorageAvail.value;
+                            return Table(
+                              children: [
+                                TableRow(
+                                  children: [
+                                    const Text("制造商"),
+                                    Text(manufacturer)
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    const Text("系统版本"),
+                                    Text(platform)
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    const Text("分辨率"),
+                                    Text("${ratio.width} * ${ratio.height}")
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    const Text("DPI"),
+                                    Text("${ratio.dpi}")
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    const Text("RAM"),
+                                    Text(
+                                        "${(memoryAvail / 1024 / 1024 / 1024).toStringAsFixed(2)}GB / ${(memoryTotal / 1024 / 1024 / 1024).toStringAsFixed(2)}GB")
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    const Text("内置存储"),
+                                    Text(
+                                        "${(storageAvail / 1024 / 1024 / 1024).toStringAsFixed(2)}GB / ${(storageTotal / 1024 / 1024 / 1024).toStringAsFixed(2)}GB")
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    const Text("外置存储"),
+                                    Text(
+                                        "${(extStorageAvail / 1024 / 1024 / 1024).toStringAsFixed(2)}GB / ${(extStorageTotal / 1024 / 1024 / 1024).toStringAsFixed(2)}GB")
+                                  ],
+                                ),
+                              ],
+                            );
+                          }),
                         ),
                       ],
                     ),
@@ -137,7 +194,11 @@ class Settings extends StatelessWidget {
                         const TitleDivider(
                           title: "调试信息",
                         ),
-                        Padding(
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: ClientColors.textLight),
+                            color: ClientColors.lightPrimary,
+                          ),
                           padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
                           child: Obx(() {
                             return Table(
@@ -145,13 +206,13 @@ class Settings extends StatelessWidget {
                                 TableRow(
                                   children: [
                                     const Text("音频状态"),
-                                    Text(immersiveController.status.toString())
+                                    Text(immersiveController.status.toString().split(".").last.toUpperCase())
                                   ],
                                 ),
                                 TableRow(
                                   children: [
                                     const Text("播放状态"),
-                                    Text(immersiveController.isPlaying.string)
+                                    Text(immersiveController.isPlaying.value ? "Yes" : "No")
                                   ],
                                 ),
                               ],

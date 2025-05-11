@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:qq_music_client_app/router/client_router_delegate.dart';
 import 'package:qq_music_client_app/router/client_route_information_parser.dart';
+import 'package:qq_music_client_app/store/device_info_controller.dart';
 import 'package:qq_music_client_app/store/favourite_controller.dart';
 import 'package:qq_music_client_app/store/follow_controller.dart';
 import 'package:qq_music_client_app/store/home_controller.dart';
@@ -22,6 +23,7 @@ void main() {
     DeviceOrientation.landscapeRight,
   ]);
 
+  Get.put(DeviceInfoController(), tag: "deviceInfoController");
   Get.put(HomeController(), tag: "homeController");
   Get.put(MyPlaylistsController(), tag: "myPlaylistsController");
   Get.put(FavouriteController(), tag: "favController");
