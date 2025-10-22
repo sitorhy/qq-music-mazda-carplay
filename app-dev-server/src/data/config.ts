@@ -1,1 +1,3 @@
-export const assertHost = "http://192.168.126.1:3000";
+const HOST = process.env.HOST || '127.0.0.1';
+
+export const assertHost = `http://${HOST}:3000`;

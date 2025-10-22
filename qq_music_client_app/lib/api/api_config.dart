@@ -1,6 +1,12 @@
 class ApiConfig {
-  static String protocol = "http";
-  static String host = "192.168.126.1";
+  static String protocol = const String.fromEnvironment(
+      'API_PROTOCOL',
+      defaultValue: 'http'
+  );
+  static String host = const String.fromEnvironment(
+    'API_HOST',
+    defaultValue: '192.168.126.1'
+  );
   static int port = 3000;
 
   static String get target => "$protocol://$host:$port/";

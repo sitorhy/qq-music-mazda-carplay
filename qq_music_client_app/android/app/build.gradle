@@ -38,6 +38,19 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            dimension "default"
+            applicationIdSuffix ""
+            manifestPlaceholders = [appName: "QQMusic Carplay"]
+        }
+        prod {
+            dimension "default"
+            manifestPlaceholders = [appName: "MusicPlayerDemo"]
+        }
+    }
 }
 
 flutter {
