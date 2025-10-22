@@ -37,6 +37,8 @@ class _ImmersivePageState extends State<_ImmersivePage>
   final ProfileController profileController =
       Get.find(tag: "profileController");
 
+  // final progressStream = BehaviorSubject<WaveformProgress>();
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +63,15 @@ class _ImmersivePageState extends State<_ImmersivePage>
     rightAnimationController.addListener(() {
       setState(() {});
     });
+
+    onPlayingSongChange(immersiveController.playingSong.value);
+    immersiveController.playingSong.listen(onPlayingSongChange);
+  }
+
+  void onPlayingSongChange(Song song) {
+    if (song.songId > 0) {
+      _resolveWave();
+    }
   }
 
   @override
@@ -74,6 +85,69 @@ class _ImmersivePageState extends State<_ImmersivePage>
       leftAnimationController.forward(from: 0.0);
     }
   }
+
+  _resolveWave() async {
+    // var song = immersiveController.playingSong.value;
+    // var response =
+    //     await FetchSongSourceRequest(songMid: song.songMid, songId: song.songId)
+    //         .request();
+    // String url = response.data ?? "";
+    // try {
+    //   String savePath = await LocalSongUtils.getSongCachePath(url);
+    //   String wavePath = await LocalSongUtils.getSongWaveCachePath(url);
+    //
+    //   await HttpUtil.download(url, savePath);
+    //   print("$savePath cache completed.");
+    //
+    //   JustWaveform.extract(
+    //     audioInFile: File(savePath),
+    //     waveOutFile: File(wavePath),
+    //     zoom: const WaveformZoom.pixelsPerSecond(100),
+    //   ).listen((waveformProgress) {
+    //     print('Progress: %${(100 * waveformProgress.progress).toInt()}');
+    //     if (waveformProgress.waveform != null) {
+    //       // Use the waveform.
+    //     }
+    //     progressStream.add(waveformProgress);
+    //   }, onError: progressStream.addError);
+    // } catch (e) {
+    //   toastError(e);
+    // }
+  }
+
+  // Widget getWaveform() {
+  //   return StreamBuilder<WaveformProgress>(
+  //     stream: progressStream,
+  //     builder: (context, snapshot) {
+  //       if (snapshot.hasError) {
+  //         return Center(
+  //           child: Text(
+  //             'Error: ${snapshot.error}',
+  //             style: Theme.of(context).textTheme.titleLarge,
+  //             textAlign: TextAlign.center,
+  //           ),
+  //         );
+  //       }
+  //       final progress = snapshot.data?.progress ?? 0.0;
+  //       final waveform = snapshot.data?.waveform;
+  //       if (waveform == null) {
+  //         return Center(
+  //           child: Text(
+  //             '${(100 * progress).toInt()}%',
+  //             style: Theme.of(context).textTheme.titleLarge,
+  //           ),
+  //         );
+  //       }
+  //       return Obx(() {
+  //         return AudioWaveformWidget(
+  //           waveform: waveform,
+  //           start: Duration.zero,
+  //           duration: waveform.duration,
+  //         );
+  //       });
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +263,9 @@ class _ImmersivePageState extends State<_ImmersivePage>
                   },
                   child: Icon(
                     color: Colors.red,
-                    IconData(outline ? 0xe601 : 0xe600, fontFamily: "IconFont"),
+                    outline
+                        ? const IconData(0xe601, fontFamily: "IconFont")
+                        : const IconData(0xe600, fontFamily: "IconFont"),
                   ),
                 );
               }),
@@ -251,32 +327,43 @@ class _ImmersivePageState extends State<_ImmersivePage>
           Expanded(
             child: Opacity(
               opacity: rightAnimationController.value,
-              child: ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color.fromRGBO(0, 0, 0, 0.0),
-                      Color.fromRGBO(0, 0, 0, 0.65),
-                      Color.fromRGBO(0, 0, 0, 0.9),
-                      Color.fromRGBO(0, 0, 0, 1.0),
-                      Color.fromRGBO(0, 0, 0, 1.0),
-                      Color.fromRGBO(0, 0, 0, 0.9),
-                      Color.fromRGBO(0, 0, 0, 0.65),
-                      Color.fromRGBO(0, 0, 0, 0.0),
-                    ],
-                  ).createShader(bounds);
-                },
-                blendMode: BlendMode.dstIn,
-                child: Obx(() {
-                  String lyricText = immersiveController.playingSongLyric.value;
-                  Duration current = immersiveController.current.value;
-                  return LyricsRenderer(
-                    lyricText: lyricText,
-                    current: current,
-                  );
-                }),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Container(
+                  //   width: 200,
+                  //   height: 200,
+                  //   child: getWaveform(),
+                  // ),
+                  ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromRGBO(0, 0, 0, 0.0),
+                          Color.fromRGBO(0, 0, 0, 0.65),
+                          Color.fromRGBO(0, 0, 0, 0.9),
+                          Color.fromRGBO(0, 0, 0, 1.0),
+                          Color.fromRGBO(0, 0, 0, 1.0),
+                          Color.fromRGBO(0, 0, 0, 0.9),
+                          Color.fromRGBO(0, 0, 0, 0.65),
+                          Color.fromRGBO(0, 0, 0, 0.0),
+                        ],
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: Obx(() {
+                      String lyricText =
+                          immersiveController.playingSongLyric.value;
+                      Duration current = immersiveController.current.value;
+                      return LyricsRenderer(
+                        lyricText: lyricText,
+                        current: current,
+                      );
+                    }),
+                  ),
+                ],
               ),
             ),
           ),
@@ -318,7 +405,7 @@ class _ImmersivePageState extends State<_ImmersivePage>
         children: [
           // 高斯背景
           Transform.scale(
-            scale: 2.0,
+            scale: 1.5,
             child: Obx(() {
               var coverUrl =
                   immersiveController.playingSong.value.album?.cover ?? "";
@@ -326,15 +413,18 @@ class _ImmersivePageState extends State<_ImmersivePage>
                   coverUrl.isNotEmpty ? coverUrl : 'images/bg_default.jpg';
 
               return backgroundImgUrl.contains("http")
-                  ? Image.network(backgroundImgUrl)
+                  ? Image.network(
+                      backgroundImgUrl,
+                      fit: BoxFit.cover,
+                    )
                   : Image.asset(backgroundImgUrl, fit: BoxFit.cover);
             }),
           ),
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(
-                sigmaX: 150,
-                sigmaY: 150,
+                sigmaX: 120,
+                sigmaY: 120,
                 tileMode: TileMode.clamp,
               ),
               child: Container(

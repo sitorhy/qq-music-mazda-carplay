@@ -1,1 +1,1 @@
-export const assertHost = "http://192.168.120.1:3000";
+export const assertHost = "http://192.168.126.1:3000";

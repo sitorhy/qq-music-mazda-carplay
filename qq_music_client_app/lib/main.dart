@@ -10,6 +10,7 @@ import 'package:qq_music_client_app/store/home_controller.dart';
 import 'package:qq_music_client_app/store/immersive_controller.dart';
 import 'package:qq_music_client_app/store/my_playlists_controller.dart';
 import 'package:qq_music_client_app/store/profile_controller.dart';
+import 'package:qq_music_client_app/utils/song_local_path.dart';
 
 import 'api/http_response.dart';
 
@@ -37,7 +38,9 @@ void main() {
 class ClientApp extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  ClientApp({super.key});
+  ClientApp({super.key}) {
+    LocalSongUtils.init();
+  }
 
   /// MaterialApp.router 初始化
   /// RouterDelegate 必须项，路由代理

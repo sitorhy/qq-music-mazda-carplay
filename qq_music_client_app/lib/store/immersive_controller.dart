@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:qq_music_client_app/api/song_api.dart';
@@ -5,6 +7,8 @@ import 'package:qq_music_client_app/model/album.dart';
 import 'package:qq_music_client_app/model/playlist.dart';
 import 'package:qq_music_client_app/model/song.dart';
 import 'package:qq_music_client_app/store/playing_session.dart';
+import 'package:qq_music_client_app/utils/http_util.dart';
+import 'package:qq_music_client_app/utils/song_local_path.dart';
 import 'package:qq_music_client_app/utils/toast.dart';
 import 'dart:math' as math;
 
@@ -167,10 +171,11 @@ class ImmersiveController extends GetxController {
     if (song == null) {
       // 继续播放当前
       if (playingSong.value.songMid.isNotEmpty) {
-        player.play();
+        await player.play();
       }
       return;
     }
+    String songUrl = "";
     try {
       if ([ProcessingStateAdapter.loading].contains(status.value)) {
         return;
@@ -184,6 +189,22 @@ class ImmersiveController extends GetxController {
               songMid: song.songMid, songId: song.songId)
           .request();
       String url = response.data ?? "";
+      songUrl = url;
+
+      // 读取缓存
+      String localPath = await LocalSongUtils.getSongCachePath(url);
+      bool exists = await File(localPath).exists();
+      if (!exists) {
+        String tmp = "$localPath.tmp";
+        HttpUtil.download(url, tmp).then((o) {
+          File(tmp).rename(localPath);
+        });
+      }
+
+      if (exists) {
+        url = File(localPath).uri.toString();
+      }
+
       if (url.isNotEmpty) {
         Duration? songDuration = await player.setUrl(url);
         if (songDuration != null) {
@@ -192,6 +213,16 @@ class ImmersiveController extends GetxController {
           duration.value = Duration.zero;
         }
         player.play();
+
+        // 读取缓存
+        String localLrcPath = await LocalSongUtils.getSongLyricCachePath(url);
+        exists = await File(localLrcPath).exists();
+        if (exists) {
+          final file = File(localLrcPath);
+          final String lyricText = await file.readAsString();
+          playingSongLyric.value = lyricText;
+          return;
+        }
       } else {
         toastError(response.message);
       }
@@ -204,6 +235,13 @@ class ImmersiveController extends GetxController {
           await FetchSongLyricRequest(songMid: song.songMid).request();
       String lyricText = response.data ?? "";
       playingSongLyric.value = lyricText;
+      if (lyricText.isNotEmpty && songUrl.isNotEmpty) {
+        String lrcSavePath = await LocalSongUtils.getSongLyricCachePath(songUrl);
+        String tmpLrc = "$lrcSavePath.tmp";
+        HttpUtil.download(songUrl, tmpLrc).then((o) {
+          File(tmpLrc).rename(lrcSavePath);
+        });
+      }
     } catch (e) {
       toastError(e);
     }

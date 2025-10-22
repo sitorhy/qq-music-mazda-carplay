@@ -47,6 +47,8 @@ dependencies:
   uuid: ^4.5.1
   device_info_plugin:
     path: ../device_info_plugin
+  path_provider: ^2.1.5
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:

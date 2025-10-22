@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="qq_music_client_app"
+        android:label="MusicPlayerDemo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -30,6 +30,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+        <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

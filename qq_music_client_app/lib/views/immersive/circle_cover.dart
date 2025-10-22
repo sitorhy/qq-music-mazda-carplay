@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
@@ -96,6 +97,19 @@ Future loadImage(String path) async {
     NetworkImage(path).resolve(const ImageConfiguration()).addListener(
         ImageStreamListener((info, _) => completer.complete(info.image)));
     return completer.future;
+  } else if (File(path).existsSync()) {
+    File imageFile = File(path);
+    // Read the image file as bytes
+    final Uint8List bytes = await imageFile.readAsBytes();
+
+    // Instantiate an image codec from the bytes
+    final ui.Codec codec = await ui.instantiateImageCodec(bytes);
+
+    // Get the first frame of the image
+    final ui.FrameInfo frameInfo = await codec.getNextFrame();
+
+    // Return the ui.Image
+    return frameInfo.image;
   }
   final data = await rootBundle.load(path);
   // 把资源文件转换成Uint8List类型
