@@ -46,7 +46,7 @@ public class MainActivity extends FlutterActivity {
                 }
                 dialog = new AlertDialog.Builder(this)
                         .setTitle("提示")//设置标题
-                        .setMessage("请开启文件访问权限，否则无法正常使用本应用！")
+                        .setMessage("请开启文件访问权限，释放缓存文件")
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
@@ -77,7 +77,7 @@ public class MainActivity extends FlutterActivity {
                     }
                     dialog = new AlertDialog.Builder(this)
                             .setTitle("提示")//设置标题
-                            .setMessage("请开启文件访问权限，释放缓存文件！")
+                            .setMessage("请开启文件访问权限，释放缓存文件")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
