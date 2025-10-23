@@ -30,11 +30,37 @@ public class MainActivity extends FlutterActivity {
         checkPermission();
 
         if (havePermission) {
-            MediaExtractor.extractMediaIfNecessary(this);
+            startExtractionWithProgress();
         }
     }
 
     private AlertDialog dialog;
+    private AlertDialog progressDlg;
+
+    private void startExtractionWithProgress() {
+        MediaExtractor.extractMediaIfNecessary(this, new ProgressListener() {
+            @Override
+            public void onReady() {
+                progressDlg = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("缓存释放")//设置标题
+                        .setMessage("正在准备释放")
+                        .create();
+                progressDlg.show();
+            }
+
+            @Override
+            public void onProgressUpdate(String status) {
+                runOnUiThread(() -> {
+                    progressDlg.setMessage(status);
+                });
+            }
+
+            @Override
+            public void onComplete(boolean success, String message) {
+                progressDlg.dismiss();
+            }
+        });
+    }
 
     private void checkPermission() {
         //检查权限（NEED_PERMISSION）是否被授权 PackageManager.PERMISSION_GRANTED表示同意授权
@@ -105,7 +131,7 @@ public class MainActivity extends FlutterActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     havePermission = true;
                     Toast.makeText(this, "授权成功！", Toast.LENGTH_SHORT).show();
-                    MediaExtractor.extractMediaIfNecessary(this);
+                    startExtractionWithProgress();
                 } else {
                     havePermission = false;
                     Toast.makeText(this, "授权被拒绝！", Toast.LENGTH_SHORT).show();

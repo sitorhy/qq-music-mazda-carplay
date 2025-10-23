@@ -96,3 +96,17 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+## 运行
+```bash
+npm run build
+```
+指定图片地址前缀
+```bash
+HOST=10.0.2.2 node dist/main.js
+```
+使用 pm2
+```bash
+pm2 start "HOST=8.148.234.214 node dist/main.js" --name music-app-server
+```

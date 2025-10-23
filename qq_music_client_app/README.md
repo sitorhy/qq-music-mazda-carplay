@@ -14,3 +14,17 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+## 打包
+```shell
+flutter build apk --flavor prod --dart-define=API_HOST={Server IP Address}
+```
+
+## Android Studio Debug
+run args 添加:  --dart-define=API_HOST={Server IP Address}
+Build flavor:  dev
+
+<br/>
+
+或 api_config.dart 修改服务器 IP
