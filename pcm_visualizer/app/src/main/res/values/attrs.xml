@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 声明 MyVisualizerView 的自定义属性 -->
+    <declare-styleable name="MyVisualizerView">
+        
+        <!-- 定义绘制模式的枚举属性 -->
+        <attr name="visualizerMode" format="enum">
+            <!-- 模式一：线性绘制所有频段 (默认) -->
+            <enum name="linear" value="0" />
+            <!-- 模式二：只绘制指定数量的低频柱子 -->
+            <enum name="bar" value="1" />
+        </attr>
+        
+        <!-- 定义在 bar 模式下绘制的柱子数量，默认为 256 -->
+        <attr name="barCount" format="integer" />
+
+    </declare-styleable>
+</resources>
