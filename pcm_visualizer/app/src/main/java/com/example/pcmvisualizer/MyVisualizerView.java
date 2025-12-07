@@ -3,7 +3,9 @@ package com.example.pcmvisualizer;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -22,7 +24,7 @@ public class MyVisualizerView extends View {
     private byte[] mFftData;
     private Paint mWavePaint = new Paint(); // 用于绘制波形的画笔
     private Paint mFftPaint = new Paint();   // 用于绘制频谱的画笔
-
+    private Paint mForePaint = new Paint();
     private float[] mLastBarHeights;
 
     public MyVisualizerView(Context context) {
@@ -55,6 +57,10 @@ public class MyVisualizerView extends View {
         mFftPaint.setStrokeWidth(5f);
         mFftPaint.setAntiAlias(true);
 
+        mForePaint.setStrokeWidth(10f);
+        mForePaint.setAntiAlias(true);
+        mForePaint.setColor(Color.rgb(0, 128, 255));
+
         // 如果 attrs 不为 null，则解析自定义属性
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MyVisualizerView);
@@ -78,7 +84,10 @@ public class MyVisualizerView extends View {
 
     public void updateFft(byte[] fft) {
         this.mFftData = fft;
-        invalidate(); // 请求重绘
+
+        updateVisualizer(fft);
+
+        // invalidate(); // 请求重绘
     }
 
     @Override
@@ -91,91 +100,62 @@ public class MyVisualizerView extends View {
         }
     }
 
+    private byte[] mBytes;
+
+    private final Rect mRect = new Rect();
+
+    public void updateVisualizer(byte[] fft) {
+        byte[] model = new byte[fft.length / 2 + 1];
+        model[0] = (byte) Math.abs(fft[0]);
+        for (int i = 2, j = 1; j < mBarCount; ++j) {
+            model[j] = (byte) Math.hypot(fft[i], fft[i + 1]);
+            i += 2;
+        }
+        mBytes = model;
+        invalidate();
+    }
+
     protected void onDrawBar(Canvas canvas) {
+        super.onDraw(canvas);
         canvas.drawColor(0xFF111111);
-
-        if (mFftData == null) {
+        if (mBytes == null) {
             return;
         }
+        mRect.set(0, 0, getWidth(), getHeight());
 
-        int barCount = mBarCount;
-        if (barCount <= 0) {
-            return;
-        }
+        final int width = mRect.width();
+        final int height = mRect.height();
 
-        // 初始化或检查平滑数组
-        if (mLastBarHeights == null || mLastBarHeights.length != barCount) {
-            mLastBarHeights = new float[barCount];
-        }
+        // 计算每个柱子的总宽度（包含间隙）
+        final float barTotalWidth = (float)width / mBarCount;
+        // 定义柱子之间的间隙，例如总宽度的 1/4
+        final float gap = barTotalWidth / 4;
+        // 计算柱子本身的绘制宽度
+        final float barDrawWidth = barTotalWidth - gap;
 
-        float barWidth = (float) getWidth() / barCount;
-        int totalFftBins = mFftData.length / 2;
-        int binsPerBar = totalFftBins / barCount;
-        if (binsPerBar < 1) binsPerBar = 1;
-
-        // --- 视觉增强: 柱子间隙 ---
-        float gap = barWidth * 0.2f; // 20% 的间隙
-        float barDrawWidth = barWidth - gap;
-
-        for (int i = 0; i < barCount; i++) {
-            float magnitudeSum = 0;
-            int startBin = i * binsPerBar;
-            int endBin = (i + 1) * binsPerBar;
-            if (endBin > totalFftBins) endBin = totalFftBins;
-
-            for (int j = startBin; j < endBin; j++) {
-                int index = j * 2;
-                if (index + 1 < mFftData.length) {
-                    float real = mFftData[index];
-                    float imag = mFftData[index + 1];
-                    magnitudeSum += (float) Math.sqrt(real * real + imag * imag);
-                }
+        for (int i = 0; i < mBarCount; i++) {
+            if (mBytes[i] < 0) {
+                mBytes[i] = 127;
             }
 
-            int numBinsInBar = endBin - startBin;
-            float averageMagnitude = (numBinsInBar > 0) ? magnitudeSum / numBinsInBar : 0;
+            // 计算当前柱子的高度
+            // 为了让视觉效果更好，可以乘以一个缩放因子
+            float barHeight = mBytes[i] * 5; // 尝试乘以2，让柱子更高
+            if (barHeight > height) {
+                barHeight = height;
+            }
 
-
-            // --- 新增：频率均衡（EQ）增益 ---
-            // i 是当前柱子的索引，从左到右 (0 -> barCount-1)
-            // 我们设计一个简单的增益函数：频率越高，增益越大
-            // float gain = 1.0f + ((float)i / barCount) * 1.0f; // 线性增益，最右边的柱子增益为5倍
-            float gain = 1.0f;
-            float eqMagnitude = averageMagnitude * gain;
-
-            // 1. --- 专业核心：对数缩放 ---
-            // double dbValue = 20 * Math.log10(averageMagnitude + 1e-6);
-            // 使用增加了EQ的 eqMagnitude 进行后续计算
-            double dbValue = 20 * Math.log10(eqMagnitude + 1e-6);
-
-
-            float dbRange = -80; // 动态范围可以调，越大，低音部分越高
-            float barHeight = (float) ((dbValue + dbRange) / dbRange) * getHeight();
-            if (barHeight < 0) barHeight = 0;
-            if (barHeight > getHeight()) barHeight = getHeight();
-
-            // 2. --- 专业核心：平滑处理 ---
-            float smoothingFactor = 0.2f; // 系数越小越平滑
-            float finalBarHeight = mLastBarHeights[i] * (1 - smoothingFactor) + barHeight * smoothingFactor;
-
-            // 3. --- 专业核心：视觉增强 ---
-            float left = i * barWidth + (gap / 2);
-            float top = getHeight() - finalBarHeight;
+            // 计算当前柱子的坐标
+            float left = i * barTotalWidth + gap / 2;
+            float top = height - barHeight;
             float right = left + barDrawWidth;
-            float bottom = getHeight();
+            float bottom = height;
 
-            // 根据高度给一点简单的颜色变化
-            int alpha = (int) ((finalBarHeight / getHeight()) * 200) + 55;
-            mFftPaint.setAlpha(alpha);
-
-            // 使用圆角矩形绘制
-            float cornerRadius = barDrawWidth / 2;
-            canvas.drawRoundRect(left, top, right, bottom, cornerRadius, cornerRadius, mFftPaint);
-
-            // 更新历史高度
-            mLastBarHeights[i] = finalBarHeight;
+            // 使用 drawRect 绘制实心矩形
+            canvas.drawRect(left, top, right, bottom, mFftPaint);
         }
     }
+
 
 
     protected void onDrawLine(Canvas canvas) {
@@ -220,7 +200,7 @@ public class MyVisualizerView extends View {
 
                 // 计算该频率的能量幅值
                 float magnitude = (float) Math.sqrt(real * real + imag * imag);
-
+                Log.d("能量值", String.valueOf(magnitude));
                 // 将幅值映射到视图的高度
                 float barHeight = (magnitude / 150f) * getHeight();
                 // 增加一个保护，防止柱子画出屏幕

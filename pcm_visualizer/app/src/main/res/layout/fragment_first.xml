@@ -19,7 +19,7 @@
             android:id="@+id/my_visualizer_view"
             android:layout_width="match_parent"
             app:visualizerMode="bar"
-            app:barCount="64"
+            app:barCount="256"
             android:layout_height="256dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
