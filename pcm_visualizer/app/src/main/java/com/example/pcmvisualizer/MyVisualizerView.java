@@ -116,7 +116,6 @@ public class MyVisualizerView extends View {
     }
 
     protected void onDrawBar(Canvas canvas) {
-        super.onDraw(canvas);
         canvas.drawColor(0xFF111111);
         if (mBytes == null) {
             return;
