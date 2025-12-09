@@ -85,9 +85,7 @@ public class MyVisualizerView extends View {
     public void updateFft(byte[] fft) {
         this.mFftData = fft;
 
-        updateVisualizer(fft);
-
-        // invalidate(); // 请求重绘
+        invalidate();
     }
 
     @Override
@@ -96,65 +94,191 @@ public class MyVisualizerView extends View {
         if (mVisualizerMode == MODE_LINEAR) {
             onDrawLine(canvas);
         } else if (mVisualizerMode == MODE_BAR) {
-            onDrawBar(canvas);
+            // onDrawBar(canvas);
+            onDrawBarGroup(canvas);
         }
     }
 
-    private byte[] mBytes;
 
-    private final Rect mRect = new Rect();
+    // 在类的顶部添加一个常量，用于表示相对dB的最小范围
+    // 这个值定义了最弱的信号（相对于最强信号）能显示到多低
+    private static final float MIN_RELATIVE_DB_VALUE = -60f;
 
-    public void updateVisualizer(byte[] fft) {
-        byte[] model = new byte[fft.length / 2 + 1];
-        model[0] = (byte) Math.abs(fft[0]);
-        for (int i = 2, j = 1; j < mBarCount; ++j) {
-            model[j] = (byte) Math.hypot(fft[i], fft[i + 1]);
-            i += 2;
-        }
-        mBytes = model;
-        invalidate();
-    }
-
-    protected void onDrawBar(Canvas canvas) {
+    // 绘制经过对数分组和平滑处理的相对分贝图像
+    protected void onDrawBarGroup(Canvas canvas) {
+        // 先清空画布
         canvas.drawColor(0xFF111111);
-        if (mBytes == null) {
+
+        // 检查原始FFT数据是否存在
+        if (mFftData == null) {
             return;
         }
-        mRect.set(0, 0, getWidth(), getHeight());
 
-        final int width = mRect.width();
-        final int height = mRect.height();
+        // mFftData.length / 2 是FFT分析出的总频率点数
+        int totalFrequencyCount = mFftData.length / 2;
+        if (totalFrequencyCount == 0 || mBarCount == 0) {
+            return;
+        }
 
-        // 计算每个柱子的总宽度（包含间隙）
-        final float barTotalWidth = (float)width / mBarCount;
-        // 定义柱子之间的间隙，例如总宽度的 1/4
-        final float gap = barTotalWidth / 4;
-        // 计算柱子本身的绘制宽度
-        final float barDrawWidth = barTotalWidth - gap;
+        // **第一步：对FFT数据进行对数分组，并计算每组的平均幅值**
+
+        // `groupedMagnitudes` 数组用于存放最终 mBarCount 个柱子的幅值
+        float[] groupedMagnitudes = new float[mBarCount];
+        // `groupCounts` 用于记录每个分组包含了多少个原始频率点，方便计算平均值
+        int[] groupCounts = new int[mBarCount];
+
+        // 定义对数分组的边界点。第0个边界点是0。
+        int[] groupBoundaries = new int[mBarCount + 1];
+        groupBoundaries[0] = 0;
+
+        // 使用对数公式计算每个分组的右边界
+        // totalFrequencyCount - 1 是最后一个频率点的索引
+        // Math.log(mBarCount) 是底数
+        for (int i = 1; i <= mBarCount; i++) {
+            // 这个公式使得低频部分分组更窄，高频部分分组更宽
+            double logIndex = Math.log(i) / Math.log(mBarCount) * (totalFrequencyCount - 1);
+            groupBoundaries[i] = (int) logIndex + 1;
+        }
+
+        // 遍历所有原始频率点，将它们的幅值累加到对应的分组中
+        for (int i = 0; i < totalFrequencyCount; i++) {
+            // 计算当前频率点的幅值
+            int index = i * 2;
+            float real = mFftData[index];
+            float imag = mFftData[index + 1];
+            float magnitude = (float) Math.sqrt(real * real + imag * imag);
+
+            // 寻找当前频率点 `i` 属于哪个分组 `j`
+            for (int j = 0; j < mBarCount; j++) {
+                if (i >= groupBoundaries[j] && i < groupBoundaries[j + 1]) {
+                    groupedMagnitudes[j] += magnitude;
+                    groupCounts[j]++;
+                    break; // 找到分组后即可跳出内层循环
+                }
+            }
+        }
+
+        // 计算每组的平均幅值，并找到所有组中的最大平均幅值
+        float maxGroupedMagnitude = 0f;
+        for (int i = 0; i < mBarCount; i++) {
+            if (groupCounts[i] > 0) {
+                groupedMagnitudes[i] /= groupCounts[i]; // 除以数量，求平均
+            }
+            if (groupedMagnitudes[i] > maxGroupedMagnitude) {
+                maxGroupedMagnitude = groupedMagnitudes[i];
+            }
+        }
+
+        // 防止除以零
+        if (maxGroupedMagnitude == 0) {
+            return;
+        }
+
+
+        // **第二步：使用分组后的相对分贝值绘制所有柱子**
+
+        // 计算每个柱子的宽度
+        float barWidth = (float) getWidth() / mBarCount;
 
         for (int i = 0; i < mBarCount; i++) {
-            if (mBytes[i] < 0) {
-                mBytes[i] = 127;
-            }
+            float magnitude = groupedMagnitudes[i];
 
-            // 计算当前柱子的高度
-            // 为了让视觉效果更好，可以乘以一个缩放因子
-            float barHeight = mBytes[i] * 5; // 尝试乘以2，让柱子更高
-            if (barHeight > height) {
-                barHeight = height;
-            }
+            // 计算相对dB值
+            float ratio = (magnitude > 0) ? (magnitude / maxGroupedMagnitude) : 0f;
+            float dbValue = (ratio > 0) ? (float) (20 * Math.log10(ratio)) : MIN_RELATIVE_DB_VALUE;
 
-            // 计算当前柱子的坐标
-            float left = i * barTotalWidth + gap / 2;
-            float top = height - barHeight;
-            float right = left + barDrawWidth;
-            float bottom = height;
+            // 归一化dB值并映射到视图高度
+            float normalizedHeight = (dbValue - MIN_RELATIVE_DB_VALUE) / -MIN_RELATIVE_DB_VALUE;
+            normalizedHeight = Math.max(0f, Math.min(1f, normalizedHeight));
 
-            // 使用 drawRect 绘制实心矩形
+            float barHeight = normalizedHeight * getHeight();
+
+            // 计算当前柱子的四个坐标
+            float left = i * barWidth;
+            float top = getHeight() - barHeight;
+            float right = left + barWidth;
+            float bottom = getHeight();
+
+            // 绘制长方形
             canvas.drawRect(left, top, right, bottom, mFftPaint);
         }
     }
 
+    // 绘制相对分贝图像
+    protected void onDrawBar(Canvas canvas) {
+        // 先清空画布
+        canvas.drawColor(0xFF111111);
+
+        // 检查原始FFT数据是否存在
+        if (mFftData == null) {
+            return;
+        }
+
+        // 计算要绘制的柱子总数，即FFT数据长度的一半
+        int barCount = mFftData.length / 2;
+        if (barCount == 0) {
+            return;
+        }
+
+        // **第一步：计算所有幅值并找到最大值**
+        // 创建一个数组来存储当前帧的所有幅值
+        float[] magnitudes = new float[barCount];
+        // 用于寻找当前帧的最大幅值
+        float maxMagnitude = 0f;
+        for (int i = 0; i < barCount; i++) {
+            // 计算当前频率点的数组索引
+            int index = i * 2;
+            // 获取实部和虚部
+            float real = mFftData[index];
+            float imag = mFftData[index + 1];
+
+            // 计算该频率的能量幅值
+            float magnitude = (float) Math.sqrt(real * real + imag * imag);
+            magnitudes[i] = magnitude;
+
+            if (magnitude > maxMagnitude) {
+                maxMagnitude = magnitude;
+            }
+        }
+
+        // 防止除以零
+        if (maxMagnitude == 0) {
+            return;
+        }
+
+        // 计算每个柱子的宽度
+        float barWidth = (float) getWidth() / barCount;
+
+        // **第二步：使用相对分贝值绘制所有柱子**
+        for (int i = 0; i < barCount; i++) {
+            float magnitude = magnitudes[i];
+
+            // 计算当前幅值相对于最大幅值的比例
+            // 为避免log(0)，给一个极小的下限
+            float ratio = (magnitude > 0) ? (magnitude / maxMagnitude) : 0f;
+
+            // 计算相对dB值。结果范围在 (-∞, 0]
+            float dbValue = (ratio > 0) ? (float) (20 * Math.log10(ratio)) : MIN_RELATIVE_DB_VALUE;
+
+            // 将相对dB值 [MIN_RELATIVE_DB_VALUE, 0] 映射到视图高度 [0, getHeight()]
+            // 公式: (当前值 - 最小值) / (最大值 - 最小值)
+            float normalizedHeight = (dbValue - MIN_RELATIVE_DB_VALUE) / -MIN_RELATIVE_DB_VALUE;
+
+            // 确保高度比例在 0.0 到 1.0 之间
+            normalizedHeight = Math.max(0f, Math.min(1f, normalizedHeight));
+
+            float barHeight = normalizedHeight * getHeight();
+
+            // 计算当前柱子的四个坐标
+            float left = i * barWidth;
+            float top = getHeight() - barHeight;
+            float right = left + barWidth;
+            float bottom = getHeight();
+
+            // 绘制长方形
+            canvas.drawRect(left, top, right, bottom, mFftPaint);
+        }
+    }
 
 
     protected void onDrawLine(Canvas canvas) {
